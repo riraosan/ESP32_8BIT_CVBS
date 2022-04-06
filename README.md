@@ -35,6 +35,7 @@ C:\Users\{{username}}\Documents\Arduino\libraries
 lib_deps =
         SPIFFS
         SD(esp32)
+        https://github.com/riraosan/ESP32_8BIT_CVBS.git
         https://github.com/lovyan03/LovyanGFX.git
         https://github.com/riraosan/ESP_8_BIT_composite.git
         https://github.com/tanakamasayuki/efont.git
