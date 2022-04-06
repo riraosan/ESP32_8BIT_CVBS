@@ -1,11 +1,11 @@
-
+@import "./css/style.less"
 # ESP32 8BIT CVBS Library
 
 ## 概要
 
 コンポジット映像信号（CVBS : Composite Video, Blanking, and Sync）は、映像信号を構成する同期信号、輝度信号、カラーの場合は色信号を合成して、1本のケーブルで扱えるようにした信号のことです。
 
-CVBS映像信号を生成するESP_8_BIT_compositeライブラリを改修しLovyanGFXと結合しました。簡単に言うと、ESP_8_BIT_GFXクラスをLovyanGFXに置き換えました。
+CVBS映像信号を生成する[ESP_8_BIT_composite](https://github.com/Roger-random/ESP_8_BIT_composite.git)ライブラリを改修し[LovyanGFX](https://github.com/lovyan03/LovyanGFX.git)と結合しました。簡単に言うとESP_8_BIT_GFXクラスをLovyanGFXに置き換えました。
 
 また、ESP_8_BIT_compositeクラスが持つダブルバッファへ描画データを転送するために、Panel_CVBSクラスを作成しました。Panel_CVBSクラスをLovyanGFXのフォルダ内に配置することも可能です。
 
@@ -17,33 +17,45 @@ Instagramに[サンプル動画](https://www.instagram.com/p/CbXvBUovzNE/?utm_so
 
 ## インストール方法
 
+ESP_8_BIT_compositeライブラリには若干の改修を行いましたので、riraosanリポジトリのソースコードをご利用ください。
+
+```
+https://github.com/riraosan/ESP_8_BIT_composite.git
+```
+
 ### Arduino IDEの場合
 
-ESP32_8BIT_CVBSライブラリをライブラリフォルダに配置してください。
+- 次のライブラリをGitHubよりダウンロードしてください。
 
-Windows 10 64bitの場合
 ```
+https://github.com/riraosan/ESP32_8BIT_CVBS.git
+https://github.com/lovyan03/LovyanGFX.git
+https://github.com/riraosan/ESP_8_BIT_composite.git
+```
+
+- ダウンロードしたライブラリをライブラリフォルダに配置してください。
+
+```powershell:Windows10の場合
 C:\Users\{{username}}\Documents\Arduino\libraries
 ```
 
 ### PlatformIO IDEの場合
 
-サンプルのplatformio.iniを修正してライブラリをGitHubリポジトリよりダウンロードしてください。
+PlatformIO IDEのライブラリマネージャーを使って、GitHubリポジトリよりライブラリをダウンロードしてください。
 
-
-```
+```yaml:platformio.ini
 lib_deps =
-        SPIFFS
-        SD(esp32)
-        https://github.com/riraosan/ESP32_8BIT_CVBS.git
         https://github.com/lovyan03/LovyanGFX.git
         https://github.com/riraosan/ESP_8_BIT_composite.git
         https://github.com/tanakamasayuki/efont.git
+        https://githu b.com/riraosan/ESP32_8BIT_CVBS.git
 ```
 
 ## 使い方
 
 ```cpp
+//#define ENABLE_GPIO26
+
 #include <Arduino.h>
 #define LGFX_USE_V1
 #include <LovyanGFX.h>
@@ -54,7 +66,7 @@ static LGFX_Sprite     _sprite(&_cvbs);
 
 void setup(){
   _cvbs.init();
-  //初期設定など
+  //他のモジュールの初期設定など
 }
 
 void loop(){
@@ -64,14 +76,50 @@ void loop(){
 ```
 
 - LovyanGFXのv1フォルダ以下のソースコードを使用しています。`#define LGFX_USE_V1`
-- ESP32_8BIT_CVBSクラスのインスタンスを作成し、Panel_CVBSクラスを初期化します。` ESP32_8BIT_CVBS _cvbs;`
+- ESP32_8BIT_CVBSクラスのインスタンスを作成し、Panel_CVBSクラスを初期化してください。` ESP32_8BIT_CVBS _cvbs;`
 - LovyanGFXのLGFX_SpriteクラスのインスタンスにESP32_8BIT_CVBSクラスのインスタンスを紐づけます。`LGFX_Sprite _sprite(&_cvbs);`
 - `setup()`でPanel_CVBSクラスの`init()`を実行して、ライブラリを初期化してください。
-- その後、`loop()`でLovyanGFXのAPIを使って描画処理を実装してください。
+- その後、`loop()`でLovyanGFXのAPIを使用して各種描画処理を実装してください。
 - LovyanGFXのAPIの使い方はサンプルコードを参照してください。
-- Panel_CVBSクラスをLovyanGFXのフォルダ（panel）に配置することも可能です。もちろん、ESP_8_BIT_compositeライブラリのインクルードが必要です。
+- Panel_CVBSクラスをLovyanGFXのフォルダ（/panel）に配置することも可能です。もちろん、ESP_8_BIT_compositeライブラリのインクルードが必要です。
+- デフォルトのコンポジット信号出力ポートはGPIO25です。
+- M5STACK ATOM LiteのGroveコネクタ(PH2.0-4P)の`G26`ポートよりコンポジット信号を出力したい場合は、`#include ENABLE_GPIO26`をソースコード(*.ino)に記述してください。他のESP32モジュール基板でも出力ポート切り替えはできるはずです（未確認）。
+- PlatformIO IDEを使用している場合は、`platformio.ini`にビルドフラグを追加してください。
+
+```
+build_flags =
+         -D ENABLE_GPIO26
+```
 
 ### ESP32とRCAケーブル結線について
+
+[ESP_8_BIT](https://github.com/rossumur/esp_8_bit.git)ライブラリのREADME.mdより簡単な結線図を転載します。
+
+GPIO25とGPIO26にvideo outを設定できます。
+
+```
+    -----------
+    |         |
+    |  25(26) |------------------> video out
+    |         |
+    |      18 |---/\/\/\/----|---> audio out
+    |         |     1k       |
+    |         |             ---
+    |  ESP32  |             --- 10nf
+    |         |              |
+    |         |              v gnd
+    |         |
+    |         |     3.3v <--+-+   IR Receiver
+    |         |      gnd <--|  )  TSOP4838 etc.
+    |       0 |-------------+-+   (Optional)
+    -----------
+
+```
+
+RCAケーブルの信号線をGPIO25（26）に接続し、RCAケーブルの外側をシールドしているGNDをESP32モジュールのGNDへ接続してください。
+そしてRCAケーブルをデジタルテレビの背面にある黄色のメスコネクタ（映像）に接続してください。
+
+- サンプル画像
 
 TBD
 
@@ -79,23 +127,23 @@ TBD
 
 [M5STACK ATOM Lite](https://shop.m5stack.com/collections/m5-controllers/products/atom-lite-esp32-development-kit)を使って試験を行いました。その他のESP32モジュールや基板では確認をしていません。
 sampleフォルダにLovyanGFXライブラリにコミットされているsampleファイルの一部を配置しました。パネルの画サイズを256x240として、sampleファイルに若干の修正を加えました。これらのサンプルコードを用いてPanel_CVBSクラスの試験を行いました。
-他のESP32モジュール基板で動作確認をしましたら教えていただけますと幸いです。
+他のESP32モジュール基板でこのライブラリが動作できたことを確認していただけましたら、こちらのリポジトリに情報をコミットしていただけると幸いです。
 ## 作者
 
 - [riraosan](https://github.com/riraosan) on GitHub
 - [riraosan_0901](https://twitter.com/riraosan_0901) on Twitter
 
-## ライセンス
+## 著作権
 
 [MIT](https://github.com/riraosan/ESP32_8BIT_CVBS/blob/master/LICENSE)
 
-## 謝辞 Acknowledgements
+## 謝辞
 
-このライブラリを作成するにあたって、こちらの巨人[^1]たちのライブラリを使わさせていただきました。
+このライブラリを作成するにあたって、こちらの巨人[^1]たちのアイデアとライブラリを使わさせていただきました。ありがとうございました。
 
 - [LovyanGFX](https://github.com/lovyan03/LovyanGFX.git)の作者[lovyan03](https://github.com/lovyan03)氏へ感謝いたします。
+- [ESP_8_BIT](https://github.com/rossumur/esp_8_bit)の作者[rossumur](https://github.com/rossumur)氏へ感謝いたします。
 - [ESP_8_BIT_composite](https://github.com/Roger-random/ESP_8_BIT_composite.git)の作者[Roger-random](https://github.com/Roger-random)氏へ感謝いたします。
-
 
 [^1]: > What Des-Cartes did was a good step. You have added much several ways, & especially in taking the colours of thin plates into philosophical consideration. [If I have seen further it is by standing on the sholders of Giants](https://en.wikipedia.org/wiki/Standing_on_the_shoulders_of_giants).
 `Isaac Newton` 
