@@ -5,21 +5,21 @@ the initials CVBS for composite video baseband signal or color, video, blanking 
 https://en.wikipedia.org/wiki/Composite_video
 
 Original Source:
-https://github.com/riraosan/
+https://github.com/riraosan/ESP32_8BIT_CVBS
 
 Licence:
-[MIT](https://github.com/riraosan/)
+[MIT](https://github.com/riraosan/ESP32_8BIT_CVBS/blob/master/LICENSE)
 
 Author:
 [riraosan](https://twitter.com/riraosan_0901)
 
 Contributors:
-[lovyan03](https://github.com/???)
-[Roger Cheng](https://github.com/?)
+[lovyan03](https://github.com/lovyan03)
+[Roger Cheng](https://github.com/Roger-random)
 
 このライブラリは以下のライブラリに依存しています。
-[LovyanGFX]()
-[ESP_8_BIT_composite]()
+[LovyanGFX](https://github.com/lovyan03/LovyanGFX)
+[ESP_8_BIT_composite](https://github.com/Roger-random/ESP_8_BIT_composite)
 
 /----------------------------------------------------------------------------*/
 

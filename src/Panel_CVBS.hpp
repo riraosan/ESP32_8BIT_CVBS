@@ -1,16 +1,28 @@
 /*----------------------------------------------------------------------------/
-Panel_CVBS class using LovyanGFX for ESP_8_BIT_composite
+ESP32_8BIT_CVBS Library
+
+the initials CVBS for composite video baseband signal or color, video, blanking and sync
+https://en.wikipedia.org/wiki/Composite_video
 
 Original Source:
+https://github.com/riraosan/ESP32_8BIT_CVBS
 
 Licence:
- [MIT]()
+[MIT](https://github.com/riraosan/ESP32_8BIT_CVBS/blob/master/LICENSE)
 
 Author:
+[riraosan](https://twitter.com/riraosan_0901)
 
 Contributors:
+[lovyan03](https://github.com/lovyan03)
+[Roger Cheng](https://github.com/Roger-random)
+
+このライブラリは以下のライブラリに依存しています
+[LovyanGFX](https://github.com/lovyan03/LovyanGFX)
+[ESP_8_BIT_composite](https://github.com/Roger-random/ESP_8_BIT_composite)
 
 /----------------------------------------------------------------------------*/
+
 #pragma once
 
 #define LGFX_USE_V1
