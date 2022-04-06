@@ -100,20 +100,19 @@ GPIO25とGPIO26にvideo outを設定できます。
 ```
     -----------
     |         |
-    |  25(26) |------------------> video out
-    |         |
-    |      18 |---/\/\/\/----|---> audio out
-    |         |     1k       |
-    |         |             ---
-    |  ESP32  |             --- 10nf
-    |         |              |
-    |         |              v gnd
-    |         |
-    |         |     3.3v <--+-+   IR Receiver
-    |         |      gnd <--|  )  TSOP4838 etc.
-    |       0 |-------------+-+   (Optional)
+    |  25(26) |------------------> RCA(pin)
+    |         |                +-> RCA(ring)
+    |         |                |
+    |         |                |
+    |         |                |
+    |  ESP32  |                |
+    |         |                |
+    |         |                |
+    |         |                |
+    |         |                |
+    |         |                |
+    |     GND |----------------+
     -----------
-
 ```
 
 RCAケーブルの信号線をGPIO25（26）に接続し、RCAケーブルの外側をシールドしているGNDをESP32モジュールのGNDへ接続してください。
@@ -121,21 +120,15 @@ RCAケーブルの信号線をGPIO25（26）に接続し、RCAケーブルの外
 
 - サンプル画像
 
-TBD
+![RCA Pin](./docs/images/RCA_sample1.png)
 
+> 形状としては、オス側のプラグは中心に金属の棒（ピン）があり、切り込みの入ったリング状の金属板がそれを囲っている。メス側のソケットはピンを差し込む穴の周りを金属のリングが覆っている。接続すると、オスのリングがメスのリングを挟み込む形になる。従来は剥き出しのリングに四方の切り込みが入ったものが多く用いられたが（通称「チューリップ」）、現在は小さな切り込みが1か所だけで、先端数ミリを除いてプラスチックでカバーされた形状が主流となっている。
+[Wikipedia](https://ja.wikipedia.org/wiki/RCA%E7%AB%AF%E5%AD%90)
 ## 動作の確認
 
 [M5STACK ATOM Lite](https://shop.m5stack.com/collections/m5-controllers/products/atom-lite-esp32-development-kit)を使って試験を行いました。その他のESP32モジュールや基板では確認をしていません。
 sampleフォルダにLovyanGFXライブラリにコミットされているsampleファイルの一部を配置しました。パネルの画サイズを256x240として、sampleファイルに若干の修正を加えました。これらのサンプルコードを用いてPanel_CVBSクラスの試験を行いました。
 他のESP32モジュール基板でこのライブラリが動作できたことを確認していただけましたら、こちらのリポジトリに情報をコミットしていただけると幸いです。
-## 作者
-
-- [riraosan](https://github.com/riraosan) on GitHub
-- [riraosan_0901](https://twitter.com/riraosan_0901) on Twitter
-
-## 著作権
-
-[MIT](https://github.com/riraosan/ESP32_8BIT_CVBS/blob/master/LICENSE)
 
 ## 謝辞
 
@@ -144,6 +137,15 @@ sampleフォルダにLovyanGFXライブラリにコミットされているsampl
 - [LovyanGFX](https://github.com/lovyan03/LovyanGFX.git)の作者[lovyan03](https://github.com/lovyan03)氏へ感謝いたします。
 - [ESP_8_BIT](https://github.com/rossumur/esp_8_bit)の作者[rossumur](https://github.com/rossumur)氏へ感謝いたします。
 - [ESP_8_BIT_composite](https://github.com/Roger-random/ESP_8_BIT_composite.git)の作者[Roger-random](https://github.com/Roger-random)氏へ感謝いたします。
+
+## 著作権
+
+[MIT](https://github.com/riraosan/ESP32_8BIT_CVBS/blob/master/LICENSE)
+
+## 作者
+
+- [riraosan](https://github.com/riraosan) on GitHub
+- [riraosan_0901](https://twitter.com/riraosan_0901) on Twitter
 
 [^1]: > What Des-Cartes did was a good step. You have added much several ways, & especially in taking the colours of thin plates into philosophical consideration. [If I have seen further it is by standing on the sholders of Giants](https://en.wikipedia.org/wiki/Standing_on_the_shoulders_of_giants).
 `Isaac Newton` 
