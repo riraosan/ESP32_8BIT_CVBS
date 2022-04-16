@@ -112,7 +112,9 @@ public:
   bool dmaBusy(void) override { return false; }
   void waitDisplay(void) override {}
   bool displayBusy(void) override { return false; }
-  void display(uint_fast16_t x, uint_fast16_t y, uint_fast16_t w, uint_fast16_t h) override {}
+  void display(uint_fast16_t x, uint_fast16_t y, uint_fast16_t w, uint_fast16_t h) override {
+    _video.waitForFrame();
+  }
   bool isReadable(void) const override { return false; }
   bool isBusShared(void) const override { return false; }
 

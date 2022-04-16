@@ -13,9 +13,10 @@
 //#define MISAKI_FONT           // OK
 //#define EFONT                 // OK
 //#define U8G2                  // OK
-#define ANIMATED_GIF          // OK
+//#define ANIMATED_GIF          // OK
 //#define RADGIALGAUGE          // OK
 //#define METERSAMPLE           // OK
+//#define SPINTILE              // OK
 
 #if defined(EFONT)
 // need to include efont before LovyanGFX.
@@ -94,6 +95,9 @@ void loop(void) {
 #include "../sample/02_Sprite/RadgialGauge/RadgialGauge.ino"
 #elif defined(METERSAMPLE)
 #include "../sample/02_Sprite/MeterSample/MeterSample.ino"
+#elif defined(SPINTILE)
+using M5GFX = ESP32_8BIT_CVBS;
+#include "../sample/02_Sprite/SpinTile/SpinTile.ino"
 #else
 void setup() {}
 void loop() {}
