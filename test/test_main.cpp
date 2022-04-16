@@ -18,7 +18,8 @@
 //#define METERSAMPLE           // NG  パレットの透過がうまくいかない
 //#define SPINTILE              // OK
 //#define GAMEOFLIFE            // OK
-#define BARGRAPH
+//#define BARGRAPH
+#define ANALOGMETER
 
 #if defined(EFONT)
 // need to include efont before LovyanGFX.
@@ -107,6 +108,9 @@ using M5Canvas = LGFX_Sprite;
 #elif defined(BARGRAPH)
 using M5GFX = ESP32_8BIT_CVBS;
 #include "../sample/03_Standard/BarGraph/BarGraph.ino"
+#elif defined(ANALOGMETER)
+using M5GFX = ESP32_8BIT_CVBS;
+#include "../sample/02_Sprite/AnalogMeter/AnalogMeter.ino"
 #else
 void setup() {}
 void loop() {}
