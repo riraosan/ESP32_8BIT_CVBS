@@ -135,8 +135,8 @@ void setup(void) {
   display.begin();
   display.setEpdMode(epd_mode_t::epd_fastest);
 
-  if (display.width() > display.height()) {
-    // display.setRotation(display.getRotation() ^ 1); // bug TBD
+  if (display.width() < display.height()) {
+    display.setRotation(display.getRotation() ^ 1);
   }
 
   display.startWrite();
