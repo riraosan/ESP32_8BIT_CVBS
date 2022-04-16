@@ -1,10 +1,6 @@
 //#define LGFX_USE_V1
 //#include <LovyanGFX.hpp>
 
-//#define LGFX_AUTODETECT
-//#include <LGFX_AUTODETECT.hpp>  // クラス"LGFX"を準備します
-// #include <lgfx_user/LGFX_ESP32_sample.hpp> // またはユーザ自身が用意したLGFXクラスを準備します
-
 static LGFX lcd;
 
 extern const unsigned short info[];
@@ -73,7 +69,6 @@ static LGFX_Sprite  icons[3];
 static int_fast16_t sprite_height;
 
 void setup(void) {
-  lcd.setCopyAfterSwap(true);
   lcd.init();
 
   if (lcd.width() < lcd.height()) {
@@ -123,7 +118,7 @@ void setup(void) {
   icons[1].pushImage(0, 0, alertWidth, alertHeight, alert);
   icons[2].pushImage(0, 0, closeWidth, closeHeight, closeX);
 
-  // lcd.startWrite();
+  lcd.startWrite();
 }
 
 void loop(void) {
@@ -149,7 +144,8 @@ void loop(void) {
     }
     sprites[flip].pushSprite(&lcd, 0, y);
   }
-  // lcd.display();
+
+  lcd.display();
 
   ++frame_count;
   sec = lgfx::millis() / 1000;

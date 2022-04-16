@@ -33,5 +33,5 @@ void loop(void) {
   sprites[!flip]->fillRect(0, width - 3, width, 3);
   sprites[!flip]->setClipRect(3, 3, width - 6, width - 6);
   sprites[!flip]->pushRotateZoom(sprites[flip], width >> 1, (width >> 1) + 10, ((float)count) * .5, 0.9, 0.95);
-  sprites[flip]->pushSprite((lcd.width() - width) >> 1, (lcd.height() - width) >> 1);
+  sprites[flip]->pushSprite(((lcd.width() - width) >> 1) - 6, (lcd.height() - width) >> 1);
 }

@@ -24,6 +24,7 @@ static float              zoom;                            // 表示倍率
 
 void setup(void) {
   lcd.begin();
+  lcd.startWrite();
 
   zoom = (float)(std::min(lcd.width(), lcd.height())) / width;  // 表示が画面にフィットするよう倍率を調整;
   zoom *= ZOOM;
@@ -106,8 +107,6 @@ void setup(void) {
   shadow2.drawFastVLine(1, 0, 119, 1);
   needle2.fillRect(0, 99, 3, 3, 8);
 
-  // lcd.startWrite();
-
   // shadow1.pushSprite(&lcd,  0, 0); // デバッグ用、パーツを直接LCDに描画する
   // needle1.pushSprite(&lcd, 10, 0);
   // shadow2.pushSprite(&lcd, 20, 0);
@@ -163,7 +162,7 @@ void drawClock(uint64_t time) {  // 時計の描画
   // OK
   canvas.pushRotateZoom(0, zoom * 0.8, zoom);
   // NG
-  // canvas.pushRotateZoom(0, zoom, zoom, transpalette);
+  //canvas.pushRotateZoom(0, zoom, zoom, transpalette);
   lcd.display();
 }
 

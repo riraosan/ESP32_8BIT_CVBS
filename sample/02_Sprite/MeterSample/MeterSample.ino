@@ -6,7 +6,7 @@ static LGFX_Sprite canvas(&lcd);     // オフスクリーン描画用バッフ�
 static LGFX_Sprite base(&canvas);    // 文字盤パーツ
 static LGFX_Sprite needle(&canvas);  // 針パーツ
 
-static int32_t width        = 250;         // 画像サイズ
+static int32_t width        = 239;         // 画像サイズ
 static int32_t halfwidth    = width >> 1;  // 中心座標
 static auto    transpalette = 0;           // 透過色パレット番号
 static float   zoom;                       // 表示倍率
@@ -17,22 +17,24 @@ static float   zoom;                       // 表示倍率
 
 void setup(void) {
   lcd.init();
+  lcd.startWrite();
+
   int lw = std::min(lcd.width(), lcd.height());
 
   zoom = (float)lw / width;  // 表示が画面にフィットするよう倍率を調整
 
-  int px = lcd.width() >> 1;
+  int px = (lcd.width() >> 1) - 6;
   int py = lcd.height() >> 1;
   lcd.setPivot(px, py);  // 描画時の中心を画面中心に合わせる
 
-  lcd.setColorDepth(8);
+  lcd.setColorDepth(24);
   for (int i = 0; i < 180; i += 2) {  // 外周を描画する
-    lcd.setColor(lcd.color332(i * 1.4, i * 1.4 + 2, i * 1.4 + 4));
+    lcd.setColor(lcd.color888(i * 1.4, i * 1.4 + 2, i * 1.4 + 4));
     lcd.fillArc(px, py, (lw >> 1), (lw >> 1) - zoom * 3, 90 + i, 92 + i);
     lcd.fillArc(px, py, (lw >> 1), (lw >> 1) - zoom * 3, 88 - i, 90 - i);
   }
   for (int i = 0; i < 180; i += 2) {  // 外周を描画する
-    lcd.setColor(lcd.color332(i * 1.4, i * 1.4 + 2, i * 1.4 + 4));
+    lcd.setColor(lcd.color888(i * 1.4, i * 1.4 + 2, i * 1.4 + 4));
     lcd.fillArc(px, py, (lw >> 1) - zoom * 4, (lw >> 1) - zoom * 7, 270 + i, 272 + i);
     lcd.fillArc(px, py, (lw >> 1) - zoom * 4, (lw >> 1) - zoom * 7, 268 - i, 270 - i);
   }
@@ -80,21 +82,23 @@ void setup(void) {
   canvas.setPaletteColor(1, 0, 0, 15);
   canvas.setPaletteColor(2, 255, 31, 31);
   canvas.setPaletteColor(3, 255, 255, 191);
-
-  // lcd.startWrite();
 }
 
 void draw(float value) {
   base.pushSprite(0, 0);  // 描画用バッファに盤の画像を上書き
 
   float angle = 270 + value * 90.0;
+  // needle.pushRotateZoom(angle, 3.0, 10.0, transpalette);  // 針をバッファに描画する
   needle.pushRotateZoom(angle, 3.0, 10.0);  // 針をバッファに描画する
   canvas.fillCircle(halfwidth, halfwidth, 7, 3);
+  // canvas.pushRotateZoom(0, zoom, zoom, transpalette);  // 完了した盤をLCDに描画する
   canvas.pushRotateZoom(0, zoom, zoom);  // 完了した盤をLCDに描画する
 
   if (value >= 1.5) {
     lcd.fillCircle(lcd.width() >> 1, (lcd.height() >> 1) + width * 4 / 10, 5, 0x007FFFU);
   }
+
+  lcd.display();
 }
 
 void loop(void) {

@@ -1,10 +1,6 @@
 //#define LGFX_USE_V1
 //#include <LovyanGFX.hpp>
 
-//#define LGFX_AUTODETECT
-//#include <LGFX_AUTODETECT.hpp>  // クラス"LGFX"を準備します
-// #include <lgfx_user/LGFX_ESP32_sample.hpp> // またはユーザ自身が用意したLGFXクラスを準備します
-
 static LGFX lcd;
 
 static std::uint32_t sec, psec;
@@ -80,7 +76,7 @@ void setup(void) {
     }
     ++div;
   }
-  // lcd.startWrite();
+  lcd.startWrite();
 }
 
 void loop(void) {
@@ -109,7 +105,8 @@ void loop(void) {
     }
     sprites[flip].pushSprite(&lcd, 0, y);
   }
-  // lcd.display();
+
+  lcd.display();
 
   ++frame_count;
   sec = lgfx::millis() / 1000;

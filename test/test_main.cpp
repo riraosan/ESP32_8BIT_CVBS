@@ -15,8 +15,10 @@
 //#define U8G2                  // OK
 //#define ANIMATED_GIF          // OK
 //#define RADGIALGAUGE          // OK
-//#define METERSAMPLE           // OK
+//#define METERSAMPLE           // NG  パレットの透過がうまくいかない
 //#define SPINTILE              // OK
+//#define GAMEOFLIFE            // OK
+#define BARGRAPH
 
 #if defined(EFONT)
 // need to include efont before LovyanGFX.
@@ -97,7 +99,14 @@ void loop(void) {
 #include "../sample/02_Sprite/MeterSample/MeterSample.ino"
 #elif defined(SPINTILE)
 using M5GFX = ESP32_8BIT_CVBS;
-#include "../sample/02_Sprite/SpinTile/SpinTile.ino"
+#include "../sample/03_Standard/SpinTile/SpinTile.ino"
+#elif defined(GAMEOFLIFE)
+using M5GFX    = ESP32_8BIT_CVBS;
+using M5Canvas = LGFX_Sprite;
+#include "../sample/02_Sprite/GameOfLife/GameOfLife.ino"
+#elif defined(BARGRAPH)
+using M5GFX = ESP32_8BIT_CVBS;
+#include "../sample/03_Standard/BarGraph/BarGraph.ino"
 #else
 void setup() {}
 void loop() {}

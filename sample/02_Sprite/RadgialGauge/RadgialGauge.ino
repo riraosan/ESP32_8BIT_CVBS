@@ -55,7 +55,7 @@ void setup(void) {
   meter3.pivot_y = (lcd.height() * 3) >> 2;
   meter3.add     = 0.57;
 
-  lcd.fillScreen(lcd.color332(0, 0, 127));
+  lcd.fillScreen(lcd.color888(0, 0, 127));
 
   for (int i = 0; i < 20; i++) {
     lcd.drawFastHLine(0, (i * 2 + 1) * lcd.height() / 40, lcd.width(), 0xFFFF);
@@ -64,7 +64,7 @@ void setup(void) {
 }
 
 void loop(void) {
-  meter1.drawGauge(sprite.color332(255, meter1.angle, 127));
-  meter2.drawGauge(sprite.color332(255 - meter2.angle, meter2.angle, 127));
-  meter3.drawGauge(sprite.color332(0, 127, meter3.angle));
+  meter1.drawGauge(sprite.color888(255, meter1.angle, 127));
+  meter2.drawGauge(sprite.color888(255 - meter2.angle, meter2.angle, 127));
+  meter3.drawGauge(sprite.color888(0, 127, meter3.angle));
 }

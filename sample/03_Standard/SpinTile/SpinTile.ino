@@ -68,7 +68,7 @@ size_t   scale = 1;
 
 void setup(void) {
   display.init();
-  //display.startWrite();
+  display.startWrite();
   display.fillScreen(TFT_BLACK);
 
   if (display.isEPD()) {
@@ -84,7 +84,7 @@ void setup(void) {
   lcd_width  = display.width() / scale;
   lcd_height = display.height() / scale;
 
-  //display.startWrite();
+  display.startWrite();
   display.setColorDepth(8);
   display.fillScreen(TFT_BLACK);
   f = 0;
@@ -125,7 +125,7 @@ void loop(void) {
   uint32_t dyx = (zoom * ((0) * rcos - (1) * rsin)) >> (20 - 8);
   uint32_t dyy = (zoom * ((1) * rcos + (0) * rsin)) >> (20 - 8);
 
-  //display.waitDisplay();
+  // display.waitDisplay();
   for (uint32_t y = 0; y < lcd_height; y++) {
     uint32_t ypos = y * scale;
     p_cxx += p_dxx;
