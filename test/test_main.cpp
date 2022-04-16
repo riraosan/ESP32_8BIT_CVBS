@@ -110,7 +110,7 @@ using M5GFX = ESP32_8BIT_CVBS;
 #include "../sample/03_Standard/BarGraph/BarGraph.ino"
 #elif defined(ANALOGMETER)
 using M5GFX = ESP32_8BIT_CVBS;
-#include "../sample/02_Sprite/AnalogMeter/AnalogMeter.ino"
+#include "../sample/03_Standard/AnalogMeter/AnalogMeter.ino"
 #else
 void setup() {}
 void loop() {}
