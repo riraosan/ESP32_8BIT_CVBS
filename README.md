@@ -127,7 +127,9 @@ RCAケーブルの信号線をGPIO25（26）に接続し、RCAケーブルの外
 ## 動作の確認
 
 [M5STACK ATOM Lite](https://shop.m5stack.com/collections/m5-controllers/products/atom-lite-esp32-development-kit)を使って試験を行いました。その他のESP32モジュールや基板では確認をしていません。
+
 sampleフォルダにLovyanGFXライブラリにコミットされているsampleファイルの一部を配置しました。パネルの画サイズを256x240として、sampleファイルに若干の修正を加えました。これらのサンプルコードを用いてPanel_CVBSクラスの試験を行いました。
+
 他のESP32モジュール基板でこのライブラリが動作できたことを確認していただけましたら、こちらのリポジトリに情報をコミットしていただけると幸いです。
 
 ## 謝辞
