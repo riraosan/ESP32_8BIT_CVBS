@@ -142,7 +142,9 @@ sampleフォルダにLovyanGFXライブラリにコミットされているsampl
 
 ## 著作権
 
-[MIT](https://github.com/riraosan/ESP32_8BIT_CVBS/blob/master/LICENSE)
+- ESP32_8BIT_CVBS : [MIT](https://github.com/riraosan/ESP32_8BIT_CVBS/blob/master/LICENSE) riraosan
+- LovyanGFX : [FreeBSD](https://github.com/lovyan03/LovyanGFX/blob/master/license.txt) lovyan03
+- ESP_8_BIT_composite  : [MIT](https://github.com/Roger-random/ESP_8_BIT_composite/blob/main/LICENSE) Roger-random
 
 ## 作者
 
