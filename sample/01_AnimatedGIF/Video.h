@@ -6,8 +6,7 @@
 #include <SD.h>
 #include <SPI.h>
 
-#define LGFX_USE_V1
-#include <LovyanGFX.h>
+#include <M5GFX.h>
 #include <ESP32_8BIT_CVBS.h>
 
 #include <AnimatedGIF.h>

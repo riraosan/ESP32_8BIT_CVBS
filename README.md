@@ -29,7 +29,7 @@ https://github.com/riraosan/ESP_8_BIT_composite.git
 
 ```
 https://github.com/riraosan/ESP32_8BIT_CVBS.git
-https://github.com/lovyan03/LovyanGFX.git
+https://github.com/m5stack/M5GFX.git
 https://github.com/riraosan/ESP_8_BIT_composite.git
 ```
 
@@ -45,10 +45,10 @@ PlatformIO IDEのライブラリマネージャーを使って、GitHubリポジ
 
 ```yaml:platformio.ini
 lib_deps =
-        https://github.com/lovyan03/LovyanGFX.git
+        https://github.com/m5stack/M5GFX.git
         https://github.com/riraosan/ESP_8_BIT_composite.git
         https://github.com/tanakamasayuki/efont.git
-        https://githu b.com/riraosan/ESP32_8BIT_CVBS.git
+        https://github.com/riraosan/ESP32_8BIT_CVBS.git
 ```
 
 ## 使い方
@@ -57,8 +57,7 @@ lib_deps =
 //#define ENABLE_GPIO26
 
 #include <Arduino.h>
-#define LGFX_USE_V1
-#include <LovyanGFX.h>
+#include <M5GFX.h>
 #include <ESP32_8BIT_CVBS.h>
 
 static ESP32_8BIT_CVBS _cvbs;
@@ -75,13 +74,12 @@ void loop(){
 }
 ```
 
-- LovyanGFXのv1フォルダ以下のソースコードを使用しています。`#define LGFX_USE_V1`
 - ESP32_8BIT_CVBSクラスのインスタンスを作成し、Panel_CVBSクラスを初期化してください。` ESP32_8BIT_CVBS _cvbs;`
-- LovyanGFXのLGFX_SpriteクラスのインスタンスにESP32_8BIT_CVBSクラスのインスタンスを紐づけます。`LGFX_Sprite _sprite(&_cvbs);`
+- LGFX_SpriteクラスのインスタンスにESP32_8BIT_CVBSクラスのインスタンスを紐づけてください。`LGFX_Sprite _sprite(&_cvbs);`
 - `setup()`でPanel_CVBSクラスの`init()`を実行して、ライブラリを初期化してください。
-- その後、`loop()`でLovyanGFXのAPIを使用して各種描画処理を実装してください。
-- LovyanGFXのAPIの使い方はサンプルコードを参照してください。
-- Panel_CVBSクラスをLovyanGFXのフォルダ（/panel）に配置することも可能です。もちろん、ESP_8_BIT_compositeライブラリのインクルードが必要です。
+- その後、`loop()`でM5GFXのAPIを使用して各種描画処理を実装してください。
+- M5GFXのAPIの使い方はサンプルコードを参照してください。
+- Panel_CVBSクラスをM5GFXのフォルダ（/panel）に配置することも可能です。もちろん、ESP_8_BIT_compositeライブラリのインクルードが必要です。
 - デフォルトのコンポジット信号出力ポートはGPIO25です。
 - M5STACK ATOM LiteのGroveコネクタ(PH2.0-4P)の`G26`ポートよりコンポジット信号を出力したい場合は、`#include ENABLE_GPIO26`をソースコード(*.ino)に記述してください。他のESP32モジュール基板でも出力ポート切り替えはできるはずです（未確認）。
 - PlatformIO IDEを使用している場合は、`platformio.ini`にビルドフラグを追加してください。
@@ -136,19 +134,19 @@ sampleフォルダにLovyanGFXライブラリにコミットされているsampl
 
 このライブラリを作成するにあたって、こちらの巨人[^1]たちのアイデアとライブラリを使わさせていただきました。ありがとうございました。
 
-- [LovyanGFX](https://github.com/lovyan03/LovyanGFX.git)の作者[lovyan03](https://github.com/lovyan03)氏へ感謝いたします。
+- [LovyanGFX(M5GFX)](https://github.com/lovyan03/LovyanGFX.git)の作者[lovyan03](https://github.com/lovyan03)氏へ感謝いたします。
 - [ESP_8_BIT](https://github.com/rossumur/esp_8_bit)の作者[rossumur](https://github.com/rossumur)氏へ感謝いたします。
 - [ESP_8_BIT_composite](https://github.com/Roger-random/ESP_8_BIT_composite.git)の作者[Roger-random](https://github.com/Roger-random)氏へ感謝いたします。
 
 ## 著作権
 
 - ESP32_8BIT_CVBS : [MIT](https://github.com/riraosan/ESP32_8BIT_CVBS/blob/master/LICENSE) riraosan
-- LovyanGFX : [FreeBSD](https://github.com/lovyan03/LovyanGFX/blob/master/license.txt) lovyan03
 - ESP_8_BIT_composite  : [MIT](https://github.com/Roger-random/ESP_8_BIT_composite/blob/main/LICENSE) Roger-random
+- LovyanGFX : [FreeBSD](https://github.com/lovyan03/LovyanGFX/blob/master/license.txt) lovyan03
+- M5GFX : [MIT](https://github.com/m5stack/M5GFX/blob/master/LICENSE) M5Stack
 
 ## 作者
 
-- [riraosan](https://github.com/riraosan) on GitHub
 - [riraosan_0901](https://twitter.com/riraosan_0901) on Twitter
 
 [^1]: > What Des-Cartes did was a good step. You have added much several ways, & especially in taking the colours of thin plates into philosophical consideration. [If I have seen further it is by standing on the sholders of Giants](https://en.wikipedia.org/wiki/Standing_on_the_shoulders_of_giants).

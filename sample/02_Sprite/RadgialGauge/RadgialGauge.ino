@@ -1,8 +1,9 @@
-//#define LGFX_USE_V1
-//#include <LovyanGFX.hpp>
 
-static LGFX        lcd;
-static LGFX_Sprite sprite(&lcd);
+#include <M5GFX.h>
+#include <ESP32_8BIT_CVBS.h>
+
+static ESP32_8BIT_CVBS lcd;
+static LGFX_Sprite     sprite(&lcd);
 
 struct meter_t {
   int32_t pivot_x;
@@ -61,10 +62,14 @@ void setup(void) {
     lcd.drawFastHLine(0, (i * 2 + 1) * lcd.height() / 40, lcd.width(), 0xFFFF);
     lcd.drawFastVLine((i * 2 + 1) * lcd.width() / 40, 0, lcd.height(), 0xFFFF);
   }
+
+  lcd.startWrite();
 }
 
 void loop(void) {
   meter1.drawGauge(sprite.color888(255, meter1.angle, 127));
   meter2.drawGauge(sprite.color888(255 - meter2.angle, meter2.angle, 127));
   meter3.drawGauge(sprite.color888(0, 127, meter3.angle));
+
+  lcd.display();
 }

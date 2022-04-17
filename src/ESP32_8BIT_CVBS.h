@@ -1,4 +1,5 @@
-/*----------------------------------------------------------------------------/
+
+/*
 ESP32_8BIT_CVBS Library
 
 the initials CVBS for composite video baseband signal or color, video, blanking and sync
@@ -20,8 +21,7 @@ Contributors:
 ESP32_8BIT_CVBSライブラリは以下のライブラリに依存しています。
 [LovyanGFX](https://github.com/lovyan03/LovyanGFX)
 [ESP_8_BIT_composite](https://github.com/Roger-random/ESP_8_BIT_composite)
-
-/----------------------------------------------------------------------------*/
+*/
 
 #pragma once
 

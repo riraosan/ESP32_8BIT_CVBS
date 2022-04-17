@@ -1,5 +1,8 @@
-//#include <M5GFX.h>
-M5GFX display;
+
+#include <M5GFX.h>
+#include <ESP32_8BIT_CVBS.h>
+
+ESP32_8BIT_CVBS display;
 
 //#include <M5UnitOLED.h>
 // M5UnitOLED display; // default setting

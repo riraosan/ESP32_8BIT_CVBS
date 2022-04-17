@@ -9,9 +9,10 @@
 // Include the font data of Arduino-misakiUTF16.
 #include "misakiUTF16FontData.h"
 
-//#include <LovyanGFX.hpp>
+#include <M5GFX.h>
+#include <ESP32_8BIT_CVBS.h>
 
-static LGFX lcd;
+static ESP32_8BIT_CVBS lcd;
 
 // lgfx::BDFfontクラスを使って、Arduino-misakiUTF16を使用できるように設定します。
 static constexpr lgfx::BDFfont misaki_font =

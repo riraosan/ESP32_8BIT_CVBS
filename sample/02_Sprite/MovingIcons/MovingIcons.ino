@@ -1,7 +1,8 @@
-//#define LGFX_USE_V1
-//#include <LovyanGFX.hpp>
 
-static LGFX lcd;
+#include <M5GFX.h>
+#include <ESP32_8BIT_CVBS.h>
+
+static ESP32_8BIT_CVBS lcd;
 
 extern const unsigned short info[];
 extern const unsigned short alert[];

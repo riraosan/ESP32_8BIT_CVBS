@@ -1,13 +1,14 @@
-#define LGFX_USE_V1
-#include <LovyanGFX.hpp>
+
+#include <M5GFX.h>
+#include <ESP32_8BIT_CVBS.h>
 
 #include "image320x240x16.h"
 #include "image480x320x8.h"
 #include "image640x480x4.h"
 #include "image1280x960x1.h"
 
-static LGFX        lcd;
-static LGFX_Sprite sprite;
+static ESP32_8BIT_CVBS lcd;
+static LGFX_Sprite     sprite;
 
 void setup() {
   lcd.init();

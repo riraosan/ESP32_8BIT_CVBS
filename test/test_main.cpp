@@ -1,7 +1,32 @@
+
+/*
+MIT License
+
+Copyright (c) 2021-2022 riraosan.github.io
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 #include <unity.h>
 #include <Arduino.h>
 
-//#define RGB_TEST              // OK
+#define RGB_TEST  // OK
 //#define PARTY_PARROT          // OK
 //#define CLOCK_SAMPLE          // OK
 //#define FLASH_MEM_SPRITE      // OK
@@ -13,59 +38,41 @@
 //#define MISAKI_FONT           // OK
 //#define EFONT                 // OK
 //#define U8G2                  // OK
-//#define ANIMATED_GIF          // OK
 //#define RADGIALGAUGE          // OK
-//#define METERSAMPLE           // NG  パレットの透過がうまくいかない
+//#define METERSAMPLE           // NG  pushRotateZoom APIの不具合のような気がする。lcd color Depth 8の場合、カラーパレット0の透過がうまくいかないように見える。しらんけど。
 //#define SPINTILE              // OK
 //#define GAMEOFLIFE            // OK
-//#define BARGRAPH
-#define ANALOGMETER
+//#define BARGRAPH              // OK
+//#define ANALOGMETER           // OK
+//#define ANIMATED_GIF          // OK with SDHC Card
+//#define WEBRADIO              // mp3再生にI2Sドライバを使っているので、ESP32_8BIT_CVBSライブラリは使えない。「E (234) I2S: Register I2S Interrupt error」
 
-#if defined(EFONT)
-// need to include efont before LovyanGFX.
+#if defined(RGB_TEST)  // basic
 
-#include <efontEnableAll.h>  // Include a header corresponding to the character set used.
-//#include <efontEnableAscii.h>
-//#include <efontEnableCJK.h>
-//#include <efontEnableCn.h>
-//#include <efontEnableJa.h>
-//#include <efontEnableJaMini.h>
-//#include <efontEnableKr.h>
-//#include <efontEnableTw.h>
-
-#include <efontFontData.h>  // Include the font data of efont.
-
-#endif
-
-#define LGFX_USE_V1
-#include <LovyanGFX.h>
+#include <M5GFX.h>
 #include <ESP32_8BIT_CVBS.h>
-using LGFX = ESP32_8BIT_CVBS;
 
-#if defined(RGB_TEST)
-
-static ESP32_8BIT_CVBS _cvbs;
-static LGFX_Sprite     _sprite(&_cvbs);
+static ESP32_8BIT_CVBS display;
 
 void setup(void) {
-  _cvbs.init();
+  display.init();
 
-  _cvbs.fillScreen(0x0000);  // black
+  display.fillScreen(0x0000);  // black
   delay(1000);
-  _cvbs.fillScreen(0xF800);  // red
+  display.fillScreen(0xF800);  // red
   delay(1000);
-  _cvbs.fillScreen(0x07E0);  // green
+  display.fillScreen(0x07E0);  // green
   delay(1000);
-  _cvbs.fillScreen(0x001F);  // blue
+  display.fillScreen(0x001F);  // blue
   delay(1000);
-  _cvbs.fillScreen(0xffff);  // white
+  display.fillScreen(0xffff);  // white
   delay(1000);
-  _cvbs.fillScreen(0x0000);  // black
+  display.fillScreen(0x0000);  // black
   delay(1000);
 }
 
 void loop(void) {
-  _cvbs.waitForFrame();
+  display.waitForFrame();
 }
 
 #elif defined(PARTY_PARROT)
@@ -99,18 +106,15 @@ void loop(void) {
 #elif defined(METERSAMPLE)
 #include "../sample/02_Sprite/MeterSample/MeterSample.ino"
 #elif defined(SPINTILE)
-using M5GFX = ESP32_8BIT_CVBS;
 #include "../sample/03_Standard/SpinTile/SpinTile.ino"
 #elif defined(GAMEOFLIFE)
-using M5GFX    = ESP32_8BIT_CVBS;
-using M5Canvas = LGFX_Sprite;
 #include "../sample/02_Sprite/GameOfLife/GameOfLife.ino"
 #elif defined(BARGRAPH)
-using M5GFX = ESP32_8BIT_CVBS;
 #include "../sample/03_Standard/BarGraph/BarGraph.ino"
 #elif defined(ANALOGMETER)
-using M5GFX = ESP32_8BIT_CVBS;
 #include "../sample/03_Standard/AnalogMeter/AnalogMeter.ino"
+#elif defined(WEBRADIO)
+#include "../sample/99_Advance/WebRadio_with_ESP8266Audio/WebRadio_with_ESP8266Audio.ino"  //I could not use. Help me!!
 #else
 void setup() {}
 void loop() {}

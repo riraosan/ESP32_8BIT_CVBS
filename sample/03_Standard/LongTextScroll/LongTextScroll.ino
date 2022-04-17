@@ -1,9 +1,9 @@
-//#define LGFX_AUTODETECT
-//#define LGFX_USE_V1
-//#include <LovyanGFX.hpp>
 
-LGFX        lcd;
-LGFX_Sprite canvas;
+#include <M5GFX.h>
+#include <ESP32_8BIT_CVBS.h>
+
+ESP32_8BIT_CVBS lcd;
+LGFX_Sprite     canvas;
 
 static constexpr char   text[]  = "Hello world ! こんにちは世界！ this is long long string sample. 寿限無、寿限無、五劫の擦り切れ、海砂利水魚の、水行末・雲来末・風来末、喰う寝る処に住む処、藪ら柑子の藪柑子、パイポ・パイポ・パイポのシューリンガン、シューリンガンのグーリンダイ、グーリンダイのポンポコピーのポンポコナの、長久命の長助";
 static constexpr size_t textlen = sizeof(text) / sizeof(text[0]);

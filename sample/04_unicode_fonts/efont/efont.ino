@@ -7,7 +7,7 @@
 
 // 使用する文字セットに応じたヘッダをincludeします。
 // Include a header corresponding to the character set used.
-//#include <efontEnableAll.h>
+#include <efontEnableAll.h>
 //#include <efontEnableAscii.h>
 //#include <efontEnableCJK.h>
 //#include <efontEnableCn.h>
@@ -18,17 +18,19 @@
 
 // efontのフォントデータをincludeします。
 // Include the font data of efont.
-//#include <efontFontData.h>
+#include <efontFontData.h>
 
 // LovyanGFXより先に efontのincludeが必要です。
 // need to include efont before LovyanGFX.
 //#define LGFX_USE_V1
 //#include <LovyanGFX.h>
 
-static LGFX lcd;
+#include <M5GFX.h>
+#include <ESP32_8BIT_CVBS.h>
 
-void setup()
-{
+static ESP32_8BIT_CVBS lcd;
+
+void setup() {
   lcd.init();
 
   // setFont関数に引数efontを指定すると、printやdrawString等でefontを使用できます。
@@ -37,10 +39,9 @@ void setup()
   lcd.setTextWrap(true, true);
 }
 
-void loop()
-{
+void loop() {
   lcd.setTextColor(random(0x10000), random(0x10000));
-  lcd.setTextSize(random(1,3), random(1,3));
+  lcd.setTextSize(random(1, 3), random(1, 3));
 
   lcd.print("Hello");
   lcd.print("こんにちは");

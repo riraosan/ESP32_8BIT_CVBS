@@ -1,12 +1,13 @@
-// #define LGFX_USE_V1
-// #include <LovyanGFX.hpp>
 
-static LGFX         lcd;
-static LGFX_Sprite  sprite1(&lcd);
-static LGFX_Sprite  sprite2(&lcd);
-static LGFX_Sprite* sprites[2] = {&sprite1, &sprite2};
-static int32_t      width      = 180;
-static size_t       count      = 0;
+#include <M5GFX.h>
+#include <ESP32_8BIT_CVBS.h>
+
+static ESP32_8BIT_CVBS lcd;
+static LGFX_Sprite     sprite1(&lcd);
+static LGFX_Sprite     sprite2(&lcd);
+static LGFX_Sprite*    sprites[2] = {&sprite1, &sprite2};
+static int32_t         width      = 180;
+static size_t          count      = 0;
 
 void setup(void) {
   lcd.init();

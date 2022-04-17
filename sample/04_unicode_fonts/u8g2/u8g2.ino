@@ -1,10 +1,12 @@
 
-//#include <LovyanGFX.h>
+
+#include <M5GFX.h>
+#include <ESP32_8BIT_CVBS.h>
 
 #include "profont.h"
 #include "adobex11font.h"
 
-static LGFX lcd;
+static ESP32_8BIT_CVBS lcd;
 
 static const lgfx::U8g2font profont10( u8g2_font_profont10_tr );
 static const lgfx::U8g2font profont11( u8g2_font_profont11_tr );

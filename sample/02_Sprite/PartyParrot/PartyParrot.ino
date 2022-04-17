@@ -1,8 +1,9 @@
-//#define LGFX_USE_V1
-//#include <LovyanGFX.hpp>
 
-static LGFX lcd;
-static LGFX_Sprite sprite[10];
+#include <M5GFX.h>
+#include <ESP32_8BIT_CVBS.h>
+
+static ESP32_8BIT_CVBS lcd;
+static LGFX_Sprite     sprite[10];
 
 static std::uint32_t count = 0;
 static float zoom = 0;

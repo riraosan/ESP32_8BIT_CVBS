@@ -1,10 +1,11 @@
-//#define LGFX_USE_V1
-//#include <LovyanGFX.hpp>
 
-static LGFX        lcd;
-static LGFX_Sprite canvas(&lcd);     // オフスクリーン描画用バッファ
-static LGFX_Sprite base(&canvas);    // 文字盤パーツ
-static LGFX_Sprite needle(&canvas);  // 針パーツ
+#include <M5GFX.h>
+#include <ESP32_8BIT_CVBS.h>
+
+static ESP32_8BIT_CVBS lcd;
+static LGFX_Sprite     canvas(&lcd);     // オフスクリーン描画用バッファ
+static LGFX_Sprite     base(&canvas);    // 文字盤パーツ
+static LGFX_Sprite     needle(&canvas);  // 針パーツ
 
 static int32_t width        = 239;         // 画像サイズ
 static int32_t halfwidth    = width >> 1;  // 中心座標

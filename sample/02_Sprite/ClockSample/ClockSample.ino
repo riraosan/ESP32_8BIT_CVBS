@@ -1,13 +1,14 @@
-// #define LGFX_USE_V1
-// #include <LovyanGFX.hpp>
 
-static LGFX        lcd;
-static LGFX_Sprite canvas(&lcd);        // オフスクリーン描画用バッファ
-static LGFX_Sprite clockbase(&canvas);  // 時計の文字盤パーツ
-static LGFX_Sprite needle1(&canvas);    // 長針・短針パーツ
-static LGFX_Sprite shadow1(&canvas);    // 長針・短針の影パーツ
-static LGFX_Sprite needle2(&canvas);    // 秒針パーツ
-static LGFX_Sprite shadow2(&canvas);    // 秒針の影パーツ
+#include <M5GFX.h>
+#include <ESP32_8BIT_CVBS.h>
+
+static ESP32_8BIT_CVBS lcd;
+static LGFX_Sprite     canvas(&lcd);        // オフスクリーン描画用バッファ
+static LGFX_Sprite     clockbase(&canvas);  // 時計の文字盤パーツ
+static LGFX_Sprite     needle1(&canvas);    // 長針・短針パーツ
+static LGFX_Sprite     shadow1(&canvas);    // 長針・短針の影パーツ
+static LGFX_Sprite     needle2(&canvas);    // 秒針パーツ
+static LGFX_Sprite     shadow2(&canvas);    // 秒針の影パーツ
 
 static constexpr uint64_t oneday       = 86400000;         // 1日 = 1000msec x 60sec x 60min x 24hour = 86400000
 static uint64_t           count        = rand() % oneday;  // 現在時刻 (ミリ秒カウンタ)
@@ -162,7 +163,7 @@ void drawClock(uint64_t time) {  // 時計の描画
   // OK
   canvas.pushRotateZoom(0, zoom * 0.8, zoom);
   // NG
-  //canvas.pushRotateZoom(0, zoom, zoom, transpalette);
+  // canvas.pushRotateZoom(0, zoom, zoom, transpalette);
   lcd.display();
 }
 

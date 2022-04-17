@@ -1,10 +1,11 @@
-#include <LovyanGFX.hpp>
 
 #include <vector>
+#include <M5GFX.h>
+#include <ESP32_8BIT_CVBS.h>
 
 #define LINE_COUNT 6
 
-static LGFX lcd;
+static ESP32_8BIT_CVBS lcd;
 
 static std::vector<int> points[LINE_COUNT];
 static int              colors[] = {TFT_RED, TFT_GREEN, TFT_BLUE, TFT_CYAN, TFT_MAGENTA, TFT_YELLOW};
