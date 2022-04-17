@@ -86,7 +86,7 @@ void loop(){
 - M5STACK ATOM LiteのGroveコネクタ(PH2.0-4P)の`G26`ポートよりコンポジット信号を出力したい場合は、`#include ENABLE_GPIO26`をソースコード(*.ino)に記述してください。他のESP32モジュール基板でも出力ポート切り替えはできるはずです（未確認）。
 - PlatformIO IDEを使用している場合は、`platformio.ini`にビルドフラグを追加してください。
 
-```
+```yaml
 build_flags =
          -D ENABLE_GPIO26
 ```
@@ -142,9 +142,9 @@ sampleフォルダにLovyanGFXライブラリにコミットされているsampl
 
 ## 著作権
 
-ESP32_8BIT_CVBS : [MIT](https://github.com/riraosan/ESP32_8BIT_CVBS/blob/master/LICENSE) riraosan
-LovyanGFX : [FreeBSD](https://github.com/lovyan03/LovyanGFX/blob/master/license.txt) lovyan03
-ESP_8_BIT_composite  : [MIT](https://github.com/Roger-random/ESP_8_BIT_composite/blob/main/LICENSE) Roger-random
+- ESP32_8BIT_CVBS : [MIT](https://github.com/riraosan/ESP32_8BIT_CVBS/blob/master/LICENSE) riraosan
+- LovyanGFX : [FreeBSD](https://github.com/lovyan03/LovyanGFX/blob/master/license.txt) lovyan03
+- ESP_8_BIT_composite  : [MIT](https://github.com/Roger-random/ESP_8_BIT_composite/blob/main/LICENSE) Roger-random
 
 ## 作者
 
