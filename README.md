@@ -1,31 +1,30 @@
 
 # ESP32 8BIT CVBS Library
 
-## 概要
+## Outline
 
-コンポジット映像信号（CVBS : Composite Video, Blanking, and Sync）は、映像信号を構成する同期信号、輝度信号、カラーの場合は色信号を合成して、1本のケーブルで扱えるようにした信号のことです。
+Composite Video, Blanking, and Sync is a signal that combines the synchronization signal, luminance signal, and in the case of color, color signal that make up the video signal, so that it can be handled by a single cable.
 
-CVBS映像信号を生成する[ESP_8_BIT_composite](https://github.com/Roger-random/ESP_8_BIT_composite.git)ライブラリを改修し[LovyanGFX](https://github.com/lovyan03/LovyanGFX.git)と結合しました。簡単に言うとESP_8_BIT_GFXクラスをLovyanGFXに置き換えました。
+I have modified the [ESP_8_BIT_composite](https://github.com/Roger-random/ESP_8_BIT_composite.git) library to generate CVBS video signals and combined it with LovyanGFX. Simply put, I replaced the ESP_8_BIT_GFX class with LovyanGFX.
 
-また、ESP_8_BIT_compositeクラスが持つダブルバッファへ描画データを転送するために、Panel_CVBSクラスを作成しました。Panel_CVBSクラスをLovyanGFXのフォルダ内に配置することも可能です。
+I have also created a Panel_CVBS class that transfers drawing data to the double buffer that the ESP_8_BIT_composite class has. You can also place this Panel_CVBS class in the LovyanGFX folder.
 
-これらの改修でESP32モジュールより、ブラウン管テレビやデジタルTVへ256x240(480i@フレーム周波数29.97Hz)サイズの画像を高速に出力できるようになりました。
+With these little modifications we are able to output 256x240 (480i@29.97Hz) size images to CRT and digital TVs very fast from the ESP32 module.
 
-## サンプル動画
+## Sample videos
 
-Instagramに[サンプル動画](https://www.instagram.com/p/CbXvBUovzNE/?utm_source=ig_web_copy_link)をアップしています。ご参考まで。
+I posted [some sample videos](https://www.instagram.com/p/CbXvBUovzNE/?utm_source=ig_web_copy_link) on Instagram. Please take a look if you like.
 
-## インストール方法
+## How to Install
 
-ESP_8_BIT_compositeライブラリには若干の改修を行いましたので、riraosanリポジトリのソースコードをご利用ください。
-
+I have made some modifications to the ESP_8_BIT_composite library, please use the source code in the riraosan repository.
 ```
 https://github.com/riraosan/ESP_8_BIT_composite.git
 ```
 
-### Arduino IDEの場合
+### For Arduino IDE
 
-- 次のライブラリをGitHubよりダウンロードしてください。
+- Please download the following library from GitHub.
 
 ```
 https://github.com/riraosan/ESP32_8BIT_CVBS.git
@@ -33,15 +32,15 @@ https://github.com/m5stack/M5GFX.git
 https://github.com/riraosan/ESP_8_BIT_composite.git
 ```
 
-- ダウンロードしたライブラリをライブラリフォルダに配置してください。
+- Please place the downloaded library in the library folder.
 
-```powershell:Windows10の場合
+```powershell:Windows10
 C:\Users\{{username}}\Documents\Arduino\libraries
 ```
 
-### PlatformIO IDEの場合
+### For PlatformIO IDE
 
-PlatformIO IDEのライブラリマネージャーを使って、GitHubリポジトリよりライブラリをダウンロードしてください。
+Please download the library from the GitHub repository using the PlatformIO IDE's library manager.
 
 ```yaml:platformio.ini
 lib_deps =
@@ -51,7 +50,7 @@ lib_deps =
         https://github.com/riraosan/ESP32_8BIT_CVBS.git
 ```
 
-## 使い方
+## How to use
 
 ```cpp
 //#define ENABLE_GPIO26
@@ -65,35 +64,35 @@ static LGFX_Sprite     _sprite(&_cvbs);
 
 void setup(){
   _cvbs.init();
-  //他のモジュールの初期設定など
+  //Initial configuration of other modules, etc.
 }
 
 void loop(){
-  //描画処理など
+  //Drawing process, etc.
   _cvbs.update();
 }
 ```
 
-- ESP32_8BIT_CVBSクラスのインスタンスを作成し、Panel_CVBSクラスを初期化してください。` ESP32_8BIT_CVBS _cvbs;`
-- LGFX_SpriteクラスのインスタンスにESP32_8BIT_CVBSクラスのインスタンスを紐づけてください。`LGFX_Sprite _sprite(&_cvbs);`
-- `setup()`でPanel_CVBSクラスの`init()`を実行して、ライブラリを初期化してください。
-- その後、`loop()`でM5GFXのAPIを使用して各種描画処理を実装してください。
-- M5GFXのAPIの使い方はサンプルコードを参照してください。
-- Panel_CVBSクラスをM5GFXのフォルダ（/panel）に配置することも可能です。もちろん、ESP_8_BIT_compositeライブラリのインクルードが必要です。
-- デフォルトのコンポジット信号出力ポートはGPIO25です。
-- M5STACK ATOM LiteのGroveコネクタ(PH2.0-4P)の`G26`ポートよりコンポジット信号を出力したい場合は、`#include ENABLE_GPIO26`をソースコード(*.ino)に記述してください。他のESP32モジュール基板でも出力ポート切り替えはできるはずです（未確認）。
-- PlatformIO IDEを使用している場合は、`platformio.ini`にビルドフラグを追加してください。
+- Please create an instance of the ESP32_8BIT_CVBS class and initialize the Panel_CVBS class. ` ESP32_8BIT_CVBS _cvbs;`
+- Please tie an instance of the ESP32_8BIT_CVBS class to an instance of the LGFX_Sprite class. `LGFX_Sprite _sprite(&_cvbs);`
+- Please initialize the library by executing `init()` of the Panel_CVBS class with `setup()`.
+- After that, please implement various drawing processes using M5GFX API in `loop()`.
+- Please refer to the sample code for how to use M5GFX API.
+- You can also place the Panel_CVBS class in the M5GFX folder (/panel). Of course, you need to include the ESP_8_BIT_composite library.
+- The default composite signal output port is GPIO25.
+- If you want to output composite signal from `G26` port of Grove connector (PH2.0-4P) of M5STACK ATOM Lite, please write `#include ENABLE_GPIO26` in the source code (*.ino). You should be able to switch output ports on other ESP32 module boards (unconfirmed).
+- If you are using PlatformIO IDE, please add the build flag to `platformio.ini`.
 
 ```yaml
 build_flags =
          -D ENABLE_GPIO26
 ```
 
-### ESP32とRCAケーブル結線について
+### About ESP32 and RCA cable connection
 
-[ESP_8_BIT](https://github.com/rossumur/esp_8_bit.git)ライブラリのREADME.mdより簡単な結線図を転載します。
+A simple wiring diagram is reproduced from `README.md` of the [ESP_8_BIT](https://github.com/rossumur/esp_8_bit.git) library.
 
-GPIO25とGPIO26にvideo outを設定できます。
+You can set video out to GPIO25 and GPIO26.
 
 ```
     -----------
@@ -113,39 +112,40 @@ GPIO25とGPIO26にvideo outを設定できます。
     -----------
 ```
 
-RCAケーブルの信号線をGPIO25（26）に接続し、RCAケーブルの外側をシールドしているGNDをESP32モジュールのGNDへ接続してください。
-そしてRCAケーブルをデジタルテレビの背面にある黄色のメスコネクタ（映像）に接続してください。
+You connect the signal line of the RCA cable to GPIO 25 (26) and the GND shielding the outside of the RCA cable to the GND of the ESP32 module.
+Then you connect the RCA cable to the yellow female connector (video) on the back of your digital TV.
 
-- サンプル画像
+- Sample Images
 
 <img src="./docs/images/RCA_sample2.JPG" width="300">
 
-> 形状としては、オス側のプラグは中心に金属の棒（ピン）があり、切り込みの入ったリング状の金属板がそれを囲っている。メス側のソケットはピンを差し込む穴の周りを金属のリングが覆っている。接続すると、オスのリングがメスのリングを挟み込む形になる。従来は剥き出しのリングに四方の切り込みが入ったものが多く用いられたが（通称「チューリップ」）、現在は小さな切り込みが1か所だけで、先端数ミリを除いてプラスチックでカバーされた形状が主流となっている。
-[Wikipedia](https://ja.wikipedia.org/wiki/RCA%E7%AB%AF%E5%AD%90)
-## 動作の確認
+> In terms of shape, the male plug has a metal rod (pin) in the center and a ring-shaped metal plate with a cutout surrounding it. The female socket has a metal ring around the hole where the pin is inserted. When connected, the male ring clamps the female ring. Traditionally, a bare ring with a cutout on all sides was often used (commonly known as a "tulip"), but nowadays, a ring with only one small cutout and covered with plastic, except for a few millimeters at the tip, is the most common form.
+> [Wikipedia](https://ja.wikipedia.org/wiki/RCA%E7%AB%AF%E5%AD%90)
 
-[M5STACK ATOM Lite](https://shop.m5stack.com/collections/m5-controllers/products/atom-lite-esp32-development-kit)を使って試験を行いました。その他のESP32モジュールや基板では確認をしていません。
+## Operation check with sample code
 
-sampleフォルダにLovyanGFXライブラリにコミットされているsampleファイルの一部を配置しました。パネルの画サイズを256x240として、sampleファイルに若干の修正を加えました。これらのサンプルコードを用いてPanel_CVBSクラスの試験を行いました。
+I have tested using [M5STACK ATOM Lite](https://shop.m5stack.com/collections/m5-controllers/products/atom-lite-esp32-development-kit). I have not tested with other ESP32 modules or boards.
 
-他のESP32モジュール基板でこのライブラリが動作できたことを確認していただけましたら、こちらのリポジトリに情報をコミットしていただけると幸いです。
+I placed some of the sample files committed to the LovyanGFX library in the sample folder. I have made some modifications to the sample files, using a panel image size of 256x240. I used these sample codes to test the Panel_CVBS class.
 
-## 謝辞
+If you could confirm that this library could work with other ESP32 module boards, I would be happy to commit the information to this repository.
 
-このライブラリを作成するにあたって、こちらの巨人[^1]たちのアイデアとライブラリを使わさせていただきました。ありがとうございました。
+## Acknowledgments
 
-- [LovyanGFX(M5GFX)](https://github.com/lovyan03/LovyanGFX.git)の作者[lovyan03](https://github.com/lovyan03)氏へ感謝いたします。
-- [ESP_8_BIT](https://github.com/rossumur/esp_8_bit)の作者[rossumur](https://github.com/rossumur)氏へ感謝いたします。
-- [ESP_8_BIT_composite](https://github.com/Roger-random/ESP_8_BIT_composite.git)の作者[Roger-random](https://github.com/Roger-random)氏へ感謝いたします。
+In creating this library, I used the ideas and libraries of these giants[^1]. Thank you very much.
 
-## 著作権
+- Special thanks to [lovyan03](https://github.com/lovyan03), author of [LovyanGFX(M5GFX)](https://github.com/lovyan03/LovyanGFX.git).
+- Special thanks to [rossumur](https://github.com/rossumur), author of [ESP_8_BIT](https://github.com/rossumur/esp_8_bit).
+- Special thanks to [Roger-random](https://github.com/Roger-random), author of [ESP_8_BIT_composite](https://github.com/Roger-random/ESP_8_BIT_composite.git).
+
+## Copyright
 
 - ESP32_8BIT_CVBS : [MIT](https://github.com/riraosan/ESP32_8BIT_CVBS/blob/master/LICENSE) riraosan
 - ESP_8_BIT_composite  : [MIT](https://github.com/Roger-random/ESP_8_BIT_composite/blob/main/LICENSE) Roger-random
 - LovyanGFX : [FreeBSD](https://github.com/lovyan03/LovyanGFX/blob/master/license.txt) lovyan03
 - M5GFX : [MIT](https://github.com/m5stack/M5GFX/blob/master/LICENSE) M5Stack
 
-## 作者
+## Author
 
 - [riraosan_0901](https://twitter.com/riraosan_0901) on Twitter
 
