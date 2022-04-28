@@ -26,7 +26,7 @@ SOFTWARE.
 #include <unity.h>
 #include <Arduino.h>
 
-#define RGB_TEST  // OK
+//define RGB_TEST               // OK
 //#define PARTY_PARROT          // OK
 //#define CLOCK_SAMPLE          // OK
 //#define FLASH_MEM_SPRITE      // OK
@@ -46,6 +46,7 @@ SOFTWARE.
 //#define ANALOGMETER           // OK
 //#define ANIMATED_GIF          // OK with SDHC Card
 //#define WEBRADIO              // mp3再生にI2Sドライバを使っているので、ESP32_8BIT_CVBSライブラリは使えない。「E (234) I2S: Register I2S Interrupt error」
+#define MATRIXRAIN //OK
 
 #if defined(RGB_TEST)  // basic
 
@@ -115,6 +116,8 @@ void loop(void) {
 #include "../sample/03_Standard/AnalogMeter/AnalogMeter.ino"
 #elif defined(WEBRADIO)
 #include "../sample/99_Advance/WebRadio_with_ESP8266Audio/WebRadio_with_ESP8266Audio.ino"  //I could not use. Help me!!
+#elif defined(MATRIXRAIN)
+#include "../sample/02_Sprite/MatrixRain/MatrixRain.ino"
 #else
 void setup() {}
 void loop() {}
