@@ -26,9 +26,9 @@ SOFTWARE.
 #include <unity.h>
 #include <Arduino.h>
 
-//define RGB_TEST               // OK
+//#define RGB_TEST              // OK
 //#define PARTY_PARROT          // OK
-//#define CLOCK_SAMPLE          // OK
+//#define CLOCK_SAMPLE          /// OK
 //#define FLASH_MEM_SPRITE      // OK
 //#define MOVING_CIRCLES        // OK
 //#define MOVING_ICONS          // OK
@@ -46,7 +46,7 @@ SOFTWARE.
 //#define ANALOGMETER           // OK
 //#define ANIMATED_GIF          // OK with SDHC Card
 //#define WEBRADIO              // mp3再生にI2Sドライバを使っているので、ESP32_8BIT_CVBSライブラリは使えない。「E (234) I2S: Register I2S Interrupt error」
-#define MATRIXRAIN //OK
+#define MATRIXRAIN            // OK
 
 #if defined(RGB_TEST)  // basic
 
@@ -77,47 +77,47 @@ void loop(void) {
 }
 
 #elif defined(PARTY_PARROT)
-#include "../sample/02_Sprite/PartyParrot/PartyParrot.ino"
+#include "./02_Sprite/PartyParrot/PartyParrot.ino"
 #elif defined(CLOCK_SAMPLE)
-#include "../sample/02_Sprite/ClockSample/ClockSample.ino"
+#include "./02_Sprite/ClockSample/ClockSample.ino"
 #elif defined(FLASH_MEM_SPRITE)
-#include "../sample/02_Sprite/FlashMemSprite/FlashMemSprite.ino"
+#include "./02_Sprite/FlashMemSprite/FlashMemSprite.ino"
 #elif defined(COLLISION_CIRCLES)
-#include "../sample/02_Sprite/CollisionCircles/CollisionCircles.ino"
+#include "./02_Sprite/CollisionCircles/CollisionCircles.ino"
 #elif defined(MOVING_CIRCLES)
-#include "../sample/02_Sprite/MovingCircles/MovingCircles.ino"
+#include "./02_Sprite/MovingCircles/MovingCircles.ino"
 #elif defined(MOVING_ICONS)
-#include "../sample/02_Sprite/MovingIcons/MovingIcons.ino"
+#include "./02_Sprite/MovingIcons/MovingIcons.ino"
 #elif defined(ROTATED_ZOOMS_SAMPLE)
-#include "../sample/02_Sprite/RotatedZoomSample/RotatedZoomSample.ino"
+#include "./02_Sprite/RotatedZoom/RotatedZoomSample.ino"
 #elif defined(LONG_TEXT_SCROLL)
-#include "../sample/03_Standard/LongTextScroll/LongTextScroll.ino"
+#include "./03_Standard/LongTextScroll/LongTextScroll.ino"
 #elif defined(GRAPH)
-#include "../sample/03_Standard/Graph/Graph.ino"
+#include "./03_Standard/Graph/Graph.ino"
 #elif defined(MISAKI_FONT)
-#include "../sample/04_unicode_fonts/arduino_misaki/arduino_misaki.ino"
+#include "./04_unicode_fonts/arduino_misaki/arduino_misaki.ino"
 #elif defined(EFONT)
-#include "../sample/04_unicode_fonts/efont/efont.ino"
+#include "./04_unicode_fonts/efont/efont.ino"
 #elif defined(U8G2)
-#include "../sample/04_unicode_fonts/u8g2/u8g2.ino"
+#include "./04_unicode_fonts/u8g2/u8g2.ino"
 #elif defined(ANIMATED_GIF)
-#include "../sample/01_AnimatedGIF/AnimatedGIF.ino"
+#include "./01_AnimatedGIF/AnimatedGIF.ino"
 #elif defined(RADGIALGAUGE)
-#include "../sample/02_Sprite/RadgialGauge/RadgialGauge.ino"
+#include "./02_Sprite/RadgialGauge/RadgialGauge.ino"
 #elif defined(METERSAMPLE)
-#include "../sample/02_Sprite/MeterSample/MeterSample.ino"
+#include "./02_Sprite/MeterSample.ino"
 #elif defined(SPINTILE)
-#include "../sample/03_Standard/SpinTile/SpinTile.ino"
+#include "./03_Standard/SpinTile/SpinTile.ino"
 #elif defined(GAMEOFLIFE)
-#include "../sample/02_Sprite/GameOfLife/GameOfLife.ino"
+#include "./02_Sprite/GameOfLife/GameOfLife.ino"
 #elif defined(BARGRAPH)
-#include "../sample/03_Standard/BarGraph/BarGraph.ino"
+#include "./03_Standard/BarGraph/BarGraph.ino"
 #elif defined(ANALOGMETER)
-#include "../sample/03_Standard/AnalogMeter/AnalogMeter.ino"
+#include "./03_Standard/AnalogMeter/AnalogMeter.ino"
 #elif defined(WEBRADIO)
-#include "../sample/99_Advance/WebRadio_with_ESP8266Audio/WebRadio_with_ESP8266Audio.ino"  //I could not use. Help me!!
+#include "./99_Advance/WebRadio_with_ESP8266Audio/WebRadio_with_ESP8266Audio.ino"  //I could not use. Help me!!
 #elif defined(MATRIXRAIN)
-#include "../sample/02_Sprite/MatrixRain/MatrixRain.ino"
+#include "./02_Sprite/MatrixRain/MatrixRain.ino"
 #else
 void setup() {}
 void loop() {}
