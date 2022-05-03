@@ -122,7 +122,7 @@ Then you connect the RCA cable to the yellow female connector (video) on the bac
 > In terms of shape, the male plug has a metal rod (pin) in the center and a ring-shaped metal plate with a cutout surrounding it. The female socket has a metal ring around the hole where the pin is inserted. When connected, the male ring clamps the female ring. Traditionally, a bare ring with a cutout on all sides was often used (commonly known as a "tulip"), but nowadays, a ring with only one small cutout and covered with plastic, except for a few millimeters at the tip, is the most common form.
 > [Wikipedia](https://ja.wikipedia.org/wiki/RCA%E7%AB%AF%E5%AD%90)
 
-## Operation check with sample code
+## Testing with sample codes
 
 I have tested using [M5STACK ATOM Lite](https://shop.m5stack.com/collections/m5-controllers/products/atom-lite-esp32-development-kit). I have not tested with other ESP32 modules or boards.
 
