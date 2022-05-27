@@ -239,7 +239,8 @@ static void decodeTask(void*) {
       file            = new AudioFileSourceICYStream(station_list[index][1]);
       file->RegisterMetadataCB(MDCallback, (void*)"ICY");
       buff    = new AudioFileSourceBuffer(file, preallocateBuffer, preallocateBufferSize);
-      decoder = new AudioGeneratorMP3(preallocateCodec, preallocateCodecSize);
+      //decoder = new AudioGeneratorMP3(preallocateCodec, preallocateCodecSize);
+      decoder = new AudioGeneratorMP3();
       decoder->begin(buff, &out);
     }
     if (decoder && decoder->isRunning()) {
