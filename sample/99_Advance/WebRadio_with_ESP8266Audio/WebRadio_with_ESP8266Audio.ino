@@ -20,6 +20,11 @@
 
 static ESP32_8BIT_CVBS _cvbs;
 
+//#define WIFI_SSID "your_ssid"
+//#define WIFI_PASS "your_pass"
+#define WIFI_SSID "Buffalo-C130"
+#define WIFI_PASS "nnkxnpshmhai6"
+
 static constexpr const int bufferSize = 64 * 1024;  // buffer size in byte
 
 /// set M5Speaker virtual channel (0-7)
@@ -184,7 +189,7 @@ static int16_t                   wave_y[WAVE_SIZE];
 static int16_t                   wave_h[WAVE_SIZE];
 static int16_t                   raw_data[WAVE_SIZE * 2];
 static int                       header_height     = 0;
-static size_t                    station_index     = 0;
+static size_t                    station_index     = 2;
 static char                      stream_title[128] = {0};
 static const char*               meta_text[2]      = {nullptr, stream_title};
 static const size_t              meta_text_num     = sizeof(meta_text) / sizeof(meta_text[0]);
@@ -225,6 +230,7 @@ void play(size_t index) {
   // StreamTitle
   buffmp3 = new AudioFileSourceBuffer(filemp3, bufferSize);
   mp3     = new AudioGeneratorMP3();
+
   mp3->begin(buffmp3, &out);
   mp3->loop();
 
@@ -257,7 +263,7 @@ void gfxSetup(LGFX_Device* gfx) {
   gfx->setEpdMode(epd_mode_t::epd_fastest);
   gfx->setTextWrap(false);
   gfx->setCursor(0, 8);
-  gfx->println("WebRadio player");
+  gfx->println(" WebRadio player");
   gfx->fillRect(0, 6, gfx->width(), 2, TFT_BLACK);
 
   header_height = (gfx->height() > 80) ? 33 : 21;
@@ -286,7 +292,6 @@ void gfxLoop(LGFX_Device* gfx) {
   }
   if (header_height > 32) {
     if (meta_mod_bits) {
-      gfx->startWrite();
       for (int id = 0; id < meta_text_num; ++id) {
         if (0 == (meta_mod_bits & (1 << id))) {
           continue;
@@ -298,11 +303,10 @@ void gfxLoop(LGFX_Device* gfx) {
         }
         gfx->setCursor(4, 8 + y);
         gfx->fillRect(0, 8 + y, gfx->width(), 12, gfx->getBaseColor());
+        gfx->print(" ");
         gfx->print(meta_text[id]);
         gfx->print(" ");  // Garbage data removal when UTF8 characters are broken in the middle.
       }
-      gfx->display();
-      gfx->endWrite();
     }
   } else {
     static int title_x;
@@ -320,10 +324,9 @@ void gfxLoop(LGFX_Device* gfx) {
     }
 
     if (--wait < 0) {
-      int tx  = title_x;
-      int tid = title_id;
-      wait    = 3;
-      gfx->startWrite();
+      int tx                    = title_x;
+      int tid                   = title_id;
+      wait                      = 3;
       uint_fast8_t no_data_bits = 0;
       do {
         if (tx == 4) {
@@ -352,8 +355,6 @@ void gfxLoop(LGFX_Device* gfx) {
         }
       } while (tx < gfx->width());
       --title_x;
-      gfx->display();
-      gfx->endWrite();
     }
   }
 
@@ -363,7 +364,6 @@ void gfxLoop(LGFX_Device* gfx) {
     int        x = v * (gfx->width()) >> 8;
     if (px != x) {
       gfx->fillRect(x, 6, px - x, 2, px < x ? 0xAAFFAAu : 0u);
-      gfx->display();
       px = x;
     }
   }
@@ -375,7 +375,6 @@ void gfxLoop(LGFX_Device* gfx) {
     auto buf = out.getBuffer();
     if (buf) {
       memcpy(raw_data, buf, WAVE_SIZE * 2 * sizeof(int16_t));  // stereo data copy
-      gfx->startWrite();
 
       // draw stereo level meter
       for (size_t i = 0; i < 2; ++i) {
@@ -405,7 +404,6 @@ void gfxLoop(LGFX_Device* gfx) {
           gfx->writeFastVLine(px, i * 3, 2, TFT_WHITE);
         }
       }
-      gfx->display();
 
       // draw FFT level meter
       fft.exec(raw_data);
@@ -426,7 +424,6 @@ void gfxLoop(LGFX_Device* gfx) {
       for (size_t bx = 0; bx <= xe; ++bx) {
         size_t x = bx * bw;
         if ((x & 7) == 0) {
-          gfx->display();
           taskYIELD();
         }
         int32_t f = fft.get(bx);
@@ -470,6 +467,7 @@ void gfxLoop(LGFX_Device* gfx) {
                 gfx->writeColor(bg, 1);
               } while (++y < h);
             }
+
             size_t  i2 = i << 1;
             int32_t y1 = wave_next;
             wave_next  = ((header_height + dsp_height) >> 1) + (((256 - (raw_data[i2] + raw_data[i2 + 1])) * fft_height) >> 17);
@@ -494,31 +492,33 @@ void gfxLoop(LGFX_Device* gfx) {
           }
         }
       }
-      gfx->display();
-      gfx->endWrite();
     }
   }
 }
 
 void gfxLoopTask(void*) {
-  uint32_t prev_update_count = 0;
   for (;;) {
-    delay(1);
-    uint32_t update_count = out.getUpdateCount();
-    if (prev_update_count != update_count) {
-      prev_update_count = update_count;
-      gfxLoop(&M5.Display);
+    if (mp3->isRunning()) {
+      if (!mp3->loop()) {
+        mp3->stop();
+      }
+    } else {
+      delay(16);
     }
   }
 }
 
 void setup() {
+  log_d("Free Heap : %d", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
+
   _cvbs.begin();
+  _cvbs.startWrite();
+  _cvbs.setCopyAfterSwap(false);
 
   auto cfg = M5.config();
 
   cfg.external_spk = true;  /// use external speaker (SPK HAT / ATOMIC SPK)
-  // cfg.external_spk_detail.omit_atomic_spk = true; // exclude ATOMIC SPK
+  // cfg.external_spk_detail.omit_atomic_spk = true;  // exclude ATOMIC SPK
   // cfg.external_spk_detail.omit_spk_hat    = true; // exclude SPK HAT
 
   M5.begin(cfg);
@@ -528,12 +528,14 @@ void setup() {
     /// Increasing the sample_rate will improve the sound quality instead of increasing the CPU load.
     spk_cfg.sample_rate      = 96000;  // default:64000 (64kHz)  e.g. 48000 , 50000 , 80000 , 96000 , 100000 , 128000 , 144000 , 192000 , 200000
     spk_cfg.task_pinned_core = APP_CPU_NUM;
+    spk_cfg.i2s_port         = i2s_port_t::I2S_NUM_1;  // IS2_NUM_0はCVBSが使用する。AudioはI2S_NUM_1を使用する。
     M5.Speaker.config(spk_cfg);
   }
 
   M5.Speaker.begin();
 
-  // M5.Display.println("Connecting to WiFi");
+  gfxSetup(&_cvbs);
+
   WiFi.disconnect();
   WiFi.softAPdisconnect(true);
   WiFi.mode(WIFI_STA);
@@ -546,28 +548,28 @@ void setup() {
 
   // Try forever
   while (WiFi.status() != WL_CONNECTED) {
-    // M5.Display.print(".");
     delay(100);
   }
-  // M5.Display.clear();
-
-  // gfxSetup(&M5.Display);
-  gfxSetup(&_cvbs);
 
   play(station_index);
+  M5.Speaker.setChannelVolume(m5spk_virtual_channel, 128);  // 0-255
 
   xTaskCreatePinnedToCore(gfxLoopTask, "gfxLoopTask", 2048, nullptr, 1, nullptr, PRO_CPU_NUM);
+  log_d("Free Heap : %d", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
 }
 
 void loop() {
-  if (mp3->isRunning()) {
-    if (!mp3->loop()) {
-      mp3->stop();
-    }
-  } else {
-    delay(16);
+  uint32_t prev_update_count = 0;
+  uint32_t update_count      = out.getUpdateCount();
+
+  if (prev_update_count != update_count) {
+    prev_update_count = update_count;
+    gfxLoop(&_cvbs);
+    _cvbs.display();
+    _cvbs.display();
   }
 
+#if false  // for M5Stack
   M5.update();
   if (M5.BtnA.wasPressed()) {
     M5.Speaker.tone(440, 50);
@@ -602,4 +604,6 @@ void loop() {
       M5.Speaker.setChannelVolume(m5spk_virtual_channel, v);
     }
   }
+#endif
+  delay(1);
 }

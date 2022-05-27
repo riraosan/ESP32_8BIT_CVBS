@@ -5,14 +5,12 @@
 #include <FS.h>
 #include <SD.h>
 #include <SPI.h>
-
 #include <M5GFX.h>
 #include <ESP32_8BIT_CVBS.h>
-
 #include <AnimatedGIF.h>
 
 static ESP32_8BIT_CVBS _cvbs;
-static LGFX_Sprite     _sprite(&_cvbs);
+static M5Canvas        _sprite(&_cvbs);
 
 class Video {
 public:
@@ -34,6 +32,7 @@ public:
 
     _cvbs.begin();
     _cvbs.fillScreen(0);
+    _cvbs.startWrite();
 
     _gif.begin(LITTLE_ENDIAN_PIXELS);
     log_i("start CVBS");
@@ -42,15 +41,14 @@ public:
   }
 
   void update(void) {
+    _lTimeStart = lgfx::v1::millis();
     if (_isActive) {
-      long lTimeStart = lgfx::v1::millis();
-      int  waitTime;
-
-      if (_gif.playFrame(false, &waitTime)) {
-        long delta = lgfx::v1::millis() - lTimeStart;
+      if (_gif.playFrame(false, &_waitTime)) {
         _sprite.pushSprite(30, 35);
-        if (waitTime > delta) {
-          delay(waitTime - delta);
+        _cvbs.display();
+        _waitTime    = _waitTime - (lgfx::v1::millis() - _lTimeStart);
+        if (_waitTime > 0) {
+          delay(_waitTime);
         } else {
           // log_i("No. %04d waitTime %d delta %d", frameCount, waitTime, delta);
         }
@@ -73,6 +71,9 @@ public:
   void openGif(void) {
     if (_gif.open(_filename.c_str(), _GIFOpenFile, _GIFCloseFile, _GIFReadFile, _GIFSeekFile, _GIFDraw)) {
       _isOpen = true;
+    } else {
+      log_e("Can not open gif file.");
+      _isOpen = false;
     }
   }
 
@@ -82,6 +83,7 @@ public:
       _isOpen   = false;
       _isActive = false;
       _cvbs.fillScreen(0);
+      _cvbs.display();
     }
   }
 
@@ -156,7 +158,7 @@ private:
 
   static void _GIFDraw(GIFDRAW *pDraw) {
     uint8_t  *s;
-    uint16_t *d, *usPalette, usTemp[320];
+    uint16_t *d, *usPalette, usTemp[240];
     int       x, y, iWidth;
 
     iWidth = pDraw->iWidth;
@@ -242,6 +244,10 @@ private:
 
   bool _isActive;
   bool _isOpen;
+
+  long _lTimeStart;
+  int  _waitTime;
+  long _processTime;
 };
 
 SDFS *Video::_pSD = nullptr;
