@@ -169,7 +169,7 @@ public:
   }
 };
 
-static constexpr const int       preallocateBufferSize = 5 * 1024;
+static constexpr const int       preallocateBufferSize = 32 * 1024;//5 * 1024 ボツ音周期的発生。ボツ音間の周期が長くなるように修正。
 static constexpr const int       preallocateCodecSize  = 29192;  // MP3 codec max mem needed
 static void*                     preallocateBuffer     = nullptr;
 static void*                     preallocateCodec      = nullptr;
