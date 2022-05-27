@@ -61,7 +61,7 @@ public:
 
   void beginTransaction(void) override {}
   void endTransaction(void) override {
-    _video.waitForFrame();
+    //_video.waitForFrame();
   }
 
   color_depth_t setColorDepth(color_depth_t depth) override {
