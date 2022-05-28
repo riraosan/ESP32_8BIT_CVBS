@@ -33,13 +33,33 @@ AudioFileSourceID3 *id3;
 Video *cvbs;
 
 Ticker audioStart;
+Ticker videoStart;
 
 #define SCK  23
 #define MISO 33
 #define MOSI 19
 
+#define STORY5
+
+#if defined(STORY4)
+#define MP3_FILE "/non.mp3"
+#define GIF_FILE "/non_small.gif"
+#define WAIT_MP3 1600
+#define WAIT_GIF 1
+#elif defined(STORY5)
+#define MP3_FILE "/non5.mp3"
+#define GIF_FILE "/non5.gif"
+#define WAIT_MP3 1
+#define WAIT_GIF 2350
+#endif
+
 void startAudio(void) {
   mp3->begin(id3, out);
+  M5.dis.drawpix(0, 0x00FF00);
+}
+
+void startVideo(void) {
+  cvbs->start();
   M5.dis.drawpix(0, 0x00FF00);
 }
 
@@ -97,7 +117,7 @@ void setup() {
   M5.dis.drawpix(0, 0x000000);
   audioLogger = &Serial;
 
-  file = new AudioFileSourceSD("/non.mp3");
+  file = new AudioFileSourceSD(MP3_FILE);
   id3  = new AudioFileSourceID3(file);
   id3->RegisterMetadataCB(MDCallback, (void *)"ID3TAG");
   out = new AudioOutputI2S(I2S_NUM_1);  // CVBSがI2S0を使っている。AUDIOはI2S1を設定
@@ -110,7 +130,7 @@ void setup() {
   if (cvbs != nullptr) {
     cvbs->begin();
     cvbs->setSd(&SD);
-    cvbs->setFilename("/non_small.gif");
+    cvbs->setFilename(GIF_FILE);
     cvbs->openGif();
   } else {
     log_e("Can not allocate CVBS.");
@@ -118,8 +138,10 @@ void setup() {
 
   xTaskCreatePinnedToCore(audioTask, "audioTask", 2048, nullptr, 2, nullptr, PRO_CPU_NUM);
 
-  // タイマーを使ってAnimationとBGMの再生開始タイミングを合わせる
-  audioStart.once_ms(1600, startAudio);
+  // タイマーを使ってAnimationとBGMの再生開始タイミングを微調整する
+  audioStart.once_ms(WAIT_MP3, startAudio);
+  videoStart.once_ms(WAIT_GIF, startVideo);
+
   log_d("Free Heap : %d", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));  //使えるSRAMの残りは有りません orz
 }
 

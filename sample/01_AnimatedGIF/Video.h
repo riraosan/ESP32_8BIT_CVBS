@@ -9,18 +9,20 @@
 #include <ESP32_8BIT_CVBS.h>
 #include <AnimatedGIF.h>
 
-static ESP32_8BIT_CVBS _cvbs;
-static M5Canvas        _sprite(&_cvbs);
+static ESP32_8BIT_CVBS _display;
+static M5Canvas        _sprite(&_display);
 
 class Video {
 public:
   Video() : _filename(""),
             _isActive(false),
-            _isOpen(false) {}
+            _isOpen(false),
+            _frameCount(0),
+            _isOver(false) {}
 
   void begin(void) {
-    _width  = _cvbs.width();
-    _height = _cvbs.height();
+    _width  = _display.width();
+    _height = _display.height();
 
     log_i("width, %d, height, %d", _width, _height);
 
@@ -30,28 +32,38 @@ public:
       log_e("can not allocate sprite buffer.");
     }
 
-    _cvbs.begin();
-    _cvbs.fillScreen(0);
-    _cvbs.startWrite();
+    _display.begin();
+    _display.startWrite();
+    _display.fillScreen(TFT_BLACK);
+    _display.display();
 
     _gif.begin(LITTLE_ENDIAN_PIXELS);
     log_i("start CVBS");
-
-    _isActive = true;
   }
 
   void update(void) {
-    _lTimeStart = lgfx::v1::millis();
     if (_isActive) {
+      _lTimeStart = lgfx::v1::micros();
       if (_gif.playFrame(false, &_waitTime)) {
-        _sprite.pushSprite(30, 35);
-        _cvbs.display();
-        _waitTime    = _waitTime - (lgfx::v1::millis() - _lTimeStart);
-        if (_waitTime > 0) {
-          delay(_waitTime);
+        _sprite.pushSprite(30, 35);  // CBVSダブルバッファへデータ転送
+        _display.display();          // CVBSダブルバッファをスワップ
+
+        int wait = _waitTime * 1000 - (lgfx::v1::micros() - _lTimeStart);
+        if (wait < 0) {
+          if (_isOver == true) {
+            //デコードと描画時間が2フレーム連続してGIFウェイト時間をオーバーした場合、１フレームを描画せずにスキップする
+            _gif.playFrame(false, nullptr);
+            // log_i("[%04d], GIF _waitTime, %d [ms],        over, %d [us], iPos, %d", _frameCount, _waitTime, wait, _filePosition);
+            _isOver = false;
+            return;
+          }
+          _isOver = true;
         } else {
-          // log_i("No. %04d waitTime %d delta %d", frameCount, waitTime, delta);
+          lgfx::v1::delayMicroseconds(wait);
+          _isOver = false;
+          // log_i("[%04d], Gif _waitTime, %d [ms], actual wait, %d [us], iPos, %d", _frameCount, _waitTime, wait, _filePosition);
         }
+        _frameCount++;
       } else {
         stop();
         closeGif();
@@ -82,8 +94,8 @@ public:
       _gif.close();
       _isOpen   = false;
       _isActive = false;
-      _cvbs.fillScreen(0);
-      _cvbs.display();
+      _display.fillScreen(TFT_BLACK);
+      _display.display();
     }
   }
 
@@ -245,9 +257,11 @@ private:
   bool _isActive;
   bool _isOpen;
 
-  long _lTimeStart;
-  int  _waitTime;
-  long _processTime;
+  unsigned long _lTimeStart;
+  unsigned long _processTime;
+  int32_t       _waitTime;
+  int           _frameCount;
+  bool          _isOver;
 };
 
 SDFS *Video::_pSD = nullptr;
