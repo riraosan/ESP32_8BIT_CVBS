@@ -18,7 +18,7 @@ public:
             _isActive(false),
             _isOpen(false),
             _frameCount(0),
-            _isOver(false) {}
+            _overCount(0) {}
 
   void begin(void) {
     _width  = _display.width();
@@ -43,25 +43,24 @@ public:
 
   void update(void) {
     if (_isActive) {
-      _lTimeStart = lgfx::v1::micros();
+      _lTimeStart = lgfx::v1::millis();
       if (_gif.playFrame(false, &_waitTime)) {
         _sprite.pushSprite(30, 35);  // CBVSダブルバッファへデータ転送
         _display.display();          // CVBSダブルバッファをスワップ
 
-        int wait = _waitTime * 1000 - (lgfx::v1::micros() - _lTimeStart);
+        int wait = _waitTime - (lgfx::v1::millis() - _lTimeStart);
         if (wait < 0) {
-          if (_isOver == true) {
-            //デコードと描画時間が2フレーム連続してGIFウェイト時間をオーバーした場合、１フレームを描画せずにスキップする
+          if (_overCount == 1) {
+            //デコードと描画時間が2フレーム連続してGIFウェイト時間をオーバーした場合、描画せずにフレームをスキップする
             _gif.playFrame(false, nullptr);
-            // log_i("[%04d], GIF _waitTime, %d [ms],        over, %d [us], iPos, %d", _frameCount, _waitTime, wait, _filePosition);
-            _isOver = false;
-            return;
+            _overCount = 0;
+          } else {
+            _overCount++;
           }
-          _isOver = true;
         } else {
-          lgfx::v1::delayMicroseconds(wait);
-          _isOver = false;
-          // log_i("[%04d], Gif _waitTime, %d [ms], actual wait, %d [us], iPos, %d", _frameCount, _waitTime, wait, _filePosition);
+          _overCount = 0;
+          lgfx::v1::delay(wait);
+          // log_i("[%04d], Gif _waitTime, %d [ms], actual wait, %d [us]", _frameCount, _waitTime, wait);
         }
         _frameCount++;
       } else {
@@ -261,7 +260,7 @@ private:
   unsigned long _processTime;
   int32_t       _waitTime;
   int           _frameCount;
-  bool          _isOver;
+  uint8_t       _overCount;
 };
 
 SDFS *Video::_pSD = nullptr;
