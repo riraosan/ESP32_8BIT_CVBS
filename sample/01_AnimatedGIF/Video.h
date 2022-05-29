@@ -43,16 +43,6 @@ public:
 
   void update(void) {
     if (_isActive) {
-<<<<<<< Updated upstream
-      long lTimeStart = lgfx::v1::millis();
-      int  waitTime;
-
-      if (_gif.playFrame(false, &waitTime)) {
-        long delta = lgfx::v1::millis() - lTimeStart;
-        _sprite.pushSprite(30, 35);
-        if (waitTime > delta) {
-          delay(waitTime - delta);
-=======
       _lTimeStart = lgfx::v1::millis();
       if (_gif.playFrame(false, &_waitTime)) {
         _sprite.pushSprite(30, 35);  // CBVSダブルバッファへデータ転送
@@ -70,7 +60,6 @@ public:
           } else {
             _overCount++;
           }
->>>>>>> Stashed changes
         } else {
           // log_i("No. %04d waitTime %d delta %d", frameCount, waitTime, delta);
         }
