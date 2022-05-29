@@ -43,6 +43,7 @@ public:
 
   void update(void) {
     if (_isActive) {
+<<<<<<< Updated upstream
       long lTimeStart = lgfx::v1::millis();
       int  waitTime;
 
@@ -51,6 +52,25 @@ public:
         _sprite.pushSprite(30, 35);
         if (waitTime > delta) {
           delay(waitTime - delta);
+=======
+      _lTimeStart = lgfx::v1::millis();
+      if (_gif.playFrame(false, &_waitTime)) {
+        _sprite.pushSprite(30, 35);  // CBVSダブルバッファへデータ転送
+        _display.display();          // CVBSダブルバッファをスワップ
+
+        int wait = _waitTime - (lgfx::v1::millis() - _lTimeStart);
+        if (wait < 0) {
+          if (_overCount == 1) {
+            //デコード時間＋描画時間＞GIFウェイト時間が２回目→描画せずにフレームをスキップする
+            Skip = true;
+            _gif.playFrame(false, nullptr);
+            Skip = false;
+
+            _overCount = 0;
+          } else {
+            _overCount++;
+          }
+>>>>>>> Stashed changes
         } else {
           // log_i("No. %04d waitTime %d delta %d", frameCount, waitTime, delta);
         }
@@ -199,8 +219,10 @@ private:
           }
         }              // while looking for opaque pixels
         if (iCount) {  // any opaque pixels?
-          _sprite.setWindow(pDraw->iX + x, y, iCount, 1);
-          _sprite.pushPixels((uint16_t *)usTemp, iCount, true);
+          if (!Skip) {
+            _sprite.setWindow(pDraw->iX + x, y, iCount, 1);
+            _sprite.pushPixels((uint16_t *)usTemp, iCount, true);
+          }
           x += iCount;
           iCount = 0;
         }
@@ -225,14 +247,16 @@ private:
       for (x = 0; x < iWidth; x++) {
         usTemp[x] = usPalette[*s++];
       }
-
-      _sprite.setWindow(pDraw->iX, y, iWidth, 1);
-      _sprite.pushPixels((uint16_t *)usTemp, iWidth, true);
+      if (!Skip) {
+        _sprite.setWindow(pDraw->iX, y, iWidth, 1);
+        _sprite.pushPixels((uint16_t *)usTemp, iWidth, true);
+      }
     }
   }
 
   static SDFS *_pSD;
   static File  _gifFile;
+  static bool  Skip;
 
   static int _width;
   static int _height;
@@ -249,3 +273,5 @@ File  Video::_gifFile;
 
 int Video::_width  = 0;
 int Video::_height = 0;
+
+bool Video::Skip = false;
