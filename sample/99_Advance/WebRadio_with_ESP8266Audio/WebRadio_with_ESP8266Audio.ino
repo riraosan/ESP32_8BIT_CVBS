@@ -1,3 +1,5 @@
+#define WIFI_SSID "your_ssid"
+#define WIFI_PASS "your_pass"
 
 #include <Arduino.h>
 #include <SPI.h>
@@ -13,14 +15,11 @@
 #include <AudioGeneratorMP3.h>
 #include <AudioOutputI2S.h>
 
-#include <M5UnitLCD.h>
-#include <M5UnitOLED.h>
+//#include <M5UnitLCD.h>
+//#include <M5UnitOLED.h>
 #include <M5Unified.h>
 #include <ESP32_8BIT_CVBS.h>
-
 static ESP32_8BIT_CVBS _cvbs;
-
-static constexpr const int bufferSize = 64 * 1024;  // buffer size in byte
 
 /// set M5Speaker virtual channel (0-7)
 static constexpr uint8_t m5spk_virtual_channel = 0;
@@ -72,7 +71,7 @@ public:
     flush();
     _m5sound->stop(_virtual_ch);
     for (size_t i = 0; i < 3; ++i) {
-      memset(_tri_buffer[i], 0, tri_buf_size);
+      memset(_tri_buffer[i], 0, tri_buf_size * sizeof(int16_t));
     }
     ++_update_count;
     return true;
@@ -170,11 +169,15 @@ public:
   }
 };
 
-static constexpr size_t          WAVE_SIZE = 320;
+static constexpr const int       preallocateBufferSize = 32 * 1024;//5 * 1024 ボツ音周期的発生。ボツ音間の周期が長くなるように修正。
+static constexpr const int       preallocateCodecSize  = 29192;  // MP3 codec max mem needed
+static void*                     preallocateBuffer     = nullptr;
+static void*                     preallocateCodec      = nullptr;
+static constexpr size_t          WAVE_SIZE             = 320;
 static AudioOutputM5Speaker      out(&M5.Speaker, m5spk_virtual_channel);
-static AudioGeneratorMP3*        mp3     = nullptr;
-static AudioFileSourceICYStream* filemp3 = nullptr;
-static AudioFileSourceBuffer*    buffmp3 = nullptr;
+static AudioGenerator*           decoder = nullptr;
+static AudioFileSourceICYStream* file    = nullptr;
+static AudioFileSourceBuffer*    buff    = nullptr;
 static fft_t                     fft;
 static bool                      fft_enabled  = false;
 static bool                      wave_enabled = false;
@@ -189,8 +192,9 @@ static char                      stream_title[128] = {0};
 static const char*               meta_text[2]      = {nullptr, stream_title};
 static const size_t              meta_text_num     = sizeof(meta_text) / sizeof(meta_text[0]);
 static uint8_t                   meta_mod_bits     = 0;
+static volatile size_t           playindex         = ~2u;
 
-void MDCallback(void* cbData, const char* type, bool isUnicode, const char* string) {
+static void MDCallback(void* cbData, const char* type, bool isUnicode, const char* string) {
   (void)cbData;
   if ((strcmp(type, "StreamTitle") == 0) && (strcmp(stream_title, string) != 0)) {
     strncpy(stream_title, string, sizeof(stream_title));
@@ -198,42 +202,56 @@ void MDCallback(void* cbData, const char* type, bool isUnicode, const char* stri
   }
 }
 
-void stop(void) {
-  if (mp3) {
-    mp3->stop();
-    delete mp3;
-    mp3 = nullptr;
+static void stop(void) {
+  if (decoder) {
+    decoder->stop();
+    delete decoder;
+    decoder = nullptr;
   }
 
-  if (buffmp3) {
-    buffmp3->close();
-    delete buffmp3;
-    buffmp3 = nullptr;
+  if (buff) {
+    buff->close();
+    delete buff;
+    buff = nullptr;
   }
-  if (filemp3) {
-    filemp3->close();
-    delete filemp3;
-    filemp3 = nullptr;
+  if (file) {
+    file->close();
+    delete file;
+    file = nullptr;
   }
   out.stop();
 }
 
-void play(size_t index) {
-  stop();
-  filemp3 = new AudioFileSourceICYStream(station_list[index][1]);
-  filemp3->RegisterMetadataCB(MDCallback, (void*)"ICY");
-  // StreamTitle
-  buffmp3 = new AudioFileSourceBuffer(filemp3, bufferSize);
-  mp3     = new AudioGeneratorMP3();
-  mp3->begin(buffmp3, &out);
-  mp3->loop();
-
-  meta_text[0]    = station_list[index][0];
-  stream_title[0] = 0;
-  meta_mod_bits   = 3;
+static void play(size_t index) {
+  playindex = index;
 }
 
-uint32_t bgcolor(LGFX_Device* gfx, int y) {
+static void decodeTask(void*) {
+  for (;;) {
+    delay(1);
+    if (playindex != ~0u) {
+      auto index = playindex;
+      playindex  = ~0u;
+      stop();
+      meta_text[0]    = station_list[index][0];
+      stream_title[0] = 0;
+      meta_mod_bits   = 3;
+      file            = new AudioFileSourceICYStream(station_list[index][1]);
+      file->RegisterMetadataCB(MDCallback, (void*)"ICY");
+      buff    = new AudioFileSourceBuffer(file, preallocateBuffer, preallocateBufferSize);
+      //decoder = new AudioGeneratorMP3(preallocateCodec, preallocateCodecSize);
+      decoder = new AudioGeneratorMP3();
+      decoder->begin(buff, &out);
+    }
+    if (decoder && decoder->isRunning()) {
+      if (!decoder->loop()) {
+        decoder->stop();
+      }
+    }
+  }
+}
+
+static uint32_t bgcolor(LGFX_Device* gfx, int y) {
   auto h  = gfx->height();
   auto dh = h - header_height;
   int  v  = ((h - y) << 5) / dh;
@@ -246,7 +264,7 @@ uint32_t bgcolor(LGFX_Device* gfx, int y) {
   return gfx->color888(v + 2, v, v + 6);
 }
 
-void gfxSetup(LGFX_Device* gfx) {
+static void gfxSetup(LGFX_Device* gfx) {
   if (gfx == nullptr) {
     return;
   }
@@ -257,13 +275,14 @@ void gfxSetup(LGFX_Device* gfx) {
   gfx->setEpdMode(epd_mode_t::epd_fastest);
   gfx->setTextWrap(false);
   gfx->setCursor(0, 8);
-  gfx->println("WebRadio player");
+  gfx->print(" WebRadio player ");
   gfx->fillRect(0, 6, gfx->width(), 2, TFT_BLACK);
 
   header_height = (gfx->height() > 80) ? 33 : 21;
   fft_enabled   = !gfx->isEPD();
   if (fft_enabled) {
-    wave_enabled = (gfx->getBoard() != m5gfx::board_M5UnitLCD);
+    // wave_enabled = (gfx->getBoard() != m5gfx::board_M5UnitLCD);
+    wave_enabled = false;  //波の消去に失敗する原因がわからず。誰か直して。
 
     for (int y = header_height; y < gfx->height(); ++y) {
       gfx->drawFastHLine(0, y, gfx->width(), bgcolor(gfx, y));
@@ -286,7 +305,7 @@ void gfxLoop(LGFX_Device* gfx) {
   }
   if (header_height > 32) {
     if (meta_mod_bits) {
-      gfx->startWrite();
+      // gfx->startWrite();
       for (int id = 0; id < meta_text_num; ++id) {
         if (0 == (meta_mod_bits & (1 << id))) {
           continue;
@@ -301,8 +320,8 @@ void gfxLoop(LGFX_Device* gfx) {
         gfx->print(meta_text[id]);
         gfx->print(" ");  // Garbage data removal when UTF8 characters are broken in the middle.
       }
-      gfx->display();
-      gfx->endWrite();
+      // gfx->display();
+      // gfx->endWrite();
     }
   } else {
     static int title_x;
@@ -323,7 +342,7 @@ void gfxLoop(LGFX_Device* gfx) {
       int tx  = title_x;
       int tid = title_id;
       wait    = 3;
-      gfx->startWrite();
+      // gfx->startWrite();
       uint_fast8_t no_data_bits = 0;
       do {
         if (tx == 4) {
@@ -352,30 +371,19 @@ void gfxLoop(LGFX_Device* gfx) {
         }
       } while (tx < gfx->width());
       --title_x;
-      gfx->display();
-      gfx->endWrite();
+      // gfx->display();
+      // gfx->endWrite();
     }
   }
 
-  if (!gfx->displayBusy()) {  // draw volume bar
-    static int px;
-    uint8_t    v = M5.Speaker.getChannelVolume(m5spk_virtual_channel);
-    int        x = v * (gfx->width()) >> 8;
-    if (px != x) {
-      gfx->fillRect(x, 6, px - x, 2, px < x ? 0xAAFFAAu : 0u);
-      gfx->display();
-      px = x;
-    }
-  }
-
-  if (fft_enabled && !gfx->displayBusy() && M5.Speaker.isPlaying(m5spk_virtual_channel) > 1) {
+  if (fft_enabled) {
     static int prev_x[2];
     static int peak_x[2];
 
     auto buf = out.getBuffer();
     if (buf) {
       memcpy(raw_data, buf, WAVE_SIZE * 2 * sizeof(int16_t));  // stereo data copy
-      gfx->startWrite();
+      // gfx->startWrite();
 
       // draw stereo level meter
       for (size_t i = 0; i < 2; ++i) {
@@ -405,7 +413,7 @@ void gfxLoop(LGFX_Device* gfx) {
           gfx->writeFastVLine(px, i * 3, 2, TFT_WHITE);
         }
       }
-      gfx->display();
+      // gfx->display();
 
       // draw FFT level meter
       fft.exec(raw_data);
@@ -426,7 +434,7 @@ void gfxLoop(LGFX_Device* gfx) {
       for (size_t bx = 0; bx <= xe; ++bx) {
         size_t x = bx * bw;
         if ((x & 7) == 0) {
-          gfx->display();
+          // gfx->display();
           taskYIELD();
         }
         int32_t f = fft.get(bx);
@@ -495,30 +503,33 @@ void gfxLoop(LGFX_Device* gfx) {
         }
       }
       gfx->display();
-      gfx->endWrite();
+      // gfx->endWrite();
     }
   }
-}
 
-void gfxLoopTask(void*) {
-  uint32_t prev_update_count = 0;
-  for (;;) {
-    delay(1);
-    uint32_t update_count = out.getUpdateCount();
-    if (prev_update_count != update_count) {
-      prev_update_count = update_count;
-      gfxLoop(&M5.Display);
+  if (!gfx->displayBusy()) {  // draw volume bar
+    static int px;
+    uint8_t    v = M5.Speaker.getChannelVolume(m5spk_virtual_channel);
+    int        x = v * (gfx->width()) >> 8;
+    if (px != x) {
+      gfx->fillRect(x, 6, px - x, 2, px < x ? 0xAAFFAAu : 0u);
+      // gfx->display();
+      px = x;
     }
   }
 }
 
 void setup() {
+  log_d("Free Heap : %d", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
+
   _cvbs.begin();
+  _cvbs.startWrite();
+  gfxSetup(&_cvbs);
 
   auto cfg = M5.config();
 
   cfg.external_spk = true;  /// use external speaker (SPK HAT / ATOMIC SPK)
-  // cfg.external_spk_detail.omit_atomic_spk = true; // exclude ATOMIC SPK
+  // cfg.external_spk_detail.omit_atomic_spk = true;  // exclude ATOMIC SPK
   // cfg.external_spk_detail.omit_spk_hat    = true; // exclude SPK HAT
 
   M5.begin(cfg);
@@ -528,12 +539,16 @@ void setup() {
     /// Increasing the sample_rate will improve the sound quality instead of increasing the CPU load.
     spk_cfg.sample_rate      = 96000;  // default:64000 (64kHz)  e.g. 48000 , 50000 , 80000 , 96000 , 100000 , 128000 , 144000 , 192000 , 200000
     spk_cfg.task_pinned_core = APP_CPU_NUM;
+    spk_cfg.i2s_port         = i2s_port_t::I2S_NUM_1;  // IS2_NUM_0はCVBSが使用する。AudioはI2S_NUM_1を使用する。
     M5.Speaker.config(spk_cfg);
   }
 
   M5.Speaker.begin();
 
-  // M5.Display.println("Connecting to WiFi");
+  _cvbs.println("Connecting to WiFi");
+  _cvbs.display();
+  delay(1000);
+
   WiFi.disconnect();
   WiFi.softAPdisconnect(true);
   WiFi.mode(WIFI_STA);
@@ -546,28 +561,29 @@ void setup() {
 
   // Try forever
   while (WiFi.status() != WL_CONNECTED) {
-    // M5.Display.print(".");
     delay(100);
   }
-  // M5.Display.clear();
-
-  // gfxSetup(&M5.Display);
-  gfxSetup(&_cvbs);
 
   play(station_index);
+  M5.Speaker.setChannelVolume(m5spk_virtual_channel, 255 / 3);  // 0-255
 
-  xTaskCreatePinnedToCore(gfxLoopTask, "gfxLoopTask", 2048, nullptr, 1, nullptr, PRO_CPU_NUM);
+  xTaskCreatePinnedToCore(decodeTask, "decodeTask", 4096, nullptr, 1, nullptr, PRO_CPU_NUM);
+  log_d("Free Heap : %d", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
 }
 
 void loop() {
-  if (mp3->isRunning()) {
-    if (!mp3->loop()) {
-      mp3->stop();
-    }
-  } else {
-    delay(16);
+  gfxLoop(&_cvbs);
+
+  {
+    static int prev_frame;
+    int        frame;
+    do {
+      delay(1);
+    } while (prev_frame == (frame = millis() >> 3));  /// 8 msec cycle wait
+    prev_frame = frame;
   }
 
+  // for ATOM Lite G39
   M5.update();
   if (M5.BtnA.wasPressed()) {
     M5.Speaker.tone(440, 50);
@@ -589,17 +605,6 @@ void loop() {
         }
         play(--station_index);
         break;
-    }
-  }
-  if (M5.BtnA.isHolding() || M5.BtnB.isPressed() || M5.BtnC.isPressed()) {
-    size_t v   = M5.Speaker.getChannelVolume(m5spk_virtual_channel);
-    int    add = (M5.BtnB.isPressed()) ? -1 : 1;
-    if (M5.BtnA.isHolding()) {
-      add = M5.BtnA.getClickCount() ? -1 : 1;
-    }
-    v += add;
-    if (v <= 255) {
-      M5.Speaker.setChannelVolume(m5spk_virtual_channel, v);
     }
   }
 }

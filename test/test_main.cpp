@@ -28,7 +28,7 @@ SOFTWARE.
 
 //#define RGB_TEST              // OK
 //#define PARTY_PARROT          // OK
-//#define CLOCK_SAMPLE          /// OK
+//#define CLOCK_SAMPLE          // OK
 //#define FLASH_MEM_SPRITE      // OK
 //#define MOVING_CIRCLES        // OK
 //#define MOVING_ICONS          // OK
@@ -44,9 +44,9 @@ SOFTWARE.
 //#define GAMEOFLIFE            // OK
 //#define BARGRAPH              // OK
 //#define ANALOGMETER           // OK
-//#define ANIMATED_GIF          // OK with SDHC Card
-//#define WEBRADIO              // mp3再生にI2Sドライバを使っているので、ESP32_8BIT_CVBSライブラリは使えない。「E (234) I2S: Register I2S Interrupt error」
-#define MATRIXRAIN            // OK
+#define ANIMATED_GIF          // OK ATOMIC SPKで動作確認済み。mp3とgifはTFカードへ保存してください。
+//#define WEBRADIO              // OK ATOMIC SPKで動作確認済み。CVBSはI2S0を使用。AudioはI2S1を使用
+//#define MATRIXRAIN            // OK
 
 #if defined(RGB_TEST)  // basic
 
@@ -101,7 +101,7 @@ void loop(void) {
 #elif defined(U8G2)
 #include "./04_unicode_fonts/u8g2/u8g2.ino"
 #elif defined(ANIMATED_GIF)
-#include "./01_AnimatedGIF/AnimatedGIF.ino"
+#include "./01_AnimatedGIF/AnimatedGIFwithBGM.ino"
 #elif defined(RADGIALGAUGE)
 #include "./02_Sprite/RadgialGauge/RadgialGauge.ino"
 #elif defined(METERSAMPLE)
@@ -115,7 +115,7 @@ void loop(void) {
 #elif defined(ANALOGMETER)
 #include "./03_Standard/AnalogMeter/AnalogMeter.ino"
 #elif defined(WEBRADIO)
-#include "./99_Advance/WebRadio_with_ESP8266Audio/WebRadio_with_ESP8266Audio.ino"  //I could not use. Help me!!
+#include "./99_Advance/WebRadio_with_ESP8266Audio/WebRadio_with_ESP8266Audio.ino"
 #elif defined(MATRIXRAIN)
 #include "./02_Sprite/MatrixRain/MatrixRain.ino"
 #else

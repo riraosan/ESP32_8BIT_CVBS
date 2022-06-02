@@ -5,24 +5,24 @@
 #include <FS.h>
 #include <SD.h>
 #include <SPI.h>
-
 #include <M5GFX.h>
 #include <ESP32_8BIT_CVBS.h>
-
 #include <AnimatedGIF.h>
 
-static ESP32_8BIT_CVBS _cvbs;
-static LGFX_Sprite     _sprite(&_cvbs);
+static ESP32_8BIT_CVBS _display;
+static M5Canvas        _sprite(&_display);
 
 class Video {
 public:
   Video() : _filename(""),
             _isActive(false),
-            _isOpen(false) {}
+            _isOpen(false),
+            _frameCount(0),
+            _overCount(0) {}
 
   void begin(void) {
-    _width  = _cvbs.width();
-    _height = _cvbs.height();
+    _width  = _display.width();
+    _height = _display.height();
 
     log_i("width, %d, height, %d", _width, _height);
 
@@ -32,13 +32,13 @@ public:
       log_e("can not allocate sprite buffer.");
     }
 
-    _cvbs.begin();
-    _cvbs.fillScreen(0);
+    _display.begin();
+    _display.startWrite();
+    _display.fillScreen(TFT_BLACK);
+    _display.display();
 
     _gif.begin(LITTLE_ENDIAN_PIXELS);
     log_i("start CVBS");
-
-    _isActive = true;
   }
 
   void update(void) {
@@ -55,14 +55,16 @@ public:
             Skip = true;
             _gif.playFrame(false, nullptr);
             Skip = false;
-
             _overCount = 0;
           } else {
             _overCount++;
           }
         } else {
-          // log_i("No. %04d waitTime %d delta %d", frameCount, waitTime, delta);
+          _overCount = 0;
+          lgfx::v1::delay(wait);
+          // log_i("[%04d], Gif _waitTime, %d [ms], actual wait, %d [us]", _frameCount, _waitTime, wait);
         }
+        _frameCount++;
       } else {
         stop();
         closeGif();
@@ -82,6 +84,9 @@ public:
   void openGif(void) {
     if (_gif.open(_filename.c_str(), _GIFOpenFile, _GIFCloseFile, _GIFReadFile, _GIFSeekFile, _GIFDraw)) {
       _isOpen = true;
+    } else {
+      log_e("Can not open gif file.");
+      _isOpen = false;
     }
   }
 
@@ -90,7 +95,8 @@ public:
       _gif.close();
       _isOpen   = false;
       _isActive = false;
-      _cvbs.fillScreen(0);
+      _display.fillScreen(TFT_BLACK);
+      _display.display();
     }
   }
 
@@ -165,7 +171,7 @@ private:
 
   static void _GIFDraw(GIFDRAW *pDraw) {
     uint8_t  *s;
-    uint16_t *d, *usPalette, usTemp[320];
+    uint16_t *d, *usPalette, usTemp[240];
     int       x, y, iWidth;
 
     iWidth = pDraw->iWidth;
@@ -255,6 +261,12 @@ private:
 
   bool _isActive;
   bool _isOpen;
+
+  unsigned long _lTimeStart;
+  unsigned long _processTime;
+  int32_t       _waitTime;
+  int           _frameCount;
+  uint8_t       _overCount;
 };
 
 SDFS *Video::_pSD = nullptr;
