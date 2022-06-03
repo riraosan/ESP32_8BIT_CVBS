@@ -1,5 +1,5 @@
-#define WIFI_SSID "Buffalo-C130"
-#define WIFI_PASS "nnkxnpshmhai6"
+#define WIFI_SSID "your_ssid"
+#define WIFI_PASS "your_pass"
 
 #include <Arduino.h>
 #include <SPI.h>
