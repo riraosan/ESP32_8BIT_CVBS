@@ -37,8 +37,8 @@ public:
     cfg.memory_height = cfg.panel_height = 240;
 
     _panel.config(cfg);
-
     _panel.setCopyAfterSwap(true);
+    _panel.enableDoubleBuffer(false);
     _panel.setColorDepth(lgfx::v1::color_depth_t::rgb332_1Byte);
     _panel.setRotation(0);
 

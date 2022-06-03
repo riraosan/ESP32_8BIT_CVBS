@@ -1,5 +1,5 @@
-#define WIFI_SSID "your_ssid"
-#define WIFI_PASS "your_pass"
+#define WIFI_SSID "Buffalo-C130"
+#define WIFI_PASS "nnkxnpshmhai6"
 
 #include <Arduino.h>
 #include <SPI.h>
@@ -19,7 +19,7 @@
 //#include <M5UnitOLED.h>
 #include <M5Unified.h>
 #include <ESP32_8BIT_CVBS.h>
-static ESP32_8BIT_CVBS _cvbs;
+static ESP32_8BIT_CVBS display;
 
 /// set M5Speaker virtual channel (0-7)
 static constexpr uint8_t m5spk_virtual_channel = 0;
@@ -522,9 +522,9 @@ void gfxLoop(LGFX_Device* gfx) {
 void setup() {
   log_d("Free Heap : %d", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
 
-  _cvbs.begin();
-  _cvbs.startWrite();
-  gfxSetup(&_cvbs);
+  display.begin();
+  display.startWrite();
+  gfxSetup(&display);
 
   auto cfg = M5.config();
 
@@ -537,7 +537,7 @@ void setup() {
   {  /// custom setting
     auto spk_cfg = M5.Speaker.config();
     /// Increasing the sample_rate will improve the sound quality instead of increasing the CPU load.
-    spk_cfg.sample_rate      = 96000;  // default:64000 (64kHz)  e.g. 48000 , 50000 , 80000 , 96000 , 100000 , 128000 , 144000 , 192000 , 200000
+    spk_cfg.sample_rate      = 192000;  // default:64000 (64kHz)  e.g. 48000 , 50000 , 80000 , 96000 , 100000 , 128000 , 144000 , 192000 , 200000
     spk_cfg.task_pinned_core = APP_CPU_NUM;
     spk_cfg.i2s_port         = i2s_port_t::I2S_NUM_1;  // IS2_NUM_0はCVBSが使用する。AudioはI2S_NUM_1を使用する。
     M5.Speaker.config(spk_cfg);
@@ -545,8 +545,8 @@ void setup() {
 
   M5.Speaker.begin();
 
-  _cvbs.println("Connecting to WiFi");
-  _cvbs.display();
+  display.println("Connecting to WiFi");
+  display.display();
   delay(1000);
 
   WiFi.disconnect();
@@ -572,7 +572,7 @@ void setup() {
 }
 
 void loop() {
-  gfxLoop(&_cvbs);
+  gfxLoop(&display);
 
   {
     static int prev_frame;

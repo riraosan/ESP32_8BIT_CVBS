@@ -45,7 +45,8 @@ inline namespace v1 {
 struct Panel_CVBS : public Panel_Device {
 public:
   Panel_CVBS(void) : Panel_Device(),
-                     _video(true) {  // NTSC:true, PAL:false
+                     _video(true),  // true:NTSC, false:PAL
+                     _isDoubleBuffer(true) {
   }
 
   ~Panel_CVBS(void) {
@@ -192,7 +193,7 @@ public:
   void     copyRect(uint_fast16_t, uint_fast16_t, uint_fast16_t, uint_fast16_t, uint_fast16_t, uint_fast16_t) override {}
 
   bool begin(void) {
-    _video.begin();
+    _video.begin(_isDoubleBuffer);
 
     _pCvbs = _video.getCvbs();
     if (_pCvbs == nullptr) {
@@ -210,12 +211,18 @@ public:
     _video.setCopyAfterSwap(isSwap);
   }
 
+  void enableDoubleBuffer(bool isDoubleBuffer){
+    _isDoubleBuffer = isDoubleBuffer;
+  }
+
 protected:
   ESP_8_BIT_composite *_pCvbs;
   ESP_8_BIT_GFX        _video;
 
   uint_fast16_t _xpos;
   uint_fast16_t _ypos;
+
+  bool _isDoubleBuffer;
 };
 
 #else
