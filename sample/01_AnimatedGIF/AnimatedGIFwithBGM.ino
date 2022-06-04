@@ -44,13 +44,13 @@ uint8_t story = 0;
 
 #define MP3_FILE_4 "/non.mp3"
 #define GIF_FILE_4 "/non_small.gif"
-#define WAIT_MP3_4 1300
+#define WAIT_MP3_4 1100
 #define WAIT_GIF_4 1
 
 #define MP3_FILE_5 "/non5.mp3"
 #define GIF_FILE_5 "/non5.gif"
 #define WAIT_MP3_5 1
-#define WAIT_GIF_5 1600
+#define WAIT_GIF_5 1500
 
 void MDCallback(void *cbData, const char *type, bool isUnicode, const char *string) {
   (void)cbData;

@@ -46,7 +46,7 @@ public:
       _lTimeStart = lgfx::v1::millis();
       if (_gif.playFrame(false, &_waitTime)) {
         _sprite.pushSprite(30, 35);  // CBVSダブルバッファへデータ転送
-        _display.display();          // CVBSダブルバッファをスワップ
+        _display.display();          // バッファをスワップ
 
         int wait = _waitTime - (lgfx::v1::millis() - _lTimeStart);
         if (wait < 0) {
