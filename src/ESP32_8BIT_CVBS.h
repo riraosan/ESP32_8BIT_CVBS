@@ -38,7 +38,7 @@ public:
 
     _panel.config(cfg);
     _panel.setCopyAfterSwap(true);
-    _panel.enableDoubleBuffer(false);
+    _panel.enableDoubleBuffer(true);
     _panel.setColorDepth(lgfx::v1::color_depth_t::rgb332_1Byte);
     _panel.setRotation(0);
 

@@ -11,8 +11,8 @@
 *******************************************************************************
   Use ATOM SPK play MP3 file and Animated GIF file from TF Card
   Before running put the MP3 file and Animated GIF file to the TF card
-  MP3 file : non.mp3
-  GIF file : non_small.gif
+  MP3 file : non4.mp3, non5.mp3
+  GIF file : non_small.gif, non5.gif
 */
 
 #include <Arduino.h>
@@ -42,7 +42,7 @@ uint8_t story = 0;
 #define MISO       33
 #define MOSI       19
 
-#define MP3_FILE_4 "/non.mp3"
+#define MP3_FILE_4 "/non4.mp3"
 #define GIF_FILE_4 "/non_small.gif"
 #define WAIT_MP3_4 1100
 #define WAIT_GIF_4 1
@@ -156,13 +156,13 @@ void setup() {
   M5.begin(true, false, true);
   SPI.begin(SCK, MISO, MOSI, -1);
   SPI.setDataMode(SPI_MODE3);
-  if (!SD.begin(-1, SPI, 80000000)) {  // 80MHz
+  if (!SD.begin(-1, SPI, 80000000)) {  // 80MHz(MAX)
     Serial.println("Card Mount Failed");
     return;
   }
   out = new AudioOutputI2S(I2S_NUM_1);  // CVBSがI2S0を使っている。AUDIOはI2S1を設定
   out->SetPinout(22, 21, 25);
-  out->SetGain(0.3);  // 1.0だと音が大きすぎる。0.3ぐらいが適当。後は外部アンプで増幅するのが適切。
+  out->SetGain(0.05);  // 1.0だと音が大きすぎる。0.3ぐらいが適当。後は外部アンプで増幅するのが適切。
   mp3 = new AudioGeneratorMP3();
   mp3->RegisterStatusCB(StatusCallback, (void *)"mp3");
 
@@ -177,7 +177,7 @@ void setup() {
   story = 4;
 
   xTaskCreatePinnedToCore(audioTask, "audioTask", 4098, nullptr, 2, nullptr, PRO_CPU_NUM);
-  log_d("Free Heap : %d", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));  //使えるSRAMの残りは有りません orz
+  log_d("Free Heap : %d", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));//シングルバッファモードにするとメモリに余裕ができます。
 }
 
 void loop() {
