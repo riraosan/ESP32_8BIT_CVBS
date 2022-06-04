@@ -33,6 +33,7 @@ public:
     }
 
     _display.begin();
+    _display.setPivot((_width >> 1) + 3, (_height >> 1) + 30);
     _display.startWrite();
     _display.fillScreen(TFT_BLACK);
     _display.display();
@@ -45,8 +46,8 @@ public:
     if (_isActive) {
       _lTimeStart = lgfx::v1::millis();
       if (_gif.playFrame(false, &_waitTime)) {
-        _sprite.pushSprite(30, 35);  // CBVSダブルバッファへデータ転送
-        _display.display();          // バッファをスワップ
+        _sprite.pushRotateZoom(0, 1.3, 1.3);
+        _display.display();  // バッファをスワップ
 
         int wait = _waitTime - (lgfx::v1::millis() - _lTimeStart);
         if (wait < 0) {
