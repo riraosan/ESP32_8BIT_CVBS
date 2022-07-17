@@ -21,8 +21,8 @@ static std::int32_t display_height;
 
 // Wifi 関連定義
 WiFiClient  client;
-const char* ssid               = "Buffalo-C130";   // WiFi APのSSID
-const char* password           = "nnkxnpshmhai6";  // WiFi APのPassword
+const char* ssid               = "your_ssid";     // WiFi APのSSID
+const char* password           = "your_passord";  // WiFi APのPassword
 const char* ntpServer          = "ntp.nict.jp";
 const long  gmtOffset_sec      = 9 * 3600;
 const int   daylightOffset_sec = 0;
