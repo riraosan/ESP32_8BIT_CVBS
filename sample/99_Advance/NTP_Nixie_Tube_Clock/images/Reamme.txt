@@ -1,0 +1,6 @@
+//本Nixie Tube風イメージデータは、 Jovanny Lemonad氏作成の
+//Nixie Oneフォントをベースに@logic_starおよびスタッフにより
+//デザインされたものです。使用条件は、Open Font Licenseに準拠します。
+//詳しくは以下URLのドキュメントをご参照ください。2022/3/22
+//https://fonts.google.com/specimen/Nixie+One#standard-styles
+

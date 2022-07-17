@@ -44,9 +44,10 @@ SOFTWARE.
 //#define GAMEOFLIFE            // OK
 //#define BARGRAPH              // OK
 //#define ANALOGMETER           // OK
-#define ANIMATED_GIF          // OK ATOMIC SPKで動作確認済み。mp3とgifはTFカードへ保存してください。
+//#define ANIMATED_GIF          // OK ATOMIC SPKで動作確認済み。mp3とgifはTFカードへ保存してください。
 //#define WEBRADIO              // OK ATOMIC SPKで動作確認済み。CVBSはI2S0を使用。AudioはI2S1を使用
 //#define MATRIXRAIN            // OK
+#define NTP_NIXIE_TUBE_CLOCK  // OK
 
 #if defined(RGB_TEST)  // basic
 
@@ -118,6 +119,8 @@ void loop(void) {
 #include "./99_Advance/WebRadio_with_ESP8266Audio/WebRadio_with_ESP8266Audio.ino"
 #elif defined(MATRIXRAIN)
 #include "./02_Sprite/MatrixRain/MatrixRain.ino"
+#elif defined(NTP_NIXIE_TUBE_CLOCK)
+#include "./99_Advance/NTP_Nixie_Tube_Clock/ntp_nixie_tube_clock.ino"
 #else
 void setup() {}
 void loop() {}
