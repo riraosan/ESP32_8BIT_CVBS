@@ -1,8 +1,11 @@
-// NTP Clock. (c)2022 @logic_star All rights reserved.
-// modified @riraosan.github.io for Only ATOM Lite
+/*
+NTP Clock. (c)2022 @logic_star All rights reserved.
+https://www.marutsu.co.jp/pc/static/large_order/ntp_clock_20220521
+Modified by @riraosan.github.io for ATOM Lite.
+@riraosan_0901 have not confirmed that it works with anything other M5Stack.
+*/
 
 //#define IMAGE_FROM_SD //SDカードからイメージを読み込む場合は有効化要
-
 #include <Arduino.h>
 #include <WiFi.h>
 #include <time.h>
