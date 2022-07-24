@@ -11,7 +11,7 @@ I have also created a Panel_CVBS class that transfers drawing data to the double
 
 With these little modifications we are able to output 256x240 (480i@29.97Hz) size images to CRT and digital TVs very fast from the ESP32 module.
 
-## Sample videos
+## Sample Videos
 
 I posted [some sample videos](https://www.instagram.com/p/CbXvBUovzNE/?utm_source=ig_web_copy_link) on Instagram. Please take a look if you like.
 
@@ -22,7 +22,7 @@ I have made some modifications to the ESP_8_BIT_composite library, please use th
 https://github.com/riraosan/ESP_8_BIT_composite.git
 ```
 
-### For Arduino IDE
+### Arduino IDE
 
 - Please download the following library from GitHub.
 
@@ -38,7 +38,7 @@ https://github.com/riraosan/ESP_8_BIT_composite.git
 C:\Users\{{username}}\Documents\Arduino\libraries
 ```
 
-### For PlatformIO IDE
+### PlatformIO IDE
 
 Please download the library from the GitHub repository using the PlatformIO IDE's library manager.
 
@@ -46,7 +46,6 @@ Please download the library from the GitHub repository using the PlatformIO IDE'
 lib_deps =
         https://github.com/m5stack/M5GFX.git
         https://github.com/riraosan/ESP_8_BIT_composite.git
-        https://github.com/tanakamasayuki/efont.git
         https://github.com/riraosan/ESP32_8BIT_CVBS.git
 ```
 
@@ -60,27 +59,27 @@ lib_deps =
 #include <ESP32_8BIT_CVBS.h>
 
 static ESP32_8BIT_CVBS _cvbs;
-static LGFX_Sprite     _sprite(&_cvbs);
+static M5Canvas        _sprite(&_cvbs);
 
 void setup(){
-  _cvbs.init();
+  _cvbs.begin();
   //Initial configuration of other modules, etc.
 }
 
 void loop(){
   //Drawing process, etc.
-  _cvbs.update();
+  _cvbs.display(); // swapping Double Buffer
 }
 ```
 
 - Please create an instance of the ESP32_8BIT_CVBS class and initialize the Panel_CVBS class. ` ESP32_8BIT_CVBS _cvbs;`
-- Please tie an instance of the ESP32_8BIT_CVBS class to an instance of the LGFX_Sprite class. `LGFX_Sprite _sprite(&_cvbs);`
-- Please initialize the library by executing `init()` of the Panel_CVBS class with `setup()`.
+- Please tie an instance of the ESP32_8BIT_CVBS class to an instance of the LGFX_Sprite class. `M5Canvas _sprite(&_cvbs);`
+- Please initialize the library by executing `begin()` of the Panel_CVBS class with `setup()`.
 - After that, please implement various drawing processes using M5GFX API in `loop()`.
 - Please refer to the sample code for how to use M5GFX API.
 - You can also place the Panel_CVBS class in the M5GFX folder (/panel). Of course, you need to include the ESP_8_BIT_composite library.
 - The default composite signal output port is GPIO25.
-- If you want to output composite signal from `G26` port of Grove connector (PH2.0-4P) of M5STACK ATOM Lite, please write `#include ENABLE_GPIO26` in the source code (*.ino). You should be able to switch output ports on other ESP32 module boards (unconfirmed).
+- If you want to output composite signal from `G26` port of Grove connector (PH2.0-4P) of M5Stack ATOM Lite, please write `#include ENABLE_GPIO26` in the source code (*.ino). You should be able to switch output ports on other ESP32 module boards (unconfirmed).
 - If you are using PlatformIO IDE, please add the build flag to `platformio.ini`.
 
 ```yaml
@@ -115,7 +114,7 @@ You can set video out to GPIO25 and GPIO26.
 You connect the signal line of the RCA cable to GPIO 25 (26) and the GND shielding the outside of the RCA cable to the GND of the ESP32 module.
 Then you connect the RCA cable to the yellow female connector (video) on the back of your digital TV.
 
-- Sample Images
+- Sample Image
 
 <img src="./docs/images/RCA_sample2.JPG" width="300">
 
@@ -124,7 +123,7 @@ Then you connect the RCA cable to the yellow female connector (video) on the bac
 
 ## Testing with sample codes
 
-I have tested using [M5STACK ATOM Lite](https://shop.m5stack.com/collections/m5-controllers/products/atom-lite-esp32-development-kit). I have not tested with other ESP32 modules or boards.
+I have tested using [M5Stack ATOM Lite](https://shop.m5stack.com/collections/m5-controllers/products/atom-lite-esp32-development-kit). I have not tested with other ESP32 modules or boards.
 
 I placed some of the sample files committed to the LovyanGFX library in the sample folder. I have made some modifications to the sample files, using a panel image size of 256x240. I used these sample codes to test the Panel_CVBS class.
 
