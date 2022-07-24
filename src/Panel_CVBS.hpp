@@ -45,12 +45,17 @@ inline namespace v1 {
 struct Panel_CVBS : public Panel_Device {
 public:
   Panel_CVBS(void) : Panel_Device(),
-                     _video(true),  // true:NTSC, false:PAL
+                     _video(true),
                      _isDoubleBuffer(true) {
   }
 
-  ~Panel_CVBS(void) {
+  // NTSC:true, PAL:false
+  Panel_CVBS(bool isNTSC) : Panel_Device(),
+                            _video(isNTSC),
+                            _isDoubleBuffer(true) {
   }
+
+  ~Panel_CVBS(void) {}
 
   void initBus(void) override {}
   void releaseBus(void) override {}
@@ -211,7 +216,7 @@ public:
     _video.setCopyAfterSwap(isSwap);
   }
 
-  void enableDoubleBuffer(bool isDoubleBuffer){
+  void enableDoubleBuffer(bool isDoubleBuffer) {
     _isDoubleBuffer = isDoubleBuffer;
   }
 

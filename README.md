@@ -148,5 +148,5 @@ In creating this library, I used the ideas and libraries of these giants[^1]. Th
 
 - [riraosan_0901](https://twitter.com/riraosan_0901) on Twitter
 
-[^1]: > What Des-Cartes did was a good step. You have added much several ways, & especially in taking the colours of thin plates into philosophical consideration. [If I have seen further it is by standing on the sholders of Giants](https://en.wikipedia.org/wiki/Standing_on_the_shoulders_of_giants).
+[^1]: > What Des-Cartes did was a good step. You have added much several ways, & especially in taking the colors of thin plates into philosophical consideration. [If I have seen further it is by standing on the shoulders of Giants](https://en.wikipedia.org/wiki/Standing_on_the_shoulders_of_giants).
 `Isaac Newton` 
