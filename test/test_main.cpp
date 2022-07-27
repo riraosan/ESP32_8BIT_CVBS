@@ -26,7 +26,7 @@ SOFTWARE.
 #include <unity.h>
 #include <Arduino.h>
 
-//#define RGB_TEST              // OK
+#define RGB_TEST              // OK
 //#define PARTY_PARROT          // OK
 //#define CLOCK_SAMPLE          // OK
 //#define FLASH_MEM_SPRITE      // OK
@@ -39,7 +39,7 @@ SOFTWARE.
 //#define EFONT                 // OK
 //#define U8G2                  // OK
 //#define RADGIALGAUGE          // OK
-//#define METERSAMPLE           // NG  pushRotateZoom APIの不具合のような気がする。lcd color Depth 8の場合、カラーパレット0の透過がうまくいかないように見える。しらんけど。
+//#define METERSAMPLE           // NG pushRotateZoom APIの不具合のような気がする。lcd color Depth 8の場合、カラーパレット0の透過がうまくいかないように見える。しらんけど。
 //#define SPINTILE              // OK
 //#define GAMEOFLIFE            // OK
 //#define BARGRAPH              // OK
@@ -47,7 +47,7 @@ SOFTWARE.
 //#define ANIMATED_GIF          // OK ATOMIC SPKで動作確認済み。mp3とgifはTFカードへ保存してください。
 //#define WEBRADIO              // OK ATOMIC SPKで動作確認済み。CVBSはI2S0を使用。AudioはI2S1を使用
 //#define MATRIXRAIN            // OK
-#define NTP_NIXIE_TUBE_CLOCK  // OK
+//#define NTP_NIXIE_TUBE_CLOCK  // OK
 
 #if defined(RGB_TEST)  // basic
 
