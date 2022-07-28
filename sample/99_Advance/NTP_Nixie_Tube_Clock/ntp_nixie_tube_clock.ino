@@ -37,7 +37,6 @@ struct tm timeinfo;
 uint8_t   secLastReport = 0;
 
 bool autoNtp(void) {
-  uint8_t wifi_retry_cnt;
   display.fillScreen(TFT_BLACK);  // 画面初期化
   display.setTextSize(1);
   display.setCursor(5, 10);
@@ -48,29 +47,10 @@ bool autoNtp(void) {
 
   _wifi.begin(ssid, password);
 
-  // WiFi.begin(ssid, password);  // WiFi接続開始
-  wifi_retry_cnt = 20;  // 0.5秒×20=最大10秒で接続タイムアウト
-
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    display.printf("*");  // 0.5秒毎に”＊”を表示
-
-    if (--wifi_retry_cnt == 0) {
-      WiFi.disconnect(true);  // タイムアウトでWiFiオフ
-      WiFi.mode(WIFI_OFF);
-
-      display.println("");
-      display.print(" ");
-      display.setTextColor(TFT_WHITE, TFT_RED);
-      display.println("CONNECTION FAIL");  // WiFi接続失敗表示
-
-      return false;  // 接続失敗でリターン
-    }
-  }
-
   display.println("");
   display.print(" ");
-  display.setTextColor(TFT_WHITE, TFT_GREEN);
+  display.setTextSize(4);
+  display.setTextColor(TFT_GREEN);
   display.println("CONNECTED");  // WiFi接続成功表示
   delay(1000);
 
