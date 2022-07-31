@@ -9,6 +9,7 @@ Modified by @riraosan.github.io for ATOM Lite.
 #include <Arduino.h>
 #include <WiFi.h>
 #include <time.h>
+#include "Connect.hpp"
 #ifndef IMAGE_FROM_SD
 #include "image.h"
 #endif
@@ -24,6 +25,7 @@ static std::int32_t display_height;
 
 // Wifi 関連定義
 WiFiClient  client;
+Connect     _wifi;
 const char* ssid               = "your_ssid";     // WiFi APのSSID
 const char* password           = "your_passord";  // WiFi APのPassword
 const char* ntpServer          = "ntp.nict.jp";
@@ -33,6 +35,42 @@ const int   daylightOffset_sec = 0;
 // 時間関連
 struct tm timeinfo;
 uint8_t   secLastReport = 0;
+
+bool autoNtp(void) {
+  display.fillScreen(TFT_BLACK);  // 画面初期化
+  display.setTextSize(1);
+  display.setCursor(5, 10);
+  display.printf("Connecting to %s ", ssid);
+
+  display.println("");
+  display.print(" ");
+
+  _wifi.begin(ssid, password);
+
+  display.println("");
+  display.print(" ");
+  display.setTextSize(4);
+  display.setTextColor(TFT_GREEN);
+  display.println("CONNECTED");  // WiFi接続成功表示
+  delay(1000);
+
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);  // NTPによる時刻取得
+
+  if (!getLocalTime(&timeinfo)) {
+    display.printf("/nFailed to obtain time");  // 時刻取得失敗表示
+    WiFi.disconnect(true);                      // 時刻取得失敗でWiFiオフ
+    WiFi.mode(WIFI_OFF);
+    display.printf("/nFailed to obtain time");  // 時刻取得失敗表示
+
+    return false;  // 時刻取得失敗でリターン
+  }
+
+  // WiFi.disconnect(true);          // WiFi切断
+  // WiFi.mode(WIFI_OFF);            // WiFiオフ
+  display.fillScreen(TFT_BLACK);  // 画面消去
+
+  return true;  // 時刻取得成功でリターン
+}
 
 // NTPによる時刻取得関数
 bool ntp(void) {
@@ -158,7 +196,7 @@ void setup() {
   setupSprite();
 
   // 時刻取得に失敗した場合は、動作停止
-  if (!ntp()) {
+  if (!autoNtp()) {
     while (1) {
       ;
     }
@@ -168,9 +206,9 @@ void setup() {
 void loop() {
   getLocalTime(&timeinfo);
 
-  // 毎日午前2時に時刻取得。時刻取得に失敗しても動作継続
+  // 毎日午前2時に時刻取得
   if ((timeinfo.tm_hour == 12) && (timeinfo.tm_min == 0) && (timeinfo.tm_sec == 0)) {
-    ntp();
+    ESP.restart();
   }
 
   if (secLastReport != timeinfo.tm_sec) {  //秒が更新されたら、表示をupdate
@@ -201,4 +239,5 @@ void loop() {
     delay(100);  // 0.1秒ウェイト
   }
   display.display();
+  _wifi.update();
 }

@@ -39,7 +39,7 @@ SOFTWARE.
 //#define EFONT                 // OK
 //#define U8G2                  // OK
 //#define RADGIALGAUGE          // OK
-//#define METERSAMPLE           // NG  pushRotateZoom APIの不具合のような気がする。lcd color Depth 8の場合、カラーパレット0の透過がうまくいかないように見える。しらんけど。
+//#define METERSAMPLE           // NG pushRotateZoom APIの不具合のような気がする。lcd color Depth 8の場合、カラーパレット0の透過がうまくいかないように見える。しらんけど。
 //#define SPINTILE              // OK
 //#define GAMEOFLIFE            // OK
 //#define BARGRAPH              // OK
