@@ -255,11 +255,13 @@ void loop() {
       msg = MESSAGE::kMSG_LOOP;
       break;
     case MESSAGE::kMSG_BEGIN_STORY4:
+      cvbs->setEpsilon(10.0);
       setupAV(MP3_FILE_4, GIF_FILE_4);
       startAV(WAIT_MP3_4, WAIT_GIF_4);
       msg = MESSAGE::kMSG_LOOP;
       break;
     case MESSAGE::kMSG_BEGIN_STORY5:
+      cvbs->setEpsilon(22.0);
       setupAV(MP3_FILE_5, GIF_FILE_5);
       startAV(WAIT_MP3_5, WAIT_GIF_5);
       msg = MESSAGE::kMSG_LOOP;

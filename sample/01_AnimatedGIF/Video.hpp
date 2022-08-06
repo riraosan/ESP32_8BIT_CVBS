@@ -82,7 +82,7 @@ public:
           }
           _display.display();  // バッファをスワップ
 
-          actualWait -= (lgfx::v1::millis() - playFrameTime);
+          actualWait -= lgfx::v1::millis() - playFrameTime;
           if (actualWait > 0) {
             delay(actualWait);
           }
@@ -221,6 +221,10 @@ public:
     } else {
       printState("Normal.    ");
     }
+  }
+
+  void setEpsilon(float epsilon) {
+    _epsilon = epsilon;
   }
 
 private:
