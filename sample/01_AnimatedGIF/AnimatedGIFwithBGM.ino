@@ -27,6 +27,8 @@
 #include <M5Atom.h>
 #include <AudioFileSourceSD.h>
 #include <AudioGeneratorMP3.h>
+//If the sample BIT of the DAC is 32 bits,
+//you will need to replace the file in the patch folder with the file of the same name from the ESP8266Audio#1.9.5 library.
 #include <AudioOutputI2S.h>
 #include <AudioFileSourceID3.h>
 #include <Ticker.h>
@@ -61,7 +63,7 @@ TaskHandle_t taskHandle;
 #define MP3_FILE_5 "/non5.mp3"
 #define GIF_FILE_5 "/non5.gif"
 #define WAIT_MP3_5 1
-#define WAIT_GIF_5 1500
+#define WAIT_GIF_5 1000
 
 enum class MESSAGE : int {
   kMSG_LOOP,
@@ -207,6 +209,8 @@ void setupAV(String mp3File, String gifFile) {
   xTaskCreatePinnedToCore(audioTask, "audioTask", 4098, nullptr, 2, &taskHandle, PRO_CPU_NUM);
 
   // Animation
+  _display.fillScreen(TFT_BLACK);
+  _display.display();
   cvbs->setFilename(gifFile);
   cvbs->openGif();
 }
@@ -219,7 +223,6 @@ void setup() {
   if (cvbs != nullptr) {
     cvbs->begin();
     cvbs->setSd(&SD);
-    cvbs->setThinning(false);
   } else {
     log_e("Can not allocate Buffer.");
   }
@@ -239,29 +242,27 @@ void setup() {
     Serial.println("Card Mount Failed");
     ESP.restart();
   }
+
+  cvbs->showGuide();
+
   msg = MESSAGE::kMSG_LOOP;
   log_d("Free Heap : %d", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));  //シングルバッファモードにするとメモリに余裕が生まれます。
 }
 
 void loop() {
   switch (msg) {
-    case MESSAGE::kMSG_SIMPLIFY_ON:
-      cvbs->setThinning(true);
-      cvbs->loadSimplify();
-      msg = MESSAGE::kMSG_LOOP;
-      break;
-    case MESSAGE::kMSG_SIMPLIFY_OFF:
-      cvbs->setThinning(false);
-      msg = MESSAGE::kMSG_LOOP;
-      break;
+    // case MESSAGE::kMSG_SIMPLIFY_ON:
+    //   msg = MESSAGE::kMSG_LOOP;
+    //   break;
+    // case MESSAGE::kMSG_SIMPLIFY_OFF:
+    //   msg = MESSAGE::kMSG_LOOP;
+    //   break;
     case MESSAGE::kMSG_BEGIN_STORY4:
-      cvbs->setEpsilon(10.0);
       setupAV(MP3_FILE_4, GIF_FILE_4);
       startAV(WAIT_MP3_4, WAIT_GIF_4);
       msg = MESSAGE::kMSG_LOOP;
       break;
     case MESSAGE::kMSG_BEGIN_STORY5:
-      cvbs->setEpsilon(22.0);
       setupAV(MP3_FILE_5, GIF_FILE_5);
       startAV(WAIT_MP3_5, WAIT_GIF_5);
       msg = MESSAGE::kMSG_LOOP;

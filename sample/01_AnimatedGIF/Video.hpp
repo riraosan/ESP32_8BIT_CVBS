@@ -8,11 +8,6 @@
 #include <M5GFX.h>
 #include <ESP32_8BIT_CVBS.h>
 #include <AnimatedGIF.h>
-#include <DouglasPeucker.hpp>
-#include <ArduinoJson.h>
-#include <StreamUtils.h>
-
-#define EEPROM_SIZE 5120
 
 static ESP32_8BIT_CVBS _display;
 static M5Canvas        _sprite(&_display);
@@ -22,18 +17,10 @@ public:
   Video() : _filename(""),
             _isActive(false),
             _isOpen(false),
-            _frameCount(0),
-            _isThinning(false),
-            _index(0),
-            _epsilon(1.1),
-            _doc(EEPROM_SIZE) {
+            _frameCount(0) {
   }
 
   void begin(void) {
-    // Serial.begin(115200);
-
-    EEPROM.begin(EEPROM_SIZE);
-
     _width  = _display.width();
     _height = _display.height();
 
@@ -41,126 +28,74 @@ public:
 
     _sprite.setColorDepth(8);
     _sprite.setRotation(0);
-    if (!_sprite.createSprite(190, 160)) {
+    if (!_sprite.createSprite(180, 96)) {
       log_e("can not allocate sprite buffer.");
     }
-
     _display.begin();
-    _display.setPivot((_width >> 1), (_height >> 1) + 30);
+    _display.setPivot((_width >> 1) - 7, (_height >> 1) + 5);
     _display.startWrite();
     _display.fillScreen(TFT_BLACK);
     _display.display();
+
+    _display.setFont(&fonts::Font0);
+    _display.setTextWrap(false);
+    _display.setTextSize(1);
 
     _gif.begin(LITTLE_ENDIAN_PIXELS);
     log_i("start CVBS");
   }
 
-  void printState(String state) {
-    _display.fillScreen(TFT_BLACK);
+  void showGuide(void) {
     _display.setCursor(10, 10);
-    _display.setFont(&fonts::Font0);
-    _display.setTextWrap(false);
-    _display.setTextSize(1);
-    _display.println(state.c_str());
-    _display.display();
+    _display.print("Single Click: Episode 4");
+    _display.setCursor(10, 10 + 9);
+    _display.print("  Long Click: Episode 5");
   }
 
   void update(void) {
     _lTimeStart = lgfx::v1::millis();
     if (_isActive) {
       if (_gif.playFrame(false, &_waitTime)) {
-        long playFrameTime = lgfx::v1::millis();
-        int  actualWait    = _waitTime - (playFrameTime - _lTimeStart);
+        _sprite.pushRotateZoom(0, 1.3, 1.6);
+        _display.display();
 
-        if (_isThinning) {
-          // EEPROMに保存した間引かないフレームを表示する
-          if (_showFrame[_index] == _frameCount) {
-            _sprite.pushRotateZoom(0, 1.3, 1.3);
-            _index++;
-          } else {
-            _sprite.pushRotateZoom(0, 1.3, 1.3);
-          }
-          _display.display();  // バッファをスワップ
+        int actualWait = _waitTime - (lgfx::v1::millis() - _lTimeStart);
 
-          actualWait -= lgfx::v1::millis() - playFrameTime;
-          if (actualWait > 0) {
-            delay(actualWait);
-          }
-        } else {
-          //間引き対象をEEPROMへ保存する
-          if (actualWait < 0) {
-            _frame.push_back(RDP::Point2d(_frameCount, abs(actualWait)));
-            // log_i("[%04d], Gif _waitTime, %04d [ms], delta, %04d [ms]", _frameCount, _waitTime, abs(actualWait));
-          } else {
-            _sprite.pushRotateZoom(0, 1.3, 1.3);
-            _display.display();  // バッファをスワップ
-            actualWait -= (lgfx::v1::millis() - playFrameTime);
-
-            if (actualWait > 0) {
-              delay(actualWait);
-            }
-          }
+        // Fine-tune the synchronization of BGM and GIF frames
+        if (153 < _frameCount && _frameCount < 281) {
+          actualWait += 10;
+        } else if (282 <= _frameCount && _frameCount <= 404) {
+          actualWait += 10;  // OK
+        } else if (405 <= _frameCount && _frameCount <= 454) {
+          actualWait += 20;  // OK
+        } else if (455 <= _frameCount && _frameCount <= 479) {
+          actualWait += 45;  // OK
+        } else if (480 <= _frameCount && _frameCount <= 508) {
+          actualWait += 30;  // OK
+        } else if (509 <= _frameCount && _frameCount <= 637) {
+          actualWait += 10;  // OK
+        } else if (638 <= _frameCount && _frameCount <= 697) {
+          actualWait += 27;  // OK
+        } else if (698 <= _frameCount && _frameCount <= 771) {
+          actualWait += 15;  // OK
         }
+
+        if (actualWait >= 0) {
+          delay(actualWait);
+        }
+
+        log_i("[%04d], GIF _waitTime, %04d [ms], delta, %04d [ms]", _frameCount, _waitTime, actualWait);
 
         _frameCount++;
       } else {
         stop();
         closeGif();
+        _display.fillScreen(TFT_BLACK);
 
-        if (!_isThinning) {
-          saveSimplify();
-          // loadSimplify(); //debug print
-        }
+        showGuide();
 
-        //元に戻す
         _frameCount = 0;
-        _index      = 0;
-
-        setThinning(_isThinning);
       }
-    }
-  }
-
-  void saveSimplify(void) {
-    //フレームを間引く
-    std::vector<RDP::Point2d> result = RDP::DouglasPeucker::Simplify(_frame, _epsilon);
-
-    JsonArray indexArray = _doc.to<JsonArray>();  //注意「to」だよ
-    for (auto p : result) {
-      indexArray.add((int)p.x_);
-      // log_i("Simplify playFrameTime Number, No., %04d, Over:, %04d, [ms]", (int)p.x_, (int)p.y_);
-    }
-
-    EepromStream eepromStream(0, EEPROM_SIZE);
-    serializeJson(_doc, eepromStream);
-    // serializeJson(_doc, Serial);
-    // Serial.println();
-
-    eepromStream.flush();
-
-    size_t count = result.size();
-    log_i("Simplify done. Number after Simplify, %d", count);
-  }
-
-  void loadSimplify(void) {
-    EepromStream eepromStream(0, EEPROM_SIZE);
-
-    DeserializationError error = deserializeJson(_doc, eepromStream);
-    if (error) {
-      Serial.print(F("deserializeJson() failed: "));
-      Serial.println(error.f_str());
-      return;
-    }
-
-    serializeJson(_doc, Serial);
-    Serial.println();
-
-    JsonArray indexArray = _doc.as<JsonArray>();  //注意：「as」だよ
-
-    for (JsonVariant value : indexArray) {
-      int i = value.as<int>();
-      // log_i("Simplify playFrame Number, %d", i);
-      _showFrame.push_back((int)i);
     }
   }
 
@@ -207,24 +142,6 @@ public:
 
   bool state(void) {
     return _isActive;
-  }
-
-  bool isThinning(void) {
-    return _isThinning;
-  }
-
-  void setThinning(bool isThinning) {
-    _isThinning = isThinning;
-
-    if (_isThinning) {
-      printState("Simplified.");
-    } else {
-      printState("Normal.    ");
-    }
-  }
-
-  void setEpsilon(float epsilon) {
-    _epsilon = epsilon;
   }
 
 private:
@@ -278,7 +195,7 @@ private:
 
   static void _GIFDraw(GIFDRAW *pDraw) {
     uint8_t  *s;
-    uint16_t *d, *usPalette, usTemp[240];
+    uint16_t *d, *usPalette, usTemp[180];
     int       x, y, iWidth;
 
     iWidth = pDraw->iWidth;
@@ -367,15 +284,6 @@ private:
   unsigned long _lTimeStart;
   int32_t       _waitTime;
   int           _frameCount;
-
-  std::vector<RDP::Point2d> _frame;
-  std::vector<int>          _showFrame;
-  bool                      _isThinning;
-  int                       _index;
-
-  float _epsilon;
-
-  DynamicJsonDocument _doc;
 };
 
 SDFS *Video::_pSD = nullptr;
