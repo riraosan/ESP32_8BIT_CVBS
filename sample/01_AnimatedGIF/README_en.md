@@ -48,8 +48,8 @@ lib_deps =
 ```
 
 > **Note**
+> 
 > You must use the ESP_8_BIT_composite library modified by @riraosan.
->
 > - Modified to switch between G25 and G26 outputs
 > - Modified to switch between double buffer and single buffer.
 
@@ -96,6 +96,7 @@ After you have stored the non5.gif, non5.mp3 files you have placed under the dat
 - If you click the G39 button, ATOM Lite will play Mobile Suit NON-CHAN episode 5 "OSクラッシャー".
 
 > **Note**
+>
 > I do not guarantee that it will work if you single press the G39 button (I will address this soon.)
 
 ## License
@@ -111,7 +112,7 @@ Feel free to modify or reprint. We would appreciate it if you could reprint the 
 If I could look out over the distance, it was on the shoulders of giants.
 We would like to thank the authors of each library. Thank you very much.
 
-### Conclusion
+## Conclusion
 
 It would be a great pleasure and a blessing if I could contribute in some way to someone somewhere.
 
