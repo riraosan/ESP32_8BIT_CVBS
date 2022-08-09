@@ -14,6 +14,8 @@ Modified by @riraosan.github.io for ATOM Lite.
 #include "image.h"
 #endif
 
+//#define ENABLE_GPIO26
+
 #include <M5Unified.h>
 #include <ESP32_8BIT_CVBS.h>
 static ESP32_8BIT_CVBS display;
@@ -24,10 +26,9 @@ static std::int32_t display_width;
 static std::int32_t display_height;
 
 // Wifi 関連定義
-WiFiClient  client;
-Connect     _wifi;
-const char* ssid               = "your_ssid";     // WiFi APのSSID
-const char* password           = "your_passord";  // WiFi APのPassword
+Connect _wifi;
+// const char* ssid               = "your_ssid";     // WiFi APのSSID
+// const char* password           = "your_passord";  // WiFi APのPassword
 const char* ntpServer          = "ntp.nict.jp";
 const long  gmtOffset_sec      = 9 * 3600;
 const int   daylightOffset_sec = 0;
@@ -40,12 +41,9 @@ bool autoNtp(void) {
   display.fillScreen(TFT_BLACK);  // 画面初期化
   display.setTextSize(1);
   display.setCursor(5, 10);
-  display.printf("Connecting to %s ", ssid);
+  display.println("Connecting...");
 
-  display.println("");
-  display.print(" ");
-
-  _wifi.begin(ssid, password);
+  _wifi.begin();
 
   display.println("");
   display.print(" ");
@@ -65,63 +63,6 @@ bool autoNtp(void) {
     return false;  // 時刻取得失敗でリターン
   }
 
-  // WiFi.disconnect(true);          // WiFi切断
-  // WiFi.mode(WIFI_OFF);            // WiFiオフ
-  display.fillScreen(TFT_BLACK);  // 画面消去
-
-  return true;  // 時刻取得成功でリターン
-}
-
-// NTPによる時刻取得関数
-bool ntp(void) {
-  uint8_t wifi_retry_cnt;
-  display.fillScreen(TFT_BLACK);  // 画面初期化
-  display.setTextSize(1);
-  display.setCursor(5, 10);
-  display.printf("Connecting to %s ", ssid);
-
-  display.println("");
-  display.print(" ");
-
-  WiFi.begin(ssid, password);  // WiFi接続開始
-  wifi_retry_cnt = 20;         // 0.5秒×20=最大10秒で接続タイムアウト
-
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    display.printf("*");  // 0.5秒毎に”＊”を表示
-
-    if (--wifi_retry_cnt == 0) {
-      WiFi.disconnect(true);  // タイムアウトでWiFiオフ
-      WiFi.mode(WIFI_OFF);
-
-      display.println("");
-      display.print(" ");
-      display.setTextColor(TFT_WHITE, TFT_RED);
-      display.println("CONNECTION FAIL");  // WiFi接続失敗表示
-
-      return false;  // 接続失敗でリターン
-    }
-  }
-
-  display.println("");
-  display.print(" ");
-  display.setTextColor(TFT_WHITE, TFT_GREEN);
-  display.println("CONNECTED");  // WiFi接続成功表示
-  delay(1000);
-
-  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);  // NTPによる時刻取得
-
-  if (!getLocalTime(&timeinfo)) {
-    display.printf("/nFailed to obtain time");  // 時刻取得失敗表示
-    WiFi.disconnect(true);                      // 時刻取得失敗でWiFiオフ
-    WiFi.mode(WIFI_OFF);
-    display.printf("/nFailed to obtain time");  // 時刻取得失敗表示
-
-    return false;  // 時刻取得失敗でリターン
-  }
-
-  WiFi.disconnect(true);          // WiFi切断
-  WiFi.mode(WIFI_OFF);            // WiFiオフ
   display.fillScreen(TFT_BLACK);  // 画面消去
 
   return true;  // 時刻取得成功でリターン
