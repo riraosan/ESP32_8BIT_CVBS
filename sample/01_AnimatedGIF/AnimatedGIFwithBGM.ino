@@ -27,8 +27,8 @@
 #include <M5Atom.h>
 #include <AudioFileSourceSD.h>
 #include <AudioGeneratorMP3.h>
-//If the sample BIT of the DAC is 32 bits,
-//you will need to replace the file in the patch folder with the file of the same name from the ESP8266Audio#1.9.5 library.
+// If the sample BIT of the DAC is 32 bits,
+// you will need to replace the file in the patch folder with the file of the same name from the ESP8266Audio#1.9.5 library.
 #include <AudioOutputI2S.h>
 #include <AudioFileSourceID3.h>
 #include <Ticker.h>
@@ -57,7 +57,7 @@ TaskHandle_t taskHandle;
 
 #define MP3_FILE_4 "/non4.mp3"
 #define GIF_FILE_4 "/non4.gif"
-#define WAIT_MP3_4 1000
+#define WAIT_MP3_4 100
 #define WAIT_GIF_4 1
 
 #define MP3_FILE_5 "/non5.mp3"
@@ -258,11 +258,13 @@ void loop() {
     //   msg = MESSAGE::kMSG_LOOP;
     //   break;
     case MESSAGE::kMSG_BEGIN_STORY4:
+      cvbs->setEpisode(4);
       setupAV(MP3_FILE_4, GIF_FILE_4);
       startAV(WAIT_MP3_4, WAIT_GIF_4);
       msg = MESSAGE::kMSG_LOOP;
       break;
     case MESSAGE::kMSG_BEGIN_STORY5:
+      cvbs->setEpisode(5);
       setupAV(MP3_FILE_5, GIF_FILE_5);
       startAV(WAIT_MP3_5, WAIT_GIF_5);
       msg = MESSAGE::kMSG_LOOP;

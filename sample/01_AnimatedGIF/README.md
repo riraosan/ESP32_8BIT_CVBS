@@ -48,8 +48,9 @@ lib_deps =
 ```
 
 > **Note**
-> 
+>
 > You must use the ESP_8_BIT_composite library modified by @riraosan.
+>
 > - Modified to switch between G25 and G26 outputs
 > - Modified to switch between double buffer and single buffer.
 
