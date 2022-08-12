@@ -29,14 +29,14 @@ If you want to build in Arduino IDE environment, please change the setting of pl
 I checked with arduino-esp32 library version. If you use arduino-esp32 library of series 2, you may step on compile error or operation bug. Please be aware of this.
 > For example, the arduino-esp32's I2S library has different names for the constant definitions to be set in the driver between Series 1 and Series 2. I didn't notice the difference and got stuck for a while.
 
-```yaml
+```yaml:platformio.ini
 [arduino-esp32]
 platform          = platformio/espressif32@^3.5.0
 ```
 
 I have put the GitHub link to the library under the `lib_deps =` directive. You can download the library from GitHub yourself and register it with the Arduino IDE.
 
-```yaml
+```yaml:platformio.ini
 lib_deps =
         https://github.com/m5stack/M5Atom.git
         https://github.com/FastLED/FastLED.git
@@ -58,7 +58,7 @@ lib_deps =
 
 - [x] If you want the composite video output port to be G26, please include `ENABLE_GPIO26` in the build flags. The default output port is G25.
 
-```yaml
+```yaml:platformio.ini
 build_flags =
         -D ENABLE_GPIO26
 ````
@@ -81,7 +81,7 @@ If you use a DAC (ES9038MQ2M) with 32 sample bits, you need to do the following 
 - [x] You should replace the files in the patch folder with the files in the ESP8266Audio folder. (i2s_write_expand is added)
 - [x] You must put the definition of BITS_PER_SAMPLE_32BIT_DAC in the build flags in platformio.ini.
 
-```yaml
+```yaml:platformio.ini
 build_flags =
         -D BITS_PER_SAMPLE_32BIT_DAC
 ````
