@@ -67,29 +67,24 @@ TaskHandle_t taskHandle;
 
 enum class MESSAGE : int {
   kMSG_LOOP,
-  kMSG_SIMPLIFY_ON,
-  kMSG_SIMPLIFY_OFF,
   kMSG_SETUP_STORY4,
   kMSG_SETUP_STORY5,
   kMSG_BEGIN_STORY4,
   kMSG_BEGIN_STORY5,
+  kMSG_BEGIN_ALL,
+  kMSG_BEGIN_SINGLE,
+  kMSG_NEXT_EPISODE,
   kMSG_MAX,
 };
 
-MESSAGE msg = MESSAGE::kMSG_LOOP;
+MESSAGE msg  = MESSAGE::kMSG_LOOP;
+MESSAGE mode = MESSAGE::kMSG_BEGIN_SINGLE;
 
 void handler(Button2 &btn) {
-  static int single_ck;
-
   switch (btn.getType()) {
     case clickType::single_click:
       Serial.print("single ");
-      single_ck++;
-      if (single_ck % 2) {
-        msg = MESSAGE::kMSG_SIMPLIFY_ON;
-      } else {
-        msg = MESSAGE::kMSG_SIMPLIFY_OFF;
-      }
+      // msg = MESSAGE::kMSG_BEGIN_ALL;
       break;
     case clickType::double_click:
       Serial.print("double ");
@@ -249,25 +244,34 @@ void setup() {
   log_d("Free Heap : %d", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));  //シングルバッファモードにするとメモリに余裕が生まれます。
 }
 
+void episode4(void) {
+  cvbs->setEpisode(4);
+  setupAV(MP3_FILE_4, GIF_FILE_4);
+  startAV(WAIT_MP3_4, WAIT_GIF_4);
+}
+
+void episode5(void) {
+  cvbs->setEpisode(5);
+  setupAV(MP3_FILE_5, GIF_FILE_5);
+  startAV(WAIT_MP3_5, WAIT_GIF_5);
+}
+
 void loop() {
   switch (msg) {
-    // case MESSAGE::kMSG_SIMPLIFY_ON:
-    //   msg = MESSAGE::kMSG_LOOP;
-    //   break;
-    // case MESSAGE::kMSG_SIMPLIFY_OFF:
-    //   msg = MESSAGE::kMSG_LOOP;
-    //   break;
     case MESSAGE::kMSG_BEGIN_STORY4:
-      cvbs->setEpisode(4);
-      setupAV(MP3_FILE_4, GIF_FILE_4);
-      startAV(WAIT_MP3_4, WAIT_GIF_4);
-      msg = MESSAGE::kMSG_LOOP;
+      episode4();
+      msg = MESSAGE::kMSG_NEXT_EPISODE;
       break;
     case MESSAGE::kMSG_BEGIN_STORY5:
-      cvbs->setEpisode(5);
-      setupAV(MP3_FILE_5, GIF_FILE_5);
-      startAV(WAIT_MP3_5, WAIT_GIF_5);
-      msg = MESSAGE::kMSG_LOOP;
+      episode5();
+      msg = MESSAGE::kMSG_NEXT_EPISODE;
+      break;
+    case MESSAGE::kMSG_NEXT_EPISODE:
+      if (mode == MESSAGE::kMSG_BEGIN_ALL) {
+        msg = MESSAGE::kMSG_LOOP;  // TODO
+      } else if (mode == MESSAGE::kMSG_BEGIN_SINGLE) {
+        msg = MESSAGE::kMSG_LOOP;
+      }
       break;
     default:
       break;
