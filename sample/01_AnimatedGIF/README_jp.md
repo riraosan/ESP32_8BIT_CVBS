@@ -25,7 +25,7 @@ Arduino IDE環境でビルドしたい場合は、platformio.iniの設定をArdu
 arduino-esp32ライブラリバージョンは1.0.6で動作確認をしました。2系のarduino-esp32ライブラリを使用する場合、コンパイルエラーや動作の不具合を踏む場合がありますのでご注意ください。
 （例えば、I2Sライブラリは1系と2系でドライバに設定する定数定義の名称が異なっていたりします。著者自身しばらくハマりました。）
 
-```yaml:platformio.ini
+```yaml
 [arduino-esp32]
 platform          = platformio/espressif32@^3.5.0
 ```
@@ -56,7 +56,7 @@ lib_deps =
 
 - [ ] コンポジットビデオ出力ポートをG26にしたい場合はビルドフラグに`ENABLE_GPIO26`を含めてください。デフォルト出力ポートはG25です。
 
-```yaml:platformio.ini
+```yaml
 build_flags =
         -D ENABLE_GPIO26
 ```
@@ -72,7 +72,7 @@ build_flags =
 - [ ] patchフォルダ内のファイルをESP8266Audioフォルダ内のファイルと置き換えてください。（i2s_write_expandを追加しています）
 - [ ] BITS_PER_SAMPLE_32BIT_DACの定義をビルドフラグに含めてください。
 
-```yaml:platformio.ini
+```yaml
 build_flags =
         -D BITS_PER_SAMPLE_32BIT_DAC
 ```

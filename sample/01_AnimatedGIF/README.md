@@ -58,7 +58,7 @@ lib_deps =
 
 - [x] If you want the composite video output port to be G26, please include `ENABLE_GPIO26` in the build flags. The default output port is G25.
 
-```yaml:platformio.ini
+```yaml
 build_flags =
         -D ENABLE_GPIO26
 ````
