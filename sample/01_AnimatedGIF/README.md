@@ -102,8 +102,6 @@ After you have stored the non5.gif, non5.mp3 files you have placed under the dat
 
 ## License
 
-//TODO Describe the link to the library author
-
 MIT License
 
 Feel free to modify or reprint. We would appreciate it if you could reprint the URL of this repository.
@@ -112,6 +110,10 @@ Feel free to modify or reprint. We would appreciate it if you could reprint the 
 
 If I could look out over the distance, it was on the shoulders of giants.
 We would like to thank the authors of each library. Thank you very much.
+
+- Special thanks to [bitbank2](https://github.com/bitbank2), author of [AnimatedGIF](https://github.com/bitbank2/AnimatedGIF).
+- Special thanks to [Roger-random](https://github.com/Roger-random), author of [ESP_8_BIT_composite](https://github.com/Roger-random/ESP_8_BIT_composite.git).
+- Special thanks to [lovyan03](https://github.com/lovyan03), author of [LovyanGFX(M5GFX)](https://github.com/lovyan03/LovyanGFX.git).
 
 ## Conclusion
 
