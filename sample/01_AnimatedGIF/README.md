@@ -96,10 +96,6 @@ After you have stored the non5.gif, non5.mp3 files you have placed under the dat
 - Turn on the ATOM Lite. The digital TV screen will display `Long Click: episode 5` on a black background.
 - If you click the G39 button, ATOM Lite will play Mobile Suit NON-CHAN episode 5 "OSクラッシャー".
 
-> **Note**
->
-> I do not guarantee that it will work if you single press the G39 button (I will address this soon.)
-
 ## License
 
 MIT License
