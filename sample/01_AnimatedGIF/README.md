@@ -29,14 +29,14 @@ If you want to build in Arduino IDE environment, please change the setting of pl
 I checked with arduino-esp32 library version 1.0.6. If you use arduino-esp32 library of series 2, you may step on compile error or operation bug. Please be aware of this.
 > For example, the arduino-esp32's I2S library has different names for the constant definitions to be set in the driver between Series 1 and Series 2. I didn't notice the difference and got stuck for a while.
 
-```yaml
+```yaml:platformio.ini
 [arduino-esp32]
 platform          = platformio/espressif32@^3.5.0
 ```
 
 I have put the GitHub link to the library under the `lib_deps =` directive. You can download the library from GitHub yourself and register it with the Arduino IDE.
 
-```yaml
+```yaml:platformio.ini
 lib_deps =
         https://github.com/m5stack/M5Atom.git
         https://github.com/FastLED/FastLED.git
@@ -48,8 +48,9 @@ lib_deps =
 ```
 
 > **Note**
-> 
+>
 > You must use the ESP_8_BIT_composite library modified by @riraosan.
+>
 > - Modified to switch between G25 and G26 outputs
 > - Modified to switch between double buffer and single buffer.
 
@@ -80,7 +81,7 @@ If you use a DAC (ES9038MQ2M) with 32 sample bits, you need to do the following 
 - [x] You should replace the files in the patch folder with the files in the ESP8266Audio folder. (i2s_write_expand is added)
 - [x] You must put the definition of BITS_PER_SAMPLE_32BIT_DAC in the build flags in platformio.ini.
 
-```yaml
+```yaml:platformio.ini
 build_flags =
         -D BITS_PER_SAMPLE_32BIT_DAC
 ````
@@ -101,8 +102,6 @@ After you have stored the non5.gif, non5.mp3 files you have placed under the dat
 
 ## License
 
-//TODO Describe the link to the library author
-
 MIT License
 
 Feel free to modify or reprint. We would appreciate it if you could reprint the URL of this repository.
@@ -111,6 +110,10 @@ Feel free to modify or reprint. We would appreciate it if you could reprint the 
 
 If I could look out over the distance, it was on the shoulders of giants.
 We would like to thank the authors of each library. Thank you very much.
+
+- Special thanks to [bitbank2](https://github.com/bitbank2), author of [AnimatedGIF](https://github.com/bitbank2/AnimatedGIF).
+- Special thanks to [Roger-random](https://github.com/Roger-random), author of [ESP_8_BIT_composite](https://github.com/Roger-random/ESP_8_BIT_composite.git).
+- Special thanks to [lovyan03](https://github.com/lovyan03), author of [LovyanGFX(M5GFX)](https://github.com/lovyan03/LovyanGFX.git).
 
 ## Conclusion
 

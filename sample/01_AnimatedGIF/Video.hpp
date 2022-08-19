@@ -15,6 +15,7 @@ static M5Canvas        _sprite(&_display);
 class Video {
 public:
   Video() : _filename(""),
+            _story(0),
             _isActive(false),
             _isOpen(false),
             _frameCount(0) {
@@ -47,7 +48,7 @@ public:
 
   void showGuide(void) {
     _display.setCursor(10, 10);
-    _display.print("Single Click: Episode 4");
+    _display.print("Double Click: Episode 4");
     _display.setCursor(10, 10 + 9);
     _display.print("  Long Click: Episode 5");
   }
@@ -61,31 +62,36 @@ public:
 
         int actualWait = _waitTime - (lgfx::v1::millis() - _lTimeStart);
 
-        // Fine-tune the synchronization of BGM and GIF frames
-        if (153 < _frameCount && _frameCount < 281) {
-          actualWait += 10;
-        } else if (282 <= _frameCount && _frameCount <= 404) {
-          actualWait += 10;  // OK
-        } else if (405 <= _frameCount && _frameCount <= 454) {
-          actualWait += 20;  // OK
-        } else if (455 <= _frameCount && _frameCount <= 479) {
-          actualWait += 45;  // OK
-        } else if (480 <= _frameCount && _frameCount <= 508) {
-          actualWait += 30;  // OK
-        } else if (509 <= _frameCount && _frameCount <= 637) {
-          actualWait += 10;  // OK
-        } else if (638 <= _frameCount && _frameCount <= 697) {
-          actualWait += 27;  // OK
-        } else if (698 <= _frameCount && _frameCount <= 771) {
-          actualWait += 15;  // OK
+        if (_story == 5) {
+          // Fine-tune the synchronization of BGM and GIF frames
+          if (153 <= _frameCount && _frameCount <= 281) {
+            actualWait += 10;
+          } else if (282 <= _frameCount && _frameCount <= 404) {
+            actualWait += 10;  // OK
+          } else if (405 <= _frameCount && _frameCount <= 454) {
+            actualWait += 20;  // OK
+          } else if (455 <= _frameCount && _frameCount <= 479) {
+            actualWait += 45;  // OK
+          } else if (480 <= _frameCount && _frameCount <= 508) {
+            actualWait += 30;  // OK
+          } else if (509 <= _frameCount && _frameCount <= 637) {
+            actualWait += 10;  // OK
+          } else if (638 <= _frameCount && _frameCount <= 697) {
+            actualWait += 27;  // OK
+          } else if (698 <= _frameCount && _frameCount <= 771) {
+            actualWait += 15;  // OK
+          }
+        } else if (_story == 4) {  //-1478
+          actualWait -= 1;
+        } else {
+          //?
         }
 
         if (actualWait >= 0) {
           delay(actualWait);
+        } else {
+          log_i("[%04d], GIF _waitTime, %04d [ms], delta, %04d [ms]", _frameCount, _waitTime, actualWait);
         }
-
-        log_i("[%04d], GIF _waitTime, %04d [ms], delta, %04d [ms]", _frameCount, _waitTime, actualWait);
-
         _frameCount++;
       } else {
         stop();
@@ -142,6 +148,10 @@ public:
 
   bool state(void) {
     return _isActive;
+  }
+
+  void setEpisode(int epi) {
+    _story = epi;
   }
 
 private:
@@ -277,6 +287,7 @@ private:
 
   AnimatedGIF _gif;
   String      _filename;
+  int         _story;
 
   bool _isActive;
   bool _isOpen;

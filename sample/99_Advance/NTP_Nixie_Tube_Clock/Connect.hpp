@@ -42,9 +42,11 @@ public:
       _server.send(200, "text/html", _content);
     });
 
-    _config.autoReconnect = true;
-    _config.ota           = AC_OTA_BUILTIN;
-    _config.apid          = _apName;
+    _config.autoReconnect     = true;
+    _config.reconnectInterval = 1;
+
+    _config.ota  = AC_OTA_BUILTIN;
+    _config.apid = _apName;
     _portal.config(_config);
 
     bool result = false;

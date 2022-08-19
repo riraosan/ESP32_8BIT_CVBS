@@ -91,15 +91,18 @@ dataフォルダ以下に配置しているnon5.gif, non5.mp3ファイルをmicr
 
 ## License
 
-//TODO ライブラリ作者へのリンクを記述する
 MIT License
 
 改修・転載はどうぞご自由に。こちらのリポジトリのURLを転載してくださると幸いです。
 
 ## Acknowledgements
 
-それぞれのライブラリ作者の方々に感謝いたします。ありがとうございました。
 私がかなたを見渡せたのだとしたら、それは巨人の肩の上に乗っていたからです。
+それぞれのライブラリ作者の方々に感謝いたします。ありがとうございました。
+
+- Special thanks to [bitbank2](https://github.com/bitbank2), author of [AnimatedGIF](https://github.com/bitbank2/AnimatedGIF).
+- Special thanks to [Roger-random](https://github.com/Roger-random), author of [ESP_8_BIT_composite](https://github.com/Roger-random/ESP_8_BIT_composite.git).
+- Special thanks to [lovyan03](https://github.com/lovyan03), author of [LovyanGFX(M5GFX)](https://github.com/lovyan03/LovyanGFX.git).
 
 ## Conclusion
 
