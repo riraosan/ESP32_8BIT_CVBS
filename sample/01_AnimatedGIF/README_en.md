@@ -14,8 +14,8 @@ I have tested this sample program with the following devices.
 - [ATOM Speaker Kit (NS4168)](https://www.switch-science.com/catalog/7092/)
 - microSD 16M(TF-CARD)
 - External Digital Analog Converter(DAC Bit per sample is 32bit or 16bit)
-  - NS4168(Bit per sample 16bit)
-  - ES9038MQ2M(Bit per sample 32bi)
+  - NS4168(16Bit per sample)
+  - ES9038MQ2M(32Bit per sample)
 
 ## How to build
 
@@ -26,7 +26,7 @@ If you want to build in Arduino IDE environment, please change the setting of pl
 
 ### Library's
 
-I checked with arduino-esp32 library version. If you use arduino-esp32 library of series 2, you may step on compile error or operation bug. Please be aware of this.
+I checked with arduino-esp32 library version 1.0.6. If you use arduino-esp32 library of series 2, you may step on compile error or operation bug. Please be aware of this.
 > For example, the arduino-esp32's I2S library has different names for the constant definitions to be set in the driver between Series 1 and Series 2. I didn't notice the difference and got stuck for a while.
 
 ```yaml
