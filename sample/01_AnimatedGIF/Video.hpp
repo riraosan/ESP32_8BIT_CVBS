@@ -90,7 +90,7 @@ public:
         if (actualWait >= 0) {
           delay(actualWait);
         } else {
-          log_i("[%04d], GIF _waitTime, %04d [ms], delta, %04d [ms]", _frameCount, _waitTime, actualWait);
+          //log_i("[%04d], GIF _waitTime, %04d [ms], delta, %04d [ms]", _frameCount, _waitTime, actualWait);
         }
         _frameCount++;
       } else {
