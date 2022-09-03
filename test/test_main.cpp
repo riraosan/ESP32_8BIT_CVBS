@@ -47,8 +47,8 @@ SOFTWARE.
 //#define ANIMATED_GIF  // OK ATOMIC SPKで動作確認済み。mp3とgifはTFカードへ保存してください。
 //#define WEBRADIO              // OK ATOMIC SPKで動作確認済み。CVBSはI2S0を使用。AudioはI2S1を使用
 //#define MATRIXRAIN            // OK
-//#define NTP_NIXIE_TUBE_CLOCK  // OK
-#define TEST_IMU //OK
+#define NTP_NIXIE_TUBE_CLOCK  // OK
+//#define TEST_IMU              //OK
 
 #if defined(RGB_TEST)  // basic
 

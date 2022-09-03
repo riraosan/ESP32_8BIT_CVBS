@@ -22,6 +22,7 @@
 ;SOFTWARE.
 */
 
+//note: for ATOM Matrix with Digital or CRT NTSC(PAL) Display
 #include <Arduino.h>
 
 #include <M5Atom.h>
