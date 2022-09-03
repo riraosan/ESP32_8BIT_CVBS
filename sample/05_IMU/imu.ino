@@ -186,8 +186,6 @@ void MPU6886Test() {
     canvas.setCursor(10, 125);
     canvas.printf("%.2f", phi);
 
-    // delay(20);
-
     z.end_point.x = 0;
     z.end_point.y = 0;
     z.end_point.z = 60;
@@ -207,15 +205,12 @@ void MPU6886Test() {
 
     canvas.setTextColor(TFT_WHITE);
     canvas.setTextSize(1);
-    canvas.fillRect(0,0,52,18,canvas.color565(20,20,20));
-    canvas.drawString("MPU6886",5,5,1);
+    canvas.fillRect(0, 0, 52, 18, canvas.color565(20, 20, 20));
+    canvas.drawString("MPU6886", 5, 5, 1);
 
     last_theta = theta;
     last_phi   = phi;
 
-    // M5.update();
-    //  checkAXPPress();
-    // canvas.pushSprite(0, 0);
     canvas.pushRotateZoom(0, 1.1, 1.2);
     display.display();
   }
