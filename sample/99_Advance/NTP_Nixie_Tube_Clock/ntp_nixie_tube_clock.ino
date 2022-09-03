@@ -55,10 +55,12 @@ bool autoNtp(void) {
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);  // NTPによる時刻取得
 
   if (!getLocalTime(&timeinfo)) {
-    display.printf("/nFailed to obtain time");  // 時刻取得失敗表示
-    WiFi.disconnect(true);                      // 時刻取得失敗でWiFiオフ
+    WiFi.disconnect(true);  // 時刻取得失敗でWiFiオフ
     WiFi.mode(WIFI_OFF);
-    display.printf("/nFailed to obtain time");  // 時刻取得失敗表示
+
+    display.setTextColor(TFT_RED);
+    display.setTextSize(2);
+    display.printf(" Failed to obtain time");  // 時刻取得失敗表示
 
     return false;  // 時刻取得失敗でリターン
   }
