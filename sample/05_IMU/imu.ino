@@ -4,6 +4,7 @@
 #include <M5GFX.h>
 #include <ESP32_8BIT_CVBS.h>
 static ESP32_8BIT_CVBS display;
+static M5Canvas        canvas(&display);
 
 typedef struct {
   double x;
@@ -104,7 +105,7 @@ bool point2DToDisPoint(point_2d_t *point, uint8_t *x, uint8_t *y) {
   return true;
 }
 
-bool printLine3D(ESP32_8BIT_CVBS *display, line_3d_t *line, uint32_t color) {
+bool printLine3D(M5Canvas *canvas, line_3d_t *line, uint16_t color) {
   uint8_t    start_x, start_y, end_x, end_y;
   point_2d_t point;
   point3Dto2D(&line->start_point, &point);
@@ -112,7 +113,7 @@ bool printLine3D(ESP32_8BIT_CVBS *display, line_3d_t *line, uint32_t color) {
   point3Dto2D(&line->end_point, &point);
   point2DToDisPoint(&point, &end_x, &end_y);
 
-  display->drawLine(start_x, start_y, end_x, end_y, color);
+  canvas->drawLine(start_x, start_y, end_x, end_y, color);
 
   return true;
 }
@@ -154,12 +155,12 @@ void MPU6886Test() {
     theta = alpha * theta + (1 - alpha) * last_theta;
     phi   = alpha * phi + (1 - alpha) * last_phi;
 
-    display.fillRect(0, 0, 240, 135, TFT_BLACK);
-    display.setTextSize(1);
-    display.setCursor(10, 115);
-    display.printf("%.2f", theta);
-    display.setCursor(10, 125);
-    display.printf("%.2f", phi);
+    canvas.fillSprite(TFT_BLACK);
+    canvas.setTextSize(1);
+    canvas.setCursor(10, 115);
+    canvas.printf("%.2f", theta);
+    canvas.setCursor(10, 125);
+    canvas.printf("%.2f", phi);
 
     // delay(20);
 
@@ -173,35 +174,47 @@ void MPU6886Test() {
     for (int n = 0; n < 12; n++) {
       RotatePoint(&rect_source[n].start_point, &rect_dis.start_point, theta, phi, (double)0);
       RotatePoint(&rect_source[n].end_point, &rect_dis.end_point, theta, phi, (double)0);
-      printLine3D(&display, &rect_dis, TFT_WHITE);
+      printLine3D(&canvas, &rect_dis, TFT_WHITE);
     }
-    // display.fillRect(0,0,160,80,BLACK);
-    printLine3D(&display, &x, TFT_RED);
-    printLine3D(&display, &y, TFT_GREEN);
-    printLine3D(&display, &z, TFT_BLUE);
+    // canvas.fillRect(0,0,160,80,BLACK);
+    printLine3D(&canvas, &x, TFT_RED);
+    printLine3D(&canvas, &y, TFT_GREEN);
+    printLine3D(&canvas, &z, TFT_BLUE);
 
     /*
-    display.setTextColor(TFT_WHITE);
-    display.setTextSize(1);
-    display.fillRect(0,0,52,18,display.color565(20,20,20));
-    display.drawString("MPU6886",5,5,1);
+    canvas.setTextColor(TFT_WHITE);
+    canvas.setTextSize(1);
+    canvas.fillRect(0,0,52,18,canvas.color565(20,20,20));
+    canvas.drawString("MPU6886",5,5,1);
     */
 
     last_theta = theta;
     last_phi   = phi;
 
-    M5.update();
-    // checkAXPPress();
+    // M5.update();
+    //  checkAXPPress();
+    // canvas.pushSprite(0, 0);
+    canvas.pushRotateZoom(0, 1.1, 1.2);
     display.display();
   }
 }
 
 void setup() {
   display.begin();
+  display.setColorDepth(8);
+  display.setRotation(0);
+  display.fillScreen(TFT_BLACK);
+  display.setPivot((240 >> 1) + 5, (200 >> 1) + 45);
   display.startWrite();
 
-  M5.begin(false, false, true);
-  //M5.IMU.Init();  // Init IMU sensor.
+  if (!canvas.createSprite(240, 200)) {
+    log_e("cannot allocate sprite buffer");
+  }
+
+  canvas.setColorDepth(16);
+
+  M5.begin(false, true, false);
+  M5.IMU.Init();  // Init IMU sensor.
 }
 
 void loop() {
