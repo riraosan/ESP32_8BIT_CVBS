@@ -26,10 +26,11 @@ SOFTWARE.
 #include <unity.h>
 #include <Arduino.h>
 
-//#define RGB_TEST              // OK
+#define RGB_TEST              // OK
 //#define PARTY_PARROT          // OK
 //#define CLOCK_SAMPLE          // OK
 //#define FLASH_MEM_SPRITE      // OK
+//#define COLLISION_CIRCLES     // NG メモリ不足
 //#define MOVING_CIRCLES        // OK
 //#define MOVING_ICONS          // OK
 //#define ROTATED_ZOOMS_SAMPLE  // OK
@@ -47,38 +48,36 @@ SOFTWARE.
 //#define ANIMATED_GIF          // OK ATOMIC SPKで動作確認済み。mp3とgifはTFカードへ保存してください。
 //#define WEBRADIO              // OK ATOMIC SPKで動作確認済み。CVBSはI2S0を使用。AudioはI2S1を使用
 //#define MATRIXRAIN            // OK
-#define NTP_NIXIE_TUBE_CLOCK  // OK
-//#define TEST_IMU              //OK
+//#define NTP_NIXIE_TUBE_CLOCK  // OK
+//#define TEST_IMU              // OK
 
 #include <M5Unified.h>
 
 //使用するサンプルに応じて設定を変更してください
-//StickCPlusはoutput_powerをtrueに設定すると外部に5Vを出力します
-//ATOM Matrixではinternal_imuをtrueに設定します
+// StickCPlusはoutput_powerをtrueに設定すると外部に5Vを出力します
+// ATOM Matrixではinternal_imuをtrueに設定します
 void initM5Stack(void) {
-  auto cfg            = M5.config();
+  auto cfg = M5.config();
 
-#if defined(ARDUINO)
-  cfg.serial_baudrate = 115200;  // default=115200. if "Serial" is not needed, set it to 0.
-#endif
-  cfg.clear_display   = true;    // default=true. clear the screen when begin.
-  cfg.output_power    = true;    // default=true. use external port 5V output.
-  cfg.internal_imu    = true;    // default=true. use internal IMU.
-  // cfg.internal_rtc  = true;  // default=true. use internal RTC.
-  // cfg.internal_spk  = true;  // default=true. use internal speaker.
-  // cfg.internal_mic  = true;  // default=true. use internal microphone.
-  // cfg.external_imu  = true;  // default=false. use Unit Accel & Gyro.
-  // cfg.external_rtc  = true;  // default=false. use Unit RTC.
-  // cfg.external_spk  = false; // default=false. use SPK_HAT / ATOMIC_SPK
-  // cfg.external_spk_detail.omit_atomic_spk = true; // omit ATOMIC SPK
-  // cfg.external_spk_detail.omit_spk_hat    = true; // omit SPK HAT
-  cfg.led_brightness = 0;  // default= 0. system LED brightness (0=off / 255=max) (※ not NeoPixel)
+  // cfg.serial_baudrate                     = 115200; // default=115200. if "Serial" is not needed, set it to 0.
+  // cfg.clear_display                       = true;   // default=true. clear the screen when begin.
+  // cfg.output_power                        = true;   // default=true. use external port 5V output.
+  // cfg.internal_imu                        = true;   // default=true. use internal IMU.
+  // cfg.internal_rtc                        = true;   // default=true. use internal RTC.
+  // cfg.internal_spk                        = true;   // default=true. use internal speaker.
+  // cfg.internal_mic                        = true;   // default=true. use internal microphone.
+  // cfg.external_imu                        = true;   // default=false. use Unit Accel & Gyro.
+  // cfg.external_rtc                        = true;   // default=false. use Unit RTC.
+  // cfg.external_spk                        = false;  // default=false. use SPK_HAT / ATOMIC_SPK
+  // cfg.external_spk_detail.omit_atomic_spk = true;   // omit ATOMIC SPK
+  // cfg.external_spk_detail.omit_spk_hat    = true;   // omit SPK HAT
+  // cfg.led_brightness                      = 0;      // default= 0. system LED brightness (0=off / 255=max) (※ not NeoPixel)
 
   M5.begin(cfg);
 
   if (M5.Rtc.isEnabled()) {
-    //  rtc direct setting.    YYYY  MM  DD      hh  mm  ss
-    M5.Rtc.setDateTime( {{ 2021, 12, 31 }, { 12, 34, 56 }} );
+    // rtc direct setting.    YYYY  MM  DD      hh  mm  ss
+    // M5.Rtc.setDateTime({{2021, 12, 31}, {12, 34, 56}});
   }
 
   /// For models with LCD : backlight control (0~255)
