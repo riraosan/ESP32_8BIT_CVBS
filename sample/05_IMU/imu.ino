@@ -22,10 +22,9 @@
 ;SOFTWARE.
 */
 
-//note: for ATOM Matrix with Digital or CRT NTSC(PAL) Display
+// note: for ATOM Matrix with Digital or CRT NTSC(PAL) Display
 #include <Arduino.h>
 
-#include <M5Atom.h>
 #include <M5GFX.h>
 #include <ESP32_8BIT_CVBS.h>
 static ESP32_8BIT_CVBS display;
@@ -168,7 +167,7 @@ void MPU6886Test() {
   }
 
   while (1) {
-    M5.IMU.getAccelData(&accX, &accY, &accZ);
+    M5.Imu.getAccel(&accX, &accY, &accZ);
 
     if ((accX < 1) && (accX > -1)) {
       theta = asin(-accX) * 57.295;
@@ -231,8 +230,7 @@ void setup() {
 
   canvas.setColorDepth(16);
 
-  M5.begin(false, true, false);
-  M5.IMU.Init();  // Init IMU sensor.
+  initM5Stack();
 }
 
 void loop() {

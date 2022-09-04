@@ -44,11 +44,141 @@ SOFTWARE.
 //#define GAMEOFLIFE            // OK
 //#define BARGRAPH              // OK
 //#define ANALOGMETER           // OK
-//#define ANIMATED_GIF  // OK ATOMIC SPKで動作確認済み。mp3とgifはTFカードへ保存してください。
+//#define ANIMATED_GIF          // OK ATOMIC SPKで動作確認済み。mp3とgifはTFカードへ保存してください。
 //#define WEBRADIO              // OK ATOMIC SPKで動作確認済み。CVBSはI2S0を使用。AudioはI2S1を使用
 //#define MATRIXRAIN            // OK
 #define NTP_NIXIE_TUBE_CLOCK  // OK
 //#define TEST_IMU              //OK
+
+#include <M5Unified.h>
+
+//使用するサンプルに応じて設定を変更してください
+//StickCPlusはoutput_powerをtrueに設定すると外部に5Vを出力します
+//ATOM Matrixではinternal_imuをtrueに設定します
+void initM5Stack(void) {
+  auto cfg            = M5.config();
+
+#if defined(ARDUINO)
+  cfg.serial_baudrate = 115200;  // default=115200. if "Serial" is not needed, set it to 0.
+#endif
+  cfg.clear_display   = true;    // default=true. clear the screen when begin.
+  cfg.output_power    = true;    // default=true. use external port 5V output.
+  cfg.internal_imu    = true;    // default=true. use internal IMU.
+  // cfg.internal_rtc  = true;  // default=true. use internal RTC.
+  // cfg.internal_spk  = true;  // default=true. use internal speaker.
+  // cfg.internal_mic  = true;  // default=true. use internal microphone.
+  // cfg.external_imu  = true;  // default=false. use Unit Accel & Gyro.
+  // cfg.external_rtc  = true;  // default=false. use Unit RTC.
+  // cfg.external_spk  = false; // default=false. use SPK_HAT / ATOMIC_SPK
+  // cfg.external_spk_detail.omit_atomic_spk = true; // omit ATOMIC SPK
+  // cfg.external_spk_detail.omit_spk_hat    = true; // omit SPK HAT
+  cfg.led_brightness = 0;  // default= 0. system LED brightness (0=off / 255=max) (※ not NeoPixel)
+
+  M5.begin(cfg);
+
+  if (M5.Rtc.isEnabled()) {
+    //  rtc direct setting.    YYYY  MM  DD      hh  mm  ss
+    M5.Rtc.setDateTime( {{ 2021, 12, 31 }, { 12, 34, 56 }} );
+  }
+
+  /// For models with LCD : backlight control (0~255)
+  M5.Display.setBrightness(64);
+
+  if (M5.Display.width() < M5.Display.height()) {  /// Landscape mode.
+    M5.Display.setRotation(M5.Display.getRotation() ^ 1);
+  }
+
+  int textsize = M5.Display.height() / 160;
+  if (textsize == 0) {
+    textsize = 2;
+  }
+  M5.Display.setTextSize(textsize);
+
+  // run-time branch : hardware model check
+  const char* name;
+  switch (M5.getBoard()) {
+#if defined(CONFIG_IDF_TARGET_ESP32C3)
+    case m5::board_t::board_M5StampC3:
+      name = "StampC3";
+      break;
+    case m5::board_t::board_M5StampC3U:
+      name = "StampC3U";
+      break;
+#else
+    case m5::board_t::board_M5Stack:
+      name = "Stack";
+      break;
+    case m5::board_t::board_M5StackCore2:
+      name = "StackCore2";
+      break;
+    case m5::board_t::board_M5StickC:
+      name = "StickC";
+      break;
+    case m5::board_t::board_M5StickCPlus:
+      name = "StickCPlus";
+      break;
+    case m5::board_t::board_M5StackCoreInk:
+      name = "CoreInk";
+      break;
+    case m5::board_t::board_M5Paper:
+      name = "Paper";
+      break;
+    case m5::board_t::board_M5Tough:
+      name = "Tough";
+      break;
+    case m5::board_t::board_M5Station:
+      name = "Station";
+      break;
+    case m5::board_t::board_M5Atom:
+      name = "ATOM";
+      break;
+    case m5::board_t::board_M5AtomPsram:
+      name = "ATOM PSRAM";
+      break;
+    case m5::board_t::board_M5AtomU:
+      name = "ATOM U";
+      break;
+    case m5::board_t::board_M5TimerCam:
+      name = "TimerCamera";
+      break;
+    case m5::board_t::board_M5StampPico:
+      name = "StampPico";
+      break;
+#endif
+    default:
+      name = "Who am I ?";
+      break;
+  }
+
+  M5.Display.startWrite();
+  M5.Display.print("Core:");
+  M5.Display.println(name);
+  ESP_LOGI("setup", "core:%s", name);
+
+  // run-time branch : imu model check
+  switch (M5.Imu.getType()) {
+    case m5::imu_t::imu_mpu6050:
+      name = "MPU6050";
+      break;
+    case m5::imu_t::imu_mpu6886:
+      name = "MPU6886";
+      break;
+    case m5::imu_t::imu_mpu9250:
+      name = "MPU9250";
+      break;
+    case m5::imu_t::imu_sh200q:
+      name = "SH200Q";
+      break;
+    default:
+      name = "none";
+      break;
+  }
+  M5.Display.print("IMU:");
+  M5.Display.println(name);
+  M5.Display.endWrite();
+  ESP_LOGI("setup", "imu:%s", name);
+  M5.Power.setLed(0);
+}
 
 #if defined(RGB_TEST)  // basic
 

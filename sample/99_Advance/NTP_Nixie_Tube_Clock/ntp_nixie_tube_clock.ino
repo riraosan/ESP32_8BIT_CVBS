@@ -16,7 +16,6 @@ Modified by @riraosan.github.io for ATOM Lite.
 
 #define NOT_USEATOM
 
-#include <M5Unified.h>
 #include <ESP32_8BIT_CVBS.h>
 static ESP32_8BIT_CVBS display;
 
@@ -135,34 +134,7 @@ void setupSprite(void) {
   display.startWrite();
 }
 
-void initM5Stack(void) {
-  auto cfg = M5.config();
-
-#if defined(ARDUINO)
-  cfg.serial_baudrate = 115200;  // default=115200. if "Serial" is not needed, set it to 0.
-#endif
-  cfg.clear_display = true;  // default=true. clear the screen when begin.
-  cfg.output_power  = true;  // default=true. use external port 5V output.
-  cfg.internal_imu  = true;  // default=true. use internal IMU.
-  cfg.internal_rtc  = true;  // default=true. use internal RTC.
-  // cfg.internal_spk  = true;  // default=true. use internal speaker.
-  // cfg.internal_mic  = true;  // default=true. use internal microphone.
-  // cfg.external_imu  = true;  // default=false. use Unit Accel & Gyro.
-  // cfg.external_rtc  = true;  // default=false. use Unit RTC.
-  // cfg.external_spk  = false; // default=false. use SPK_HAT / ATOMIC_SPK
-  // cfg.external_spk_detail.omit_atomic_spk = true; // omit ATOMIC SPK
-  // cfg.external_spk_detail.omit_spk_hat    = true; // omit SPK HAT
-  // cfg.led_brightness = 64;   // default= 0. system LED brightness (0=off / 255=max) (※ not NeoPixel)
-
-  M5.begin(cfg);
-  M5.Power.setLed(0);
-}
-
 void setup() {
-#if defined(NOT_USEATOM)
-  initM5Stack();
-#endif
-
   setupSprite();
 
   // 時刻取得に失敗した場合は、動作停止
