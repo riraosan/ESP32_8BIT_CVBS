@@ -38,8 +38,8 @@ I have put the GitHub link to the library under the `lib_deps =` directive. You 
 
 ```yaml:platformio.ini
 lib_deps =
-        https://github.com/m5stack/M5Atom.git
-        https://github.com/FastLED/FastLED.git
+        ;https://github.com/m5stack/M5Atom.git
+        ;https://github.com/FastLED/FastLED.git
         https://github.com/bitbank2/AnimatedGIF.git#1.4.7
         https://github.com/m5stack/M5Unified.git#0.0.7
         https://github.com/riraosan/ESP_8_BIT_composite.git ;for ESP32_8BIT_CVBS
