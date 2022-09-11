@@ -62,8 +62,8 @@ public:
 
         int actualWait = _waitTime - (lgfx::v1::millis() - _lTimeStart);
 
+        // Fine-tune the synchronization of BGM and GIF frames
         if (_story == 5) {
-          // Fine-tune the synchronization of BGM and GIF frames
           if (153 <= _frameCount && _frameCount <= 281) {
             actualWait += 10;
           } else if (282 <= _frameCount && _frameCount <= 404) {
@@ -79,12 +79,27 @@ public:
           } else if (638 <= _frameCount && _frameCount <= 697) {
             actualWait += 27;  // OK
           } else if (698 <= _frameCount && _frameCount <= 771) {
-            actualWait += 15;  // OK
+            actualWait += 22;  // OK
           }
         } else if (_story == 4) {  //-1478
-          actualWait -= 1;
-        } else {
-          //?
+          // actualWait -= 1;
+          if (0 <= _frameCount && _frameCount < 200) {
+            actualWait -= 1;
+          } else if (200 <= _frameCount && _frameCount < 400) {
+            actualWait -= 2;
+          } else if (400 <= _frameCount && _frameCount < 600) {
+            actualWait -= 0;
+          } else if (600 <= _frameCount && _frameCount < 800) {
+            actualWait -= 2;
+          } else if (800 <= _frameCount && _frameCount < 1000) {
+            actualWait -= 0;
+          } else if (1000 <= _frameCount && _frameCount < 1200) {
+            actualWait -= 1;
+          } else if (1200 <= _frameCount && _frameCount < 1400) {
+            actualWait -= 1;
+          } else if (1400 <= _frameCount && _frameCount < 1566) {
+            actualWait -= 1;
+          }
         }
 
         if (actualWait >= 0) {

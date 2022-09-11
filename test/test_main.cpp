@@ -26,7 +26,7 @@ SOFTWARE.
 #include <unity.h>
 #include <Arduino.h>
 
-#define RGB_TEST              // OK
+//#define RGB_TEST              // OK
 //#define PARTY_PARROT          // OK
 //#define CLOCK_SAMPLE          // OK
 //#define FLASH_MEM_SPRITE      // OK
@@ -45,7 +45,7 @@ SOFTWARE.
 //#define GAMEOFLIFE            // OK
 //#define BARGRAPH              // OK
 //#define ANALOGMETER           // OK
-//#define ANIMATED_GIF          // OK ATOMIC SPKで動作確認済み。mp3とgifはTFカードへ保存してください。
+#define ANIMATED_GIF          // OK ATOMIC SPKで動作確認済み。mp3とgifはTFカードへ保存してください。
 //#define WEBRADIO              // OK ATOMIC SPKで動作確認済み。CVBSはI2S0を使用。AudioはI2S1を使用
 //#define MATRIXRAIN            // OK
 //#define NTP_NIXIE_TUBE_CLOCK  // OK

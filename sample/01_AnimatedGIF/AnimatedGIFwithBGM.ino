@@ -24,7 +24,7 @@
 
 #include <Arduino.h>
 #include <WiFi.h>
-#include <M5Atom.h>
+//#include <M5Atom.h>
 #include <AudioFileSourceSD.h>
 #include <AudioGeneratorMP3.h>
 // If the sample BIT of the DAC is 32 bits,
@@ -141,10 +141,10 @@ void MDCallback(void *cbData, const char *type, bool isUnicode, const char *stri
 void audioTask(void *) {
   for (;;) {
     if (isActive) {
-      M5.dis.drawpix(0, 0x00FF00);
+      // M5.dis.drawpix(0, 0x00FF00);
       if (!mp3->loop()) {
         isActive = false;
-        M5.dis.drawpix(0, 0x000000);
+        // M5.dis.drawpix(0, 0x000000);
         mp3->stop();
       }
     }
@@ -230,7 +230,7 @@ void setup() {
   button.begin(39);  // G39
 
   // SD
-  M5.begin(true, false, true);
+  // M5.begin();
   SPI.begin(SCK, MISO, MOSI, -1);
   SPI.setDataMode(SPI_MODE3);
   if (!SD.begin(-1, SPI, 80000000)) {  // 80MHz(MAX)
