@@ -1,5 +1,5 @@
-#define WIFI_SSID "your_ssid"
-#define WIFI_PASS "your_pass"
+#define WIFI_SSID "Buffalo-C130"
+#define WIFI_PASS "nnkxnpshmhai6"
 
 #include <Arduino.h>
 #include <SPI.h>
@@ -27,16 +27,16 @@ static constexpr uint8_t m5spk_virtual_channel = 0;
 /// set web radio station url
 static constexpr const char* station_list[][2] =
     {
-        {"MAXXED Out", "http://149.56.195.94:8015/steam"},
-        {"Asia Dream", "http://igor.torontocast.com:1025/;.-mp3"},
-        {"thejazzstream", "http://wbgo.streamguys.net/thejazzstream"},
-        {"181-beatles_128k", "http://listen.181fm.com/181-beatles_128k.mp3"},
-        {"illstreet-128-mp3", "http://ice1.somafm.com/illstreet-128-mp3"},
-        {"bootliquor-128-mp3", "http://ice1.somafm.com/bootliquor-128-mp3"},
-        {"dronezone-128-mp3", "http://ice1.somafm.com/dronezone-128-mp3"},
+        {"Japan Hits", "http://igor.torontocast.com:1025/stream"},
+        {"J-Pop Powerplay", "http://kathy.torontocast.com:3560/stream"},
+        {"J-Pop Powerplay Kawaii", "http://kathy.torontocast.com:3060/stream"},
+        {"J-Pop Sakura 懐かしい", "http://igor.torontocast.com:1710/stream"},
+        {"J-Rock Powerplay", "http://kathy.torontocast.com:3340/stream"},
+        {"J-Club Hip Hop", "http://kathy.torontocast.com:3350/stream"},
+        {"Jazz Sakura", "http://kathy.torontocast.com:3330/stream"},
         {"Lite Favorites", "http://naxos.cdnstream.com:80/1255_128"},
-        {"Classic FM", "http://media-ice.musicradio.com:80/ClassicFMMP3"},
 };
+
 static constexpr const size_t stations = sizeof(station_list) / sizeof(station_list[0]);
 
 class AudioOutputM5Speaker : public AudioOutput {
@@ -169,8 +169,8 @@ public:
   }
 };
 
-static constexpr const int       preallocateBufferSize = 32 * 1024;//5 * 1024 ボツ音周期的発生。ボツ音間の周期が長くなるように修正。
-static constexpr const int       preallocateCodecSize  = 29192;  // MP3 codec max mem needed
+static constexpr const int       preallocateBufferSize = 32 * 1024;  // 5 * 1024 ボツ音周期的発生。ボツ音間の周期が長くなるように修正。
+static constexpr const int       preallocateCodecSize  = 29192;      // MP3 codec max mem needed
 static void*                     preallocateBuffer     = nullptr;
 static void*                     preallocateCodec      = nullptr;
 static constexpr size_t          WAVE_SIZE             = 320;
@@ -238,8 +238,8 @@ static void decodeTask(void*) {
       meta_mod_bits   = 3;
       file            = new AudioFileSourceICYStream(station_list[index][1]);
       file->RegisterMetadataCB(MDCallback, (void*)"ICY");
-      buff    = new AudioFileSourceBuffer(file, preallocateBuffer, preallocateBufferSize);
-      //decoder = new AudioGeneratorMP3(preallocateCodec, preallocateCodecSize);
+      buff = new AudioFileSourceBuffer(file, preallocateBuffer, preallocateBufferSize);
+      // decoder = new AudioGeneratorMP3(preallocateCodec, preallocateCodecSize);
       decoder = new AudioGeneratorMP3();
       decoder->begin(buff, &out);
     }
@@ -522,6 +522,10 @@ void gfxLoop(LGFX_Device* gfx) {
 void setup() {
   log_d("Free Heap : %d", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
 
+  // wifi不具合対策 for ATOM Lite
+  pinMode(0, OUTPUT);
+  digitalWrite(0, LOW);
+
   display.begin();
   display.startWrite();
   gfxSetup(&display);
@@ -530,14 +534,14 @@ void setup() {
 
   cfg.external_spk = true;  /// use external speaker (SPK HAT / ATOMIC SPK)
   // cfg.external_spk_detail.omit_atomic_spk = true;  // exclude ATOMIC SPK
-  // cfg.external_spk_detail.omit_spk_hat    = true; // exclude SPK HAT
+  //  cfg.external_spk_detail.omit_spk_hat    = true; // exclude SPK HAT
 
   M5.begin(cfg);
 
   {  /// custom setting
     auto spk_cfg = M5.Speaker.config();
     /// Increasing the sample_rate will improve the sound quality instead of increasing the CPU load.
-    spk_cfg.sample_rate      = 192000;  // default:64000 (64kHz)  e.g. 48000 , 50000 , 80000 , 96000 , 100000 , 128000 , 144000 , 192000 , 200000
+    spk_cfg.sample_rate      = 160000;  // default:64000 (64kHz)  e.g. 48000 , 50000 , 80000 , 96000 , 100000 , 128000 , 144000 , 192000 , 200000
     spk_cfg.task_pinned_core = APP_CPU_NUM;
     spk_cfg.i2s_port         = i2s_port_t::I2S_NUM_1;  // IS2_NUM_0はCVBSが使用する。AudioはI2S_NUM_1を使用する。
     M5.Speaker.config(spk_cfg);
