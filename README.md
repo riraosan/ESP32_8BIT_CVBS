@@ -1,6 +1,8 @@
 
 # ESP32 8BIT CVBS Library
 
+![](https://img.shields.io/badge/license-MIT-green) ![](https://img.shields.io/badge/arduino--esp32-1.0.6-green) ![](https://img.shields.io/badge/arduino--esp32-2.0.3-green)
+
 ## Outline
 
 Composite Video, Blanking, and Sync is a signal that combines the synchronization signal, luminance signal, and in the case of color, color signal that make up the video signal, so that it can be handled by a single cable.
