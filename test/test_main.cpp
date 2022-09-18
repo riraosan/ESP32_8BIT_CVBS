@@ -26,7 +26,7 @@ SOFTWARE.
 #include <unity.h>
 #include <Arduino.h>
 
-//#define RGB_TEST  // OK 2.0.3 2022-09-17
+//#define RGB_TEST              // OK 2.0.3 2022-09-17
 //#define PARTY_PARROT          // OK 2.0.3 2022-09-17
 //#define CLOCK_SAMPLE          // OK 2.0.3 2022-09-17
 //#define FLASH_MEM_SPRITE      // OK 2.0.3 2022-09-17
@@ -45,11 +45,11 @@ SOFTWARE.
 //#define GAMEOFLIFE            // OK 2.0.3 2022-09-17
 //#define BARGRAPH              // OK 2.0.3 2022-09-17
 //#define ANALOGMETER           // OK 2.0.3 2022-09-17
-#define ANIMATED_GIF          // ATOMIC SPKで動作確認済み。mp3とgifはTFカードへ保存してください。
-//#define WEBRADIO              // NG 2.0.3 ATOMIC SPKで動作確認済み。CVBSはI2S0を使用。AudioはI2S1を使用
+//#define ANIMATED_GIF          // NG
+//#define WEBRADIO              // NG CVBSはI2S0を使用。AudioはI2S1を使用
 //#define MATRIXRAIN            // OK 2.0.3 2022-09-17
 //#define NTP_NIXIE_TUBE_CLOCK  // OK 2.0.3 2022-09-17
-//#define TEST_IMU  // OK 2.0.3 2022-09-17 for ATOM Matrix
+//#define TEST_IMU              // OK 2.0.3 2022-09-17 for ATOM Matrix
 
 #if defined(TEST_IMU)
 #include <M5Unified.h>
