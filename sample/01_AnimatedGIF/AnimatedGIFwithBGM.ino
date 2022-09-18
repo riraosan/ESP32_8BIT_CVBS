@@ -54,7 +54,7 @@ TaskHandle_t taskHandle;
 #define SCK        23
 #define MISO       33
 #define MOSI       19
-#define DUMMY      13 // #1767
+#define DUMMY      13  // #1767
 
 #define MP3_FILE_4 "/non4.mp3"
 #define GIF_FILE_4 "/non4.gif"
@@ -192,7 +192,7 @@ void setupAV(String mp3File, String gifFile) {
   // Audio
   out = new AudioOutputI2S(I2S_NUM_1);  // CVBSがI2S0を使っている。AUDIOはI2S1を設定
   out->SetPinout(21, 25, 22);
-  out->SetGain(0.5);  // 1.0だと音が大きすぎる。0.3ぐらいが適当。後は外部アンプで増幅するのが適切。
+  out->SetGain(0.3);  // 1.0だと音が大きすぎる。0.3ぐらいが適当。後は外部アンプで増幅するのが適切。
 
   mp3 = new AudioGeneratorMP3();
   mp3->RegisterStatusCB(StatusCallback, (void *)"mp3");

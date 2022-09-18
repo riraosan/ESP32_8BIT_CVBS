@@ -51,7 +51,6 @@ public:
     _display.print(first.c_str());
     _display.setCursor(10, 10 + 9);
     _display.print(second.c_str());
-    _display.display();
   }
 
   void update(void) {
@@ -59,8 +58,7 @@ public:
 
     if (_isActive) {
       if (_frameCount == 0) {
-        _display.fillScreen(TFT_DARKGREY);
-        _display.display();
+        _display.fillScreen(TFT_NAVY);
       }
 
       if (_gif.playFrame(false, &_waitTime)) {
@@ -115,19 +113,18 @@ public:
           // log_i("[%04d], GIF _waitTime, %04d [ms], delta, %04d [ms]", _frameCount, _waitTime, actualWait);
         }
         _frameCount++;
+        return;
       } else {
-        stop();
         closeGif();
         _display.fillScreen(TFT_BLACK);
-        _display.display();
-
-        _isActive = false;
-
+        _isActive   = false;
         _frameCount = 0;
       }
     } else {
       showGuide("Double Click: Episode 4", "  Long Click: Episode 5");
     }
+
+    _display.display();
   }
 
   void setSd(SDFS *sd) {
