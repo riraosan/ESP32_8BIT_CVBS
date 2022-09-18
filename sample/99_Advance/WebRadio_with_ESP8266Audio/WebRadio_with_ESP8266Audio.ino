@@ -1,5 +1,33 @@
-#define WIFI_SSID "Buffalo-C130"
-#define WIFI_PASS "nnkxnpshmhai6"
+/*
+MIT License
+
+Copyright (c) 2021-2022 riraosan.github.io
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+original source
+
+
+*/
+
+#define WIFI_SSID "俺のiPhone"
+#define WIFI_PASS "room03601"
 
 #include <Arduino.h>
 #include <SPI.h>
@@ -15,8 +43,6 @@
 #include <AudioGeneratorMP3.h>
 #include <AudioOutputI2S.h>
 
-//#include <M5UnitLCD.h>
-//#include <M5UnitOLED.h>
 #include <M5Unified.h>
 #include <ESP32_8BIT_CVBS.h>
 static ESP32_8BIT_CVBS display;
@@ -59,6 +85,7 @@ public:
     flush();
     return false;
   }
+
   virtual void flush(void) override {
     if (_tri_buffer_index) {
       _m5sound->playRaw(_tri_buffer[_tri_index], _tri_buffer_index, hertz, true, 1, _virtual_ch);
@@ -67,6 +94,7 @@ public:
       ++_update_count;
     }
   }
+
   virtual bool stop(void) override {
     flush();
     _m5sound->stop(_virtual_ch);
@@ -541,7 +569,7 @@ void setup() {
   {  /// custom setting
     auto spk_cfg = M5.Speaker.config();
     /// Increasing the sample_rate will improve the sound quality instead of increasing the CPU load.
-    spk_cfg.sample_rate      = 160000;  // default:64000 (64kHz)  e.g. 48000 , 50000 , 80000 , 96000 , 100000 , 128000 , 144000 , 192000 , 200000
+    spk_cfg.sample_rate      = 128000;  // default:64000 (64kHz)  e.g. 48000 , 50000 , 80000 , 96000 , 100000 , 128000 , 144000 , 192000 , 200000
     spk_cfg.task_pinned_core = APP_CPU_NUM;
     spk_cfg.i2s_port         = i2s_port_t::I2S_NUM_1;  // IS2_NUM_0はCVBSが使用する。AudioはI2S_NUM_1を使用する。
     M5.Speaker.config(spk_cfg);
@@ -569,7 +597,7 @@ void setup() {
   }
 
   play(station_index);
-  M5.Speaker.setChannelVolume(m5spk_virtual_channel, 255 / 3);  // 0-255
+  M5.Speaker.setChannelVolume(m5spk_virtual_channel, 255 / 5);  // 0-255
 
   xTaskCreatePinnedToCore(decodeTask, "decodeTask", 4096, nullptr, 1, nullptr, PRO_CPU_NUM);
   log_d("Free Heap : %d", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
@@ -590,12 +618,15 @@ void loop() {
   // for ATOM Lite G39
   M5.update();
   if (M5.BtnA.wasPressed()) {
-    M5.Speaker.tone(440, 50);
+    M5.Speaker.tone(440, 50, m5spk_virtual_channel);
   }
+
   if (M5.BtnA.wasDeciedClickCount()) {
     switch (M5.BtnA.getClickCount()) {
       case 1:
-        M5.Speaker.tone(1000, 100);
+        M5.Speaker.tone(1000, 100, m5spk_virtual_channel);
+        delay(100);
+
         if (++station_index >= stations) {
           station_index = 0;
         }
@@ -603,11 +634,13 @@ void loop() {
         break;
 
       case 2:
-        M5.Speaker.tone(800, 100);
-        if (station_index == 0) {
+        M5.Speaker.tone(800, 100, m5spk_virtual_channel);
+        delay(100);
+
+        if (--station_index == 0) {
           station_index = stations;
         }
-        play(--station_index);
+        play(station_index);
         break;
     }
   }
