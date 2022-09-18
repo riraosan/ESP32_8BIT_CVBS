@@ -33,7 +33,7 @@ public:
       log_e("can not allocate sprite buffer.");
     }
     _display.begin();
-    _display.setPivot((_width >> 1) - 7, (_height >> 1) + 5);
+    _display.setPivot((_width >> 1) - 6, (_height >> 1) + 5);
     _display.startWrite();
     _display.fillScreen(TFT_BLACK);
     _display.display();
@@ -46,16 +46,23 @@ public:
     log_i("start CVBS");
   }
 
-  void showGuide(void) {
+  void showGuide(String first, String second) {
     _display.setCursor(10, 10);
-    _display.print("Double Click: Episode 4");
+    _display.print(first.c_str());
     _display.setCursor(10, 10 + 9);
-    _display.print("  Long Click: Episode 5");
+    _display.print(second.c_str());
+    _display.display();
   }
 
   void update(void) {
     _lTimeStart = lgfx::v1::millis();
+
     if (_isActive) {
+      if (_frameCount == 0) {
+        _display.fillScreen(TFT_DARKGREY);
+        _display.display();
+      }
+
       if (_gif.playFrame(false, &_waitTime)) {
         _sprite.pushRotateZoom(0, 1.3, 1.6);
         _display.display();
@@ -105,18 +112,21 @@ public:
         if (actualWait >= 0) {
           delay(actualWait);
         } else {
-          //log_i("[%04d], GIF _waitTime, %04d [ms], delta, %04d [ms]", _frameCount, _waitTime, actualWait);
+          // log_i("[%04d], GIF _waitTime, %04d [ms], delta, %04d [ms]", _frameCount, _waitTime, actualWait);
         }
         _frameCount++;
       } else {
         stop();
         closeGif();
         _display.fillScreen(TFT_BLACK);
+        _display.display();
 
-        showGuide();
+        _isActive = false;
 
         _frameCount = 0;
       }
+    } else {
+      showGuide("Double Click: Episode 4", "  Long Click: Episode 5");
     }
   }
 

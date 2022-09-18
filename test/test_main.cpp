@@ -26,35 +26,36 @@ SOFTWARE.
 #include <unity.h>
 #include <Arduino.h>
 
-//#define RGB_TEST              // OK
-//#define PARTY_PARROT          // OK
-//#define CLOCK_SAMPLE          // OK
-//#define FLASH_MEM_SPRITE      // OK
+//#define RGB_TEST  // OK 2.0.3 2022-09-17
+//#define PARTY_PARROT          // OK 2.0.3 2022-09-17
+//#define CLOCK_SAMPLE          // OK 2.0.3 2022-09-17
+//#define FLASH_MEM_SPRITE      // OK 2.0.3 2022-09-17
 //#define COLLISION_CIRCLES     // NG メモリ不足
-//#define MOVING_CIRCLES        // OK
-//#define MOVING_ICONS          // OK
-//#define ROTATED_ZOOMS_SAMPLE  // OK
-//#define LONG_TEXT_SCROLL      // OK
-//#define GRAPH                 // OK
-//#define MISAKI_FONT           // OK
-//#define EFONT                 // OK
-//#define U8G2                  // OK
-//#define RADGIALGAUGE          // OK
+//#define MOVING_CIRCLES        // OK 2.0.3 2022-09-17
+//#define MOVING_ICONS          // OK 2.0.3 2022-09-17
+//#define ROTATED_ZOOMS_SAMPLE  // OK 2.0.3 2022-09-17
+//#define LONG_TEXT_SCROLL      // NG 2.0.3 2022-09-17 文字の下部分の表示が乱れる。
+//#define GRAPH                 // OK 2.0.3 2022-09-17
+//#define MISAKI_FONT           // OK 2.0.3 2022-09-17
+//#define EFONT                 // OK 2.0.3 2022-09-17
+//#define U8G2                  // OK 2.0.3 2022-09-17
+//#define RADGIALGAUGE          // OK 2.0.3 2022-09-17
 //#define METERSAMPLE           // NG pushRotateZoom APIの不具合のような気がする。lcd color Depth 8の場合、カラーパレット0の透過がうまくいかないように見える。しらんけど。
-//#define SPINTILE              // OK
-//#define GAMEOFLIFE            // OK
-//#define BARGRAPH              // OK
-//#define ANALOGMETER           // OK
-#define ANIMATED_GIF          // OK ATOMIC SPKで動作確認済み。mp3とgifはTFカードへ保存してください。
-//#define WEBRADIO              // OK ATOMIC SPKで動作確認済み。CVBSはI2S0を使用。AudioはI2S1を使用
-//#define MATRIXRAIN            // OK
-//#define NTP_NIXIE_TUBE_CLOCK  // OK
-//#define TEST_IMU              // OK
+//#define SPINTILE              // OK 2.0.3 2022-09-17
+//#define GAMEOFLIFE            // OK 2.0.3 2022-09-17
+//#define BARGRAPH              // OK 2.0.3 2022-09-17
+//#define ANALOGMETER           // OK 2.0.3 2022-09-17
+#define ANIMATED_GIF          // ATOMIC SPKで動作確認済み。mp3とgifはTFカードへ保存してください。
+//#define WEBRADIO              // NG 2.0.3 ATOMIC SPKで動作確認済み。CVBSはI2S0を使用。AudioはI2S1を使用
+//#define MATRIXRAIN            // OK 2.0.3 2022-09-17
+//#define NTP_NIXIE_TUBE_CLOCK  // OK 2.0.3 2022-09-17
+//#define TEST_IMU  // OK 2.0.3 2022-09-17 for ATOM Matrix
 
+#if defined(TEST_IMU)
 #include <M5Unified.h>
 
-//使用するサンプルに応じて設定を変更してください
-// StickCPlusはoutput_powerをtrueに設定すると外部に5Vを出力します
+// 使用するサンプルに応じて設定を変更してください
+// StickCPlusでは、output_powerをtrueに設定すると外部に5Vを出力します
 // ATOM Matrixではinternal_imuをtrueに設定します
 void initM5Stack(void) {
   auto cfg = M5.config();
@@ -62,7 +63,7 @@ void initM5Stack(void) {
   // cfg.serial_baudrate                     = 115200; // default=115200. if "Serial" is not needed, set it to 0.
   // cfg.clear_display                       = true;   // default=true. clear the screen when begin.
   // cfg.output_power                        = true;   // default=true. use external port 5V output.
-  // cfg.internal_imu                        = true;   // default=true. use internal IMU.
+  cfg.internal_imu = true;  // default=true. use internal IMU.
   // cfg.internal_rtc                        = true;   // default=true. use internal RTC.
   // cfg.internal_spk                        = true;   // default=true. use internal speaker.
   // cfg.internal_mic                        = true;   // default=true. use internal microphone.
@@ -178,6 +179,7 @@ void initM5Stack(void) {
   ESP_LOGI("setup", "imu:%s", name);
   M5.Power.setLed(0);
 }
+#endif
 
 #if defined(RGB_TEST)  // basic
 

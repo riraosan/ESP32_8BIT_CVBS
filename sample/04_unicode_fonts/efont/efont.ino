@@ -5,6 +5,14 @@
 // URL : https://github.com/tanakamasayuki/efont
 //
 
+//Note: platformio.iniで以下のライブラリを無効にしてください。
+//lib_deps =
+//        ;https://github.com/m5stack/M5Unified.git#0.0.7
+//以下のライブラリを有効にしてください。
+//lib_deps =
+//        https://github.com/tanakamasayuki/efont.git
+//        https://github.com/lovyan03/LovyanGFX.git#0.4.18
+
 // 使用する文字セットに応じたヘッダをincludeします。
 // Include a header corresponding to the character set used.
 #include <efontEnableAll.h>
@@ -22,9 +30,6 @@
 
 // LovyanGFXより先に efontのincludeが必要です。
 // need to include efont before LovyanGFX.
-//#define LGFX_USE_V1
-//#include <LovyanGFX.h>
-
 #include <M5GFX.h>
 #include <ESP32_8BIT_CVBS.h>
 
@@ -41,7 +46,7 @@ void setup() {
 
 void loop() {
   lcd.setTextColor(random(0x10000), random(0x10000));
-  lcd.setTextSize(random(1, 3), random(1, 3));
+  lcd.setTextSize(random(1, 3));
 
   lcd.print("Hello");
   lcd.print("こんにちは");

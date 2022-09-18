@@ -54,6 +54,7 @@ TaskHandle_t taskHandle;
 #define SCK        23
 #define MISO       33
 #define MOSI       19
+#define DUMMY      13 // #1767
 
 #define MP3_FILE_4 "/non4.mp3"
 #define GIF_FILE_4 "/non4.gif"
@@ -191,7 +192,7 @@ void setupAV(String mp3File, String gifFile) {
   // Audio
   out = new AudioOutputI2S(I2S_NUM_1);  // CVBSがI2S0を使っている。AUDIOはI2S1を設定
   out->SetPinout(21, 25, 22);
-  out->SetGain(0.8);  // 1.0だと音が大きすぎる。0.3ぐらいが適当。後は外部アンプで増幅するのが適切。
+  out->SetGain(0.5);  // 1.0だと音が大きすぎる。0.3ぐらいが適当。後は外部アンプで増幅するのが適切。
 
   mp3 = new AudioGeneratorMP3();
   mp3->RegisterStatusCB(StatusCallback, (void *)"mp3");
@@ -204,8 +205,6 @@ void setupAV(String mp3File, String gifFile) {
   xTaskCreatePinnedToCore(audioTask, "audioTask", 4098, nullptr, 2, &taskHandle, PRO_CPU_NUM);
 
   // Animation
-  _display.fillScreen(TFT_BLACK);
-  _display.display();
   cvbs->setFilename(gifFile);
   cvbs->openGif();
 }
@@ -231,14 +230,12 @@ void setup() {
 
   // SD
   // M5.begin();
-  SPI.begin(SCK, MISO, MOSI, -1);
+  SPI.begin(SCK, MISO, MOSI, DUMMY);
   SPI.setDataMode(SPI_MODE3);
-  if (!SD.begin(-1, SPI, 80000000)) {  // 80MHz(MAX)
+  if (!SD.begin(DUMMY, SPI, 80000000)) {  // 80MHz(MAX)
     Serial.println("Card Mount Failed");
     ESP.restart();
   }
-
-  cvbs->showGuide();
 
   msg = MESSAGE::kMSG_LOOP;
   log_d("Free Heap : %d", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));  //シングルバッファモードにするとメモリに余裕が生まれます。
