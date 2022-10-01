@@ -29,11 +29,11 @@ public:
 
     _sprite.setColorDepth(8);
     _sprite.setRotation(0);
-    if (!_sprite.createSprite(180, 96)) {
+    // if (!_sprite.createSprite(180, 96)) {
+    if (!_sprite.createSprite(180, 147)) {
       log_e("can not allocate sprite buffer.");
     }
     _display.begin();
-    _display.setPivot((_width >> 1) - 6, (_height >> 1) + 5);
     _display.startWrite();
     _display.fillScreen(TFT_BLACK);
     _display.display();
@@ -58,17 +58,22 @@ public:
 
     if (_isActive) {
       if (_frameCount == 0) {
-        _display.fillScreen(TFT_NAVY);
+        _display.fillScreen(TFT_BLACK);
       }
 
       if (_gif.playFrame(false, &_waitTime)) {
-        _sprite.pushRotateZoom(0, 1.3, 1.6);
-        _display.display();
+        // _sprite.pushRotateZoom(0, 1.3, 1.6);
+        // _display.display();
 
-        int actualWait = _waitTime - (lgfx::v1::millis() - _lTimeStart);
+        int actualWait;
 
         // Fine-tune the synchronization of BGM and GIF frames
         if (_story == 5) {
+          _display.setPivot((_width >> 1) - 6, (_height >> 1) + 31);
+          _sprite.pushRotateZoom(0, 1.3, 1.6);
+          _display.display();
+
+          actualWait = _waitTime - (lgfx::v1::millis() - _lTimeStart);
           if (153 <= _frameCount && _frameCount <= 281) {
             actualWait += 10;
           } else if (282 <= _frameCount && _frameCount <= 404) {
@@ -87,7 +92,11 @@ public:
             actualWait += 22;  // OK
           }
         } else if (_story == 4) {  //-1478
-          // actualWait -= 1;
+          _display.setPivot((_width >> 1) - 6, (_height >> 1) + 31);
+          _sprite.pushRotateZoom(0, 1.3, 1.6);
+          _display.display();
+
+          actualWait = _waitTime - (lgfx::v1::millis() - _lTimeStart);
           if (0 <= _frameCount && _frameCount < 200) {
             actualWait -= 1;
           } else if (200 <= _frameCount && _frameCount < 400) {
@@ -105,12 +114,19 @@ public:
           } else if (1400 <= _frameCount && _frameCount < 1566) {
             actualWait -= 1;
           }
+        } else {
+          _display.setPivot((_width >> 1) - 6, (_height >> 1) + 5);
+          _sprite.pushRotateZoom(0, 1.0, 1.0);
+          _display.display();
+
+          actualWait = _waitTime - (lgfx::v1::millis() - _lTimeStart);
+          actualWait -= 4;
         }
 
         if (actualWait >= 0) {
           delay(actualWait);
         } else {
-          // log_i("[%04d], GIF _waitTime, %04d [ms], delta, %04d [ms]", _frameCount, _waitTime, actualWait);
+          log_i("[%04d], GIF _waitTime, %04d [ms], delta, %04d [ms]", _frameCount, _waitTime, actualWait);
         }
         _frameCount++;
         return;

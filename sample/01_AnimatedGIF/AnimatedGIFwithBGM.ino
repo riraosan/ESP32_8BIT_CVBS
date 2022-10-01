@@ -75,6 +75,7 @@ enum class MESSAGE : int {
   kMSG_BEGIN_ALL,
   kMSG_BEGIN_SINGLE,
   kMSG_NEXT_EPISODE,
+  kMSG_BEGIN_KANDENCH,
   kMSG_MAX,
 };
 
@@ -85,7 +86,7 @@ void handler(Button2 &btn) {
   switch (btn.getType()) {
     case clickType::single_click:
       Serial.print("single ");
-      // msg = MESSAGE::kMSG_BEGIN_ALL;
+      msg = MESSAGE::kMSG_BEGIN_KANDENCH;
       break;
     case clickType::double_click:
       Serial.print("double ");
@@ -253,8 +254,18 @@ void episode5(void) {
   startAV(WAIT_MP3_5, WAIT_GIF_5);
 }
 
+void kandench(void) {
+  cvbs->setEpisode(99);
+  setupAV("/kandenchiflash.mp3", "/kandenchiflash.gif");
+  startAV(500, 0);
+}
+
 void loop() {
   switch (msg) {
+    case MESSAGE::kMSG_BEGIN_KANDENCH:
+      kandench();
+      msg = MESSAGE::kMSG_LOOP;
+      break;
     case MESSAGE::kMSG_BEGIN_STORY4:
       episode4();
       msg = MESSAGE::kMSG_NEXT_EPISODE;
