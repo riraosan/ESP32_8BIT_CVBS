@@ -63,8 +63,9 @@ public:
       if (MDNS.begin(_hostName.c_str())) {
         MDNS.addService("http", "tcp", _httpPort);
         log_i("HTTP Server ready! Open http://%s.local/ in your browser\n", _hostName.c_str());
-      } else
+      } else {
         log_e("Error setting up MDNS responder");
+      }
     } else {
       log_e("ESP32 can't connect to AP.");
       ESP.restart();
