@@ -183,7 +183,7 @@ void initM5Stack(void) {
 
 #if defined(RGB_TEST)  // basic
 
-#include <M5GFX.h>
+#include <LovyanGFX.h>
 #include <ESP32_8BIT_CVBS.h>
 
 static ESP32_8BIT_CVBS display;

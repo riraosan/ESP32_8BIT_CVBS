@@ -1,8 +1,8 @@
 
 #pragma once
 
-#include <M5GFX.h>
-#include <ESP32_8BIT_CVBS.h>
+#define LGFX_USE_V1
+#include <LovyanGFX.h>
 
 class ESP32_8BIT_CVBS : public lgfx::LGFX_Device {
 public:

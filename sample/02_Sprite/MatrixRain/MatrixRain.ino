@@ -1,5 +1,5 @@
 
-#include <M5GFX.h>
+#include <LovyanGFX.h>
 #include <ESP32_8BIT_CVBS.h>
 #include "DigitalRainAnim.hpp"
 
