@@ -12,7 +12,7 @@ void setup() {
   cvbs.setRotation(0);
   cvbs.fillScreen(TFT_BLACK);
   cvbs.startWrite();
-  rain.init();
+  rain.init(false);
 }
 
 void loop() {

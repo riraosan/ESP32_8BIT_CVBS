@@ -45,9 +45,9 @@ SOFTWARE.
 //#define GAMEOFLIFE            // OK 2.0.3 2022-09-17
 //#define BARGRAPH              // OK 2.0.3 2022-09-17
 //#define ANALOGMETER           // OK 2.0.3 2022-09-17
-#define ANIMATED_GIF          // OK 2.0.3 2022-09-17 patchを更新しました。
+//#define ANIMATED_GIF          // OK 2.0.3 2022-09-17 patchを更新しました。
 //#define WEBRADIO              // OK 2.0.3 2022-09-17 CVBSはI2S0を使用。AudioはI2S1を使用
-//#define MATRIXRAIN            // OK 2.0.3 2022-09-17
+#define MATRIXRAIN            // OK 2.0.3 2022-09-17
 //#define NTP_NIXIE_TUBE_CLOCK  // OK 2.0.3 2022-09-17
 //#define TEST_IMU              // OK 2.0.3 2022-09-17 for ATOM Matrix
 
@@ -206,7 +206,7 @@ void setup(void) {
 }
 
 void loop(void) {
-  display.waitForFrame();
+  //display.waitForFrame();
 }
 
 #elif defined(PARTY_PARROT)
