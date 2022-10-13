@@ -1,18 +1,21 @@
 
-#include <M5GFX.h>
-#include <ESP32_8BIT_CVBS.h>
 
-static ESP32_8BIT_CVBS lcd;
-static LGFX_Sprite     sprite1(&lcd);
-static LGFX_Sprite     sprite2(&lcd);
+#define LGFX_USE_V1
+#include <LovyanGFX.h>
+#include <LGFX_8BIT_CVBS.h>
+static LGFX_8BIT_CVBS display;
+#define M5Canvas LGFX_Sprite
+
+static LGFX_Sprite     sprite1(&display);
+static LGFX_Sprite     sprite2(&display);
 static LGFX_Sprite*    sprites[2] = {&sprite1, &sprite2};
 static int32_t         width      = 180;
 static size_t          count      = 0;
 
 void setup(void) {
-  lcd.init();
-  lcd.setPivot(lcd.width() >> 1, lcd.height() >> 1);
-  width = std::min(width, (std::max(lcd.width(), lcd.height()) + 10)) | 1;
+  display.init();
+  display.setPivot(display.width() >> 1, display.height() >> 1);
+  width = std::min(width, (std::max(display.width(), display.height()) + 10)) | 1;
   for (int i = 0; i < 2; ++i) {
     sprites[i]->setColorDepth(8);
     sprites[i]->createSprite(width, width);
@@ -34,5 +37,5 @@ void loop(void) {
   sprites[!flip]->fillRect(0, width - 3, width, 3);
   sprites[!flip]->setClipRect(3, 3, width - 6, width - 6);
   sprites[!flip]->pushRotateZoom(sprites[flip], width >> 1, (width >> 1) + 10, ((float)count) * .5, 0.9, 0.95);
-  sprites[flip]->pushSprite(((lcd.width() - width) >> 1) - 6, (lcd.height() - width) >> 1);
+  sprites[flip]->pushSprite(((display.width() - width) >> 1) - 6, (display.height() - width) >> 1);
 }

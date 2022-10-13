@@ -1,21 +1,24 @@
 
-#include <M5GFX.h>
-#include <ESP32_8BIT_CVBS.h>
 
-ESP32_8BIT_CVBS lcd;
+#define LGFX_USE_V1
+#include <LovyanGFX.h>
+#include <LGFX_8BIT_CVBS.h>
+static LGFX_8BIT_CVBS display;
+#define M5Canvas LGFX_Sprite
+
 LGFX_Sprite     canvas;
 
 static constexpr char   text[]  = "Hello world ! こんにちは世界！ this is long long string sample. 寿限無、寿限無、五劫の擦り切れ、海砂利水魚の、水行末・雲来末・風来末、喰う寝る処に住む処、藪ら柑子の藪柑子、パイポ・パイポ・パイポのシューリンガン、シューリンガンのグーリンダイ、グーリンダイのポンポコピーのポンポコナの、長久命の長助";
 static constexpr size_t textlen = sizeof(text) / sizeof(text[0]);
 size_t                  textpos = 0;
 
-constexpr int32_t WIDTH = 222;
+constexpr int32_t WIDTH = 320;
 
 void setup(void) {
-  lcd.begin();
+  display.begin();
 
   // 画面が横長になるように回転
-  if (lcd.width() < lcd.height()) lcd.setRotation(lcd.getRotation() ^ 1);
+  if (display.width() < display.height()) display.setRotation(display.getRotation() ^ 1);
 
   canvas.setColorDepth(8);
   canvas.setFont(&fonts::lgfxJapanMincho_24);
@@ -39,5 +42,6 @@ void loop(void) {
     cursor_x = canvas.getCursorX();  // 出力後のカーソル位置を取得
   }
 
-  canvas.pushSprite(&lcd, 2, 7);
+  canvas.pushSprite(&display, 2, 7);
+  delay(10);
 }

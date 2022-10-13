@@ -1,9 +1,10 @@
 
+#define LGFX_USE_V1
 #include <LovyanGFX.h>
-#include <ESP32_8BIT_CVBS.h>
-#include "DigitalRainAnim.hpp"
+#include <LGFX_8BIT_CVBS.h>
+static LGFX_8BIT_CVBS cvbs;
 
-static ESP32_8BIT_CVBS cvbs;
+#include "DigitalRainAnim.hpp"
 static DigitalRainAnim rain(&cvbs);
 
 void setup() {

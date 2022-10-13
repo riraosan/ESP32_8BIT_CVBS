@@ -2,13 +2,13 @@
 #pragma once
 
 #define LGFX_USE_V1
-#include <LovyanGFX.h>
+#include <M5GFX.h>
 
-class ESP32_8BIT_CVBS : public lgfx::LGFX_Device {
+class LGFX_8BIT_CVBS : public lgfx::LGFX_Device {
 public:
   lgfx::Panel_CVBS _panel_instance;
 
-  ESP32_8BIT_CVBS(void) {
+  LGFX_8BIT_CVBS(void) {
     {                                       // 表示パネル制御の設定を行います。
       auto cfg = _panel_instance.config();  // 表示パネル設定用の構造体を取得します。
 
@@ -17,12 +17,12 @@ public:
       cfg.memory_height = 240;  // 出力解像度 高さ
 
       // 実際に利用する解像度を設定;
-      cfg.panel_width  = 360 - 32 / 2 + 6;  // 実際に使用する幅   (memory_width と同値か小さい値を設定する)
-      cfg.panel_height = 240 - 32 / 2;      // 実際に使用する高さ (memory_heightと同値か小さい値を設定する)
+      cfg.panel_width  = 360;  // 実際に使用する幅   (memory_width と同値か小さい値を設定する)
+      cfg.panel_height = 240 - 16;      // 実際に使用する高さ (memory_heightと同値か小さい値を設定する)
 
       // 表示位置オフセット量を設定;
-      cfg.offset_x = 16 / 2 - 2;  // 表示位置を右にずらす量 (初期値 0)
-      cfg.offset_y = 16 / 2 + 3;  // 表示位置を下にずらす量 (初期値 0)
+      cfg.offset_x = 4;  // 表示位置を右にずらす量 (初期値 0)
+      cfg.offset_y = 11;  // 表示位置を下にずらす量 (初期値 0)
 
       _panel_instance.config(cfg);
 
@@ -43,6 +43,7 @@ public:
       // cfg.signal_type = cfg.signal_type_t::PAL_N;
 
       // 出力先のGPIO番号を設定;
+      //cfg.pin_dac = 26;  // DACを使用するため、 25 または 26 のみが選択できます;
       cfg.pin_dac = 25;  // DACを使用するため、 25 または 26 のみが選択できます;
 
       // PSRAMメモリ割当の設定;

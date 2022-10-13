@@ -1,19 +1,9 @@
 
-#include <ESP32_8BIT_CVBS.h>
-
-ESP32_8BIT_CVBS display;
-
-//#include <M5UnitOLED.h>
-//M5UnitOLED display; // default setting
-//M5UnitOLED display ( 21, 22, 400000 ); // SDA, SCL, FREQ
-
-//#include <M5UnitLCD.h>
-//M5UnitLCD display;  // default setting
-//M5UnitLCD display  ( 21, 22, 400000 ); // SDA, SCL, FREQ
-
-//#include <M5AtomDisplay.h>
-//M5AtomDisplay display;  // default setting
-//M5AtomDisplay display ( 320, 180 ); // width, height
+#define LGFX_USE_V1
+#include <LovyanGFX.h>
+#include <LGFX_8BIT_CVBS.h>
+static LGFX_8BIT_CVBS display;
+#define M5Canvas LGFX_Sprite
 
 static constexpr const int qsintab[256]={
     0x8000,0x80c9,0x8192,0x825b,0x8324,0x83ee,0x84b7,0x8580,

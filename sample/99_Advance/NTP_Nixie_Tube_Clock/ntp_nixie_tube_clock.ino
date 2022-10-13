@@ -16,8 +16,12 @@ Modified by @riraosan.github.io for ATOM Lite.
 
 #define NOT_USEATOM
 
+#define LGFX_USE_V1
+#include <LovyanGFX.h>
 #include <ESP32_8BIT_CVBS.h>
 static ESP32_8BIT_CVBS display;
+
+#define M5Canvas LGFX_Sprite
 
 static M5Canvas     sprites[2];
 static int_fast16_t sprite_height;
@@ -122,7 +126,7 @@ void setupSprite(void) {
       sprites[i].setTextSize(1);
       sprites[i].setTextColor(TFT_WHITE, TFT_BLACK);
       sprites[i].setTextDatum(TL_DATUM);
-      fail = !sprites[i].createSprite(320, sprite_height);
+      fail = !sprites[i].createSprite(320, sprite_height + 10);
     }
     if (!fail) break;
     for (std::uint32_t i = 0; i < 2; ++i) {
@@ -165,8 +169,8 @@ void loop() {
     PutNum(&sprites[0], 110, 36, 52, 2, timeinfo.tm_mday);   //日の表示
     PutJpg(&sprites[0], 216, 63, timeinfo.tm_wday + 10);     //曜日の表示
 
-    display.setPivot((display_width >> 1) - 7, sprite_height >> 1);
-    sprites[0].pushRotateZoomWithAA(&display, 0, 0.72, 0.72);
+    display.setPivot((display_width >> 1) - 7, (sprite_height >> 1) - 7);
+    sprites[0].pushRotateZoomWithAA(&display, 0, 1.0, 1.0);
 
     // スプライト下
     sprites[1].setCursor(3, 16);
@@ -176,7 +180,7 @@ void loop() {
     PutNum(&sprites[1], 216, 36, 52, 2, timeinfo.tm_sec);  //秒の表示
 
     display.setPivot((display_width >> 1) - 7, sprite_height + (sprite_height >> 1));
-    sprites[1].pushRotateZoomWithAA(&display, 0, 0.72, 0.72);
+    sprites[1].pushRotateZoomWithAA(&display, 0, 1.0, 1.0);
 
     delay(100);  // 0.1秒ウェイト
   }

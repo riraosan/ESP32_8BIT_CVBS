@@ -37,10 +37,13 @@ note: for ATOM Matrix with Digital or CRT NTSC(PAL) Display
 
 #include <Arduino.h>
 
+#define LGFX_USE_V1
 #include <M5GFX.h>
-#include <ESP32_8BIT_CVBS.h>
-static ESP32_8BIT_CVBS display;
-static M5Canvas        canvas(&display);
+#include <LGFX_8BIT_CVBS.h>
+static LGFX_8BIT_CVBS display;
+#define M5Canvas LGFX_Sprite
+
+static M5Canvas canvas(&display);
 
 typedef struct {
   double x;

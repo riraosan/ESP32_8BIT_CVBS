@@ -1,8 +1,11 @@
 
-#include <M5GFX.h>
-#include <ESP32_8BIT_CVBS.h>
 
-static ESP32_8BIT_CVBS lcd;
+#define LGFX_USE_V1
+#include <LovyanGFX.h>
+#include <LGFX_8BIT_CVBS.h>
+static LGFX_8BIT_CVBS display;
+#define M5Canvas LGFX_Sprite
+
 static LGFX_Sprite     sprite[10];
 
 static std::uint32_t count = 0;
@@ -21,16 +24,16 @@ extern const unsigned char parrot09[];
 
 void setup()
 {
-  lcd.init();
-  lcd.setRotation(0);
-  if (lcd.width() < lcd.height()) { lcd.setRotation(lcd.getRotation() ^ 1); }
+  display.init();
+  display.setRotation(0);
+  if (display.width() < display.height()) { display.setRotation(display.getRotation() ^ 1); }
 
-  zoom = (float)lcd.width() / 128;
-  float ztmp = (float)lcd.height() / 96;
+  zoom = (float)display.width() / 128;
+  float ztmp = (float)display.height() / 96;
   if (zoom > ztmp) { zoom = ztmp; }
 
-  lcd.setPivot(lcd.width() >> 1, lcd.height() >> 1);
-  lcd.fillScreen(0xFFFFFFU);
+  display.setPivot(display.width() >> 1, display.height() >> 1);
+  display.fillScreen(0xFFFFFFU);
 
   sprite[0].createFromBmp(parrot00);
   sprite[1].createFromBmp(parrot01);
@@ -46,7 +49,7 @@ void setup()
 
 void loop() {
   if (++count == 10) count = 0;
-  sprite[count].pushRotateZoom(&lcd, lcd.width() >> 1, lcd.height() >> 1, 0, zoom, zoom);
+  sprite[count].pushRotateZoom(&display, display.width() >> 1, display.height() >> 1, 0, zoom, zoom);
 }
 
 // The parrot image data is from this site.

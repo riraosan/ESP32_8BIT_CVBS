@@ -1,9 +1,12 @@
 
-#include <M5GFX.h>
-#include <ESP32_8BIT_CVBS.h>
 
-static ESP32_8BIT_CVBS lcd;
-static LGFX_Sprite     sprite(&lcd);
+#define LGFX_USE_V1
+#include <LovyanGFX.h>
+#include <LGFX_8BIT_CVBS.h>
+static LGFX_8BIT_CVBS display;
+#define M5Canvas LGFX_Sprite
+
+static LGFX_Sprite     sprite(&display);
 
 struct meter_t {
   int32_t pivot_x;
@@ -20,7 +23,7 @@ struct meter_t {
   }
 
   void drawGauge(uint32_t color) {
-    lcd.setPivot(pivot_x, pivot_y);
+    display.setPivot(pivot_x, pivot_y);
     sprite.setPaletteColor(1, color);
     sprite.pushRotated(angle - 127);
     advance();
@@ -30,40 +33,40 @@ struct meter_t {
 struct meter_t meter1, meter2, meter3;
 
 void setup(void) {
-  lcd.init();
+  display.init();
 
-  if (lcd.width() < lcd.height()) {
-    lcd.setRotation(lcd.getRotation() ^ 1);
+  if (display.width() < display.height()) {
+    display.setRotation(display.getRotation() ^ 1);
   }
 
   sprite.setColorDepth(2);
 
-  sprite.createSprite(3, lcd.height() / 8);
-  sprite.setPivot(1, lcd.height() / 4);
+  sprite.createSprite(3, display.height() / 8);
+  sprite.setPivot(1, display.height() / 4);
 
   sprite.drawFastVLine(1, 0, sprite.height(), 3);
   sprite.drawFastVLine(0, 2, sprite.height() - 4, 1);
 
-  meter1.pivot_x = lcd.width() >> 1;
-  meter1.pivot_y = (lcd.height() >> 2) + 2;
+  meter1.pivot_x = display.width() >> 1;
+  meter1.pivot_y = (display.height() >> 2) + 2;
   meter1.add     = 0.01;
 
-  meter2.pivot_x = lcd.width() >> 2;
-  meter2.pivot_y = (lcd.height() * 3) >> 2;
+  meter2.pivot_x = display.width() >> 2;
+  meter2.pivot_y = (display.height() * 3) >> 2;
   meter2.add     = 0.11;
 
-  meter3.pivot_x = (lcd.width() * 3) >> 2;
-  meter3.pivot_y = (lcd.height() * 3) >> 2;
+  meter3.pivot_x = (display.width() * 3) >> 2;
+  meter3.pivot_y = (display.height() * 3) >> 2;
   meter3.add     = 0.57;
 
-  lcd.fillScreen(lcd.color888(0, 0, 127));
+  display.fillScreen(display.color888(0, 0, 127));
 
   for (int i = 0; i < 20; i++) {
-    lcd.drawFastHLine(0, (i * 2 + 1) * lcd.height() / 40, lcd.width(), 0xFFFF);
-    lcd.drawFastVLine((i * 2 + 1) * lcd.width() / 40, 0, lcd.height(), 0xFFFF);
+    display.drawFastHLine(0, (i * 2 + 1) * display.height() / 40, display.width(), 0xFFFF);
+    display.drawFastVLine((i * 2 + 1) * display.width() / 40, 0, display.height(), 0xFFFF);
   }
 
-  lcd.startWrite();
+  display.startWrite();
 }
 
 void loop(void) {
@@ -71,5 +74,5 @@ void loop(void) {
   meter2.drawGauge(sprite.color888(255 - meter2.angle, meter2.angle, 127));
   meter3.drawGauge(sprite.color888(0, 127, meter3.angle));
 
-  lcd.display();
+  display.display();
 }

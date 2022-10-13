@@ -1,14 +1,15 @@
 
-#include <M5GFX.h>
-#include <ESP32_8BIT_CVBS.h>
+#define LGFX_USE_V1
+#include <LovyanGFX.h>
+#include <LGFX_8BIT_CVBS.h>
+static LGFX_8BIT_CVBS display;
 
-static ESP32_8BIT_CVBS lcd;
-static LGFX_Sprite     canvas(&lcd);        // オフスクリーン描画用バッファ
-static LGFX_Sprite     clockbase(&canvas);  // 時計の文字盤パーツ
-static LGFX_Sprite     needle1(&canvas);    // 長針・短針パーツ
-static LGFX_Sprite     shadow1(&canvas);    // 長針・短針の影パーツ
-static LGFX_Sprite     needle2(&canvas);    // 秒針パーツ
-static LGFX_Sprite     shadow2(&canvas);    // 秒針の影パーツ
+static LGFX_Sprite canvas(&display);    // オフスクリーン描画用バッファ
+static LGFX_Sprite clockbase(&canvas);  // 時計の文字盤パーツ
+static LGFX_Sprite needle1(&canvas);    // 長針・短針パーツ
+static LGFX_Sprite shadow1(&canvas);    // 長針・短針の影パーツ
+static LGFX_Sprite needle2(&canvas);    // 秒針パーツ
+static LGFX_Sprite shadow2(&canvas);    // 秒針の影パーツ
 
 static constexpr uint64_t oneday       = 86400000;         // 1日 = 1000msec x 60sec x 60min x 24hour = 86400000
 static uint64_t           count        = rand() % oneday;  // 現在時刻 (ミリ秒カウンタ)
@@ -24,13 +25,13 @@ static float              zoom;                            // 表示倍率
 #define ZOOM 0.9
 
 void setup(void) {
-  lcd.begin();
-  lcd.startWrite();
+  display.begin();
+  display.startWrite();
 
-  zoom = (float)(std::min(lcd.width(), lcd.height())) / width;  // 表示が画面にフィットするよう倍率を調整;
+  zoom = (float)(std::min(display.width(), display.height())) / width;  // 表示が画面にフィットするよう倍率を調整;
   zoom *= ZOOM;
 
-  lcd.setPivot(lcd.width() >> 1, lcd.height() >> 1);  // 時計描画時の中心を画面中心に合わせる
+  display.setPivot(display.width() >> 1, display.height() >> 1);  // 時計描画時の中心を画面中心に合わせる
 
   canvas.setColorDepth(lgfx::palette_4bit);  // 各部品を４ビットパレットモードで準備する
   clockbase.setColorDepth(lgfx::palette_4bit);
@@ -108,10 +109,10 @@ void setup(void) {
   shadow2.drawFastVLine(1, 0, 119, 1);
   needle2.fillRect(0, 99, 3, 3, 8);
 
-  // shadow1.pushSprite(&lcd,  0, 0); // デバッグ用、パーツを直接LCDに描画する
-  // needle1.pushSprite(&lcd, 10, 0);
-  // shadow2.pushSprite(&lcd, 20, 0);
-  // needle2.pushSprite(&lcd, 25, 0);
+  // shadow1.pushSprite(&display,  0, 0); // デバッグ用、パーツを直接LCDに描画する
+  // needle1.pushSprite(&display, 10, 0);
+  // shadow2.pushSprite(&display, 20, 0);
+  // needle2.pushSprite(&display, 25, 0);
 }
 
 void update7Seg(int32_t hour, int32_t min) {  // 時計盤のデジタル表示部の描画
@@ -164,7 +165,7 @@ void drawClock(uint64_t time) {  // 時計の描画
   canvas.pushRotateZoom(0, zoom * 0.8, zoom);
   // NG
   // canvas.pushRotateZoom(0, zoom, zoom, transpalette);
-  lcd.display();
+  display.display();
 }
 
 void loop(void) {

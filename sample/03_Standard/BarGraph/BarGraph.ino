@@ -1,8 +1,9 @@
 
-#include <M5GFX.h>
-#include <ESP32_8BIT_CVBS.h>
-
-ESP32_8BIT_CVBS display;
+#define LGFX_USE_V1
+#include <LovyanGFX.h>
+#include <LGFX_8BIT_CVBS.h>
+static LGFX_8BIT_CVBS display;
+#define M5Canvas LGFX_Sprite
 
 //#include <M5UnitOLED.h>
 // M5UnitOLED display; // default setting

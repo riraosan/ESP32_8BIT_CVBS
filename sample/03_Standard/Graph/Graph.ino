@@ -1,11 +1,13 @@
 
+
 #include <vector>
-#include <M5GFX.h>
-#include <ESP32_8BIT_CVBS.h>
+#define LGFX_USE_V1
+#include <LovyanGFX.h>
+#include <LGFX_8BIT_CVBS.h>
+static LGFX_8BIT_CVBS display;
+#define M5Canvas LGFX_Sprite
 
 #define LINE_COUNT 6
-
-static ESP32_8BIT_CVBS lcd;
 
 static std::vector<int> points[LINE_COUNT];
 static int              colors[] = {TFT_RED, TFT_GREEN, TFT_BLUE, TFT_CYAN, TFT_MAGENTA, TFT_YELLOW};
@@ -16,26 +18,26 @@ int getBaseColor(int x, int y) {
 }
 
 void setup(void) {
-  lcd.init();
+  display.init();
 
-  if (lcd.width() < lcd.height()) lcd.setRotation(lcd.getRotation() ^ 1);
+  if (display.width() < display.height()) display.setRotation(display.getRotation() ^ 1);
 
-  yoffset     = lcd.height() >> 1;
-  xoffset     = lcd.width() >> 1;
-  point_count = lcd.width() + 1;
+  yoffset     = display.height() >> 1;
+  xoffset     = display.width() >> 1;
+  point_count = display.width() + 1;
 
   for (int i = 0; i < LINE_COUNT; i++) {
     points[i].resize(point_count);
   }
 
-  lcd.startWrite();
-  lcd.setAddrWindow(0, 0, lcd.width(), lcd.height());
-  for (int y = 0; y < lcd.height(); y++) {
-    for (int x = 0; x < lcd.width(); x++) {
-      lcd.writeColor(getBaseColor(x, y - yoffset), 1);
+  display.startWrite();
+  display.setAddrWindow(0, 0, display.width(), display.height());
+  for (int y = 0; y < display.height(); y++) {
+    for (int x = 0; x < display.width(); x++) {
+      display.writeColor(getBaseColor(x, y - yoffset), 1);
     }
   }
-  lcd.endWrite();
+  display.endWrite();
 }
 
 void loop(void) {
@@ -45,20 +47,20 @@ void loop(void) {
   int sec = millis() / 1000;
   if (prev_sec != sec) {
     prev_sec = sec;
-    lcd.setCursor(0, 0);
-    lcd.printf("fps:%03d", fps);
+    display.setCursor(0, 0);
+    display.printf("fps:%03d", fps);
     fps = 0;
   }
 
   static int count;
 
   for (int i = 0; i < LINE_COUNT; i++) {
-    points[i][count % point_count] = (sinf((float)count / (10 + 30 * i)) + sinf((float)count / (13 + 37 * i))) * (lcd.height() >> 2);
+    points[i][count % point_count] = (sinf((float)count / (10 + 30 * i)) + sinf((float)count / (13 + 37 * i))) * (display.height() >> 2);
   }
 
   ++count;
 
-  lcd.startWrite();
+  display.startWrite();
   int index1 = count % point_count;
   for (int x = 0; x < point_count - 1; x++) {
     int index0 = index1;
@@ -66,14 +68,14 @@ void loop(void) {
     for (int i = 0; i < LINE_COUNT; i++) {
       int y = points[i][index0];
       if (y != points[i][index1]) {
-        lcd.writePixel(x, y + yoffset, getBaseColor(x, y));
+        display.writePixel(x, y + yoffset, getBaseColor(x, y));
       }
     }
 
     for (int i = 0; i < LINE_COUNT; i++) {
       int y = points[i][index1];
-      lcd.writePixel(x, y + yoffset, colors[i]);
+      display.writePixel(x, y + yoffset, colors[i]);
     }
   }
-  lcd.endWrite();
+  display.endWrite();
 }

@@ -1,12 +1,13 @@
 
 
-#include <M5GFX.h>
-#include <ESP32_8BIT_CVBS.h>
+#define LGFX_USE_V1
+#include <LovyanGFX.h>
+#include <LGFX_8BIT_CVBS.h>
+static LGFX_8BIT_CVBS display;
+#define M5Canvas LGFX_Sprite
 
 #include "profont.h"
 #include "adobex11font.h"
-
-static ESP32_8BIT_CVBS lcd;
 
 static const lgfx::U8g2font profont10( u8g2_font_profont10_tr );
 static const lgfx::U8g2font profont11( u8g2_font_profont11_tr );
@@ -74,92 +75,92 @@ static const lgfx::U8g2font timR24  ( u8g2_font_timR24_tr  );
 
 
 void setup(){
-  lcd.init();
+  display.init();
 }
 
 void loop(){
-  lcd.setTextColor(random(0x10000)| 0x8410, random(0x10000)&0x7BEF);
+  display.setTextColor(random(0x10000)| 0x8410, random(0x10000)&0x7BEF);
 
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.setFont(&profont10); lcd.print("profont10\n");
-  lcd.setFont(&profont11); lcd.print("profont11\n");
-  lcd.setFont(&profont12); lcd.print("profont12\n");
-  lcd.setFont(&profont15); lcd.print("profont15\n");
-  lcd.setFont(&profont17); lcd.print("profont17\n");
-  lcd.setFont(&profont22); lcd.print("profont22\n");
-  lcd.setFont(&profont29); lcd.print("profont29\n");
+  display.clear();
+  display.setCursor(0,0);
+  display.setFont(&profont10); display.print("profont10\n");
+  display.setFont(&profont11); display.print("profont11\n");
+  display.setFont(&profont12); display.print("profont12\n");
+  display.setFont(&profont15); display.print("profont15\n");
+  display.setFont(&profont17); display.print("profont17\n");
+  display.setFont(&profont22); display.print("profont22\n");
+  display.setFont(&profont29); display.print("profont29\n");
   delay(2000);
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.setFont(&courB08); lcd.print("courB08\n");
-  lcd.setFont(&courB10); lcd.print("courB10\n");
-  lcd.setFont(&courB12); lcd.print("courB12\n");
-  lcd.setFont(&courB14); lcd.print("courB14\n");
-  lcd.setFont(&courB18); lcd.print("courB18\n");
-  lcd.setFont(&courB24); lcd.print("courB24\n");
+  display.clear();
+  display.setCursor(0,0);
+  display.setFont(&courB08); display.print("courB08\n");
+  display.setFont(&courB10); display.print("courB10\n");
+  display.setFont(&courB12); display.print("courB12\n");
+  display.setFont(&courB14); display.print("courB14\n");
+  display.setFont(&courB18); display.print("courB18\n");
+  display.setFont(&courB24); display.print("courB24\n");
   delay(2000);
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.setFont(&courR08); lcd.print("courR08\n");
-  lcd.setFont(&courR10); lcd.print("courR10\n");
-  lcd.setFont(&courR12); lcd.print("courR12\n");
-  lcd.setFont(&courR14); lcd.print("courR14\n");
-  lcd.setFont(&courR18); lcd.print("courR18\n");
-  lcd.setFont(&courR24); lcd.print("courR24\n");
+  display.clear();
+  display.setCursor(0,0);
+  display.setFont(&courR08); display.print("courR08\n");
+  display.setFont(&courR10); display.print("courR10\n");
+  display.setFont(&courR12); display.print("courR12\n");
+  display.setFont(&courR14); display.print("courR14\n");
+  display.setFont(&courR18); display.print("courR18\n");
+  display.setFont(&courR24); display.print("courR24\n");
   delay(2000);
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.setFont(&helvB08); lcd.print("helvB08\n");
-  lcd.setFont(&helvB10); lcd.print("helvB10\n");
-  lcd.setFont(&helvB12); lcd.print("helvB12\n");
-  lcd.setFont(&helvB14); lcd.print("helvB14\n");
-  lcd.setFont(&helvB18); lcd.print("helvB18\n");
-  lcd.setFont(&helvB24); lcd.print("helvB24\n");
+  display.clear();
+  display.setCursor(0,0);
+  display.setFont(&helvB08); display.print("helvB08\n");
+  display.setFont(&helvB10); display.print("helvB10\n");
+  display.setFont(&helvB12); display.print("helvB12\n");
+  display.setFont(&helvB14); display.print("helvB14\n");
+  display.setFont(&helvB18); display.print("helvB18\n");
+  display.setFont(&helvB24); display.print("helvB24\n");
   delay(2000);
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.setFont(&helvR08); lcd.print("helvR08\n");
-  lcd.setFont(&helvR10); lcd.print("helvR10\n");
-  lcd.setFont(&helvR12); lcd.print("helvR12\n");
-  lcd.setFont(&helvR14); lcd.print("helvR14\n");
-  lcd.setFont(&helvR18); lcd.print("helvR18\n");
-  lcd.setFont(&helvR24); lcd.print("helvR24\n");
+  display.clear();
+  display.setCursor(0,0);
+  display.setFont(&helvR08); display.print("helvR08\n");
+  display.setFont(&helvR10); display.print("helvR10\n");
+  display.setFont(&helvR12); display.print("helvR12\n");
+  display.setFont(&helvR14); display.print("helvR14\n");
+  display.setFont(&helvR18); display.print("helvR18\n");
+  display.setFont(&helvR24); display.print("helvR24\n");
   delay(2000);
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.setFont(&ncenB08); lcd.print("ncenB08\n");
-  lcd.setFont(&ncenB10); lcd.print("ncenB10\n");
-  lcd.setFont(&ncenB12); lcd.print("ncenB12\n");
-  lcd.setFont(&ncenB14); lcd.print("ncenB14\n");
-  lcd.setFont(&ncenB18); lcd.print("ncenB18\n");
-  lcd.setFont(&ncenB24); lcd.print("ncenB24\n");
+  display.clear();
+  display.setCursor(0,0);
+  display.setFont(&ncenB08); display.print("ncenB08\n");
+  display.setFont(&ncenB10); display.print("ncenB10\n");
+  display.setFont(&ncenB12); display.print("ncenB12\n");
+  display.setFont(&ncenB14); display.print("ncenB14\n");
+  display.setFont(&ncenB18); display.print("ncenB18\n");
+  display.setFont(&ncenB24); display.print("ncenB24\n");
   delay(2000);
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.setFont(&ncenR08); lcd.print("ncenR08\n");
-  lcd.setFont(&ncenR10); lcd.print("ncenR10\n");
-  lcd.setFont(&ncenR12); lcd.print("ncenR12\n");
-  lcd.setFont(&ncenR14); lcd.print("ncenR14\n");
-  lcd.setFont(&ncenR18); lcd.print("ncenR18\n");
-  lcd.setFont(&ncenR24); lcd.print("ncenR24\n");
+  display.clear();
+  display.setCursor(0,0);
+  display.setFont(&ncenR08); display.print("ncenR08\n");
+  display.setFont(&ncenR10); display.print("ncenR10\n");
+  display.setFont(&ncenR12); display.print("ncenR12\n");
+  display.setFont(&ncenR14); display.print("ncenR14\n");
+  display.setFont(&ncenR18); display.print("ncenR18\n");
+  display.setFont(&ncenR24); display.print("ncenR24\n");
   delay(2000);
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.setFont(&timB08 ); lcd.print("timB08\n");
-  lcd.setFont(&timB10 ); lcd.print("timB10\n");
-  lcd.setFont(&timB12 ); lcd.print("timB12\n");
-  lcd.setFont(&timB14 ); lcd.print("timB14\n");
-  lcd.setFont(&timB18 ); lcd.print("timB18\n");
-  lcd.setFont(&timB24 ); lcd.print("timB24\n");
+  display.clear();
+  display.setCursor(0,0);
+  display.setFont(&timB08 ); display.print("timB08\n");
+  display.setFont(&timB10 ); display.print("timB10\n");
+  display.setFont(&timB12 ); display.print("timB12\n");
+  display.setFont(&timB14 ); display.print("timB14\n");
+  display.setFont(&timB18 ); display.print("timB18\n");
+  display.setFont(&timB24 ); display.print("timB24\n");
   delay(2000);
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.setFont(&timR08 ); lcd.print("timR08\n");
-  lcd.setFont(&timR10 ); lcd.print("timR10\n");
-  lcd.setFont(&timR12 ); lcd.print("timR12\n");
-  lcd.setFont(&timR14 ); lcd.print("timR14\n");
-  lcd.setFont(&timR18 ); lcd.print("timR18\n");
-  lcd.setFont(&timR24 ); lcd.print("timR24\n");
+  display.clear();
+  display.setCursor(0,0);
+  display.setFont(&timR08 ); display.print("timR08\n");
+  display.setFont(&timR10 ); display.print("timR10\n");
+  display.setFont(&timR12 ); display.print("timR12\n");
+  display.setFont(&timR14 ); display.print("timR14\n");
+  display.setFont(&timR18 ); display.print("timR18\n");
+  display.setFont(&timR24 ); display.print("timR24\n");
   delay(2000);
 }

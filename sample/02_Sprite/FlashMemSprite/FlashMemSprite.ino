@@ -1,19 +1,20 @@
 
-#include <M5GFX.h>
-#include <ESP32_8BIT_CVBS.h>
+#define LGFX_USE_V1
+#include <LovyanGFX.h>
+#include <LGFX_8BIT_CVBS.h>
+static LGFX_8BIT_CVBS display;
 
 #include "image320x240x16.h"
 #include "image480x320x8.h"
 #include "image640x480x4.h"
 #include "image1280x960x1.h"
 
-static ESP32_8BIT_CVBS lcd;
 static LGFX_Sprite     sprite;
 
 void setup() {
-  lcd.init();
-  if (lcd.width() < lcd.height()) {
-    lcd.setRotation(lcd.getRotation() ^ 1);
+  display.init();
+  if (display.width() < display.height()) {
+    display.setRotation(display.getRotation() ^ 1);
   }
 
   // setBufferを使用することで、予め用意されたデータを用いてスプライトを使用できるようにする。
@@ -39,5 +40,5 @@ void loop() {
   static std::uint32_t count;
   if (++count == 360) count = 0;
   float zoom = (((float)count) / 200) + 0.1;
-  sprite.pushRotateZoom(&lcd, lcd.width() >> 1, lcd.height() >> 1, count, zoom, zoom);
+  sprite.pushRotateZoom(&display, display.width() >> 1, display.height() >> 1, count, zoom, zoom);
 }

@@ -30,30 +30,31 @@
 
 // LovyanGFXより先に efontのincludeが必要です。
 // need to include efont before LovyanGFX.
-#include <M5GFX.h>
-#include <ESP32_8BIT_CVBS.h>
-
-static ESP32_8BIT_CVBS lcd;
+#define LGFX_USE_V1
+#include <LovyanGFX.h>
+#include <LGFX_8BIT_CVBS.h>
+static LGFX_8BIT_CVBS display;
+#define M5Canvas LGFX_Sprite
 
 void setup() {
-  lcd.init();
+  display.init();
 
   // setFont関数に引数efontを指定すると、printやdrawString等でefontを使用できます。
-  lcd.setFont(&fonts::efont);
+  display.setFont(&fonts::efont);
 
-  lcd.setTextWrap(true, true);
+  display.setTextWrap(true, true);
 }
 
 void loop() {
-  lcd.setTextColor(random(0x10000), random(0x10000));
-  lcd.setTextSize(random(1, 3));
+  display.setTextColor(random(0x10000), random(0x10000));
+  display.setTextSize(random(1, 3));
 
-  lcd.print("Hello");
-  lcd.print("こんにちは");
-  lcd.print("你好");
-  lcd.print("안녕하세요");
-  lcd.print("Доброе утро");
-  lcd.print("Päivää");
-  lcd.print("Здравствуйте");
+  display.print("Hello");
+  display.print("こんにちは");
+  display.print("你好");
+  display.print("안녕하세요");
+  display.print("Доброе утро");
+  display.print("Päivää");
+  display.print("Здравствуйте");
   delay(1000);
 }

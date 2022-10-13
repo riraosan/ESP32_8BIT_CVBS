@@ -26,43 +26,43 @@ SOFTWARE.
 #include <unity.h>
 #include <Arduino.h>
 
-//#define RGB_TEST              // OK 2.0.3 2022-09-17
-//#define PARTY_PARROT          // OK 2.0.3 2022-09-17
-//#define CLOCK_SAMPLE          // OK 2.0.3 2022-09-17
-//#define FLASH_MEM_SPRITE      // OK 2.0.3 2022-09-17
+//#define RGB_TEST              // OK 2.0.3 2022-10-13
+//#define PARTY_PARROT          // OK 2.0.3 2022-10-13
+//#define CLOCK_SAMPLE          // OK 2.0.3 2022-10-13
+//#define FLASH_MEM_SPRITE      // OK 2.0.3 2022-10-13
 //#define COLLISION_CIRCLES     // NG SRAM不足のため動作できない。描画バッファは削減できない。
-//#define MOVING_CIRCLES        // OK 2.0.3 2022-09-17
-//#define MOVING_ICONS          // OK 2.0.3 2022-09-17
-//#define ROTATED_ZOOMS_SAMPLE  // OK 2.0.3 2022-09-17
-//#define LONG_TEXT_SCROLL      // NG 2.0.3 2022-09-17 文字の下部分の表示が乱れる。
-//#define GRAPH                 // OK 2.0.3 2022-09-17
-//#define MISAKI_FONT           // OK 2.0.3 2022-09-17
-//#define EFONT                 // OK 2.0.3 2022-09-17
-//#define U8G2                  // OK 2.0.3 2022-09-17
-//#define RADGIALGAUGE          // OK 2.0.3 2022-09-17
+//#define MOVING_CIRCLES        // OK 2.0.3 2022-10-13
+//#define MOVING_ICONS          // OK 2.0.3 2022-10-13
+//#define ROTATED_ZOOMS_SAMPLE  // OK 2.0.3 2022-10-13
+//#define LONG_TEXT_SCROLL      // OK 2.0.3 2022-10-13
+//#define GRAPH                 // OK 2.0.3 2022-10-13
+//#define MISAKI_FONT           // OK 2.0.3 2022-10-13
+//#define EFONT                 // OK 2.0.3 2022-10-13
+//#define U8G2                  // OK 2.0.3 2022-10-13
+//#define RADGIALGAUGE          // OK 2.0.3 2022-10-13
 //#define METERSAMPLE           // NG pushRotateZoom APIの不具合のような気がする。lcd color Depth 8の場合、カラーパレット0の透過がうまくいかないように見える。しらんけど。
-//#define SPINTILE              // OK 2.0.3 2022-09-17
-//#define GAMEOFLIFE            // OK 2.0.3 2022-09-17
-//#define BARGRAPH              // OK 2.0.3 2022-09-17
+//#define SPINTILE              // OK 2.0.3 2022-10-13
+//#define GAMEOFLIFE            // OK 2.0.3 2022-10-13
+//#define BARGRAPH              // OK 2.0.3 2022-10-13
 //#define ANALOGMETER           // OK 2.0.3 2022-09-17
 //#define ANIMATED_GIF          // OK 2.0.3 2022-09-17 patchを更新しました。
 //#define WEBRADIO              // OK 2.0.3 2022-09-17 CVBSはI2S0を使用。AudioはI2S1を使用
-#define MATRIXRAIN            // OK 2.0.3 2022-09-17
-//#define NTP_NIXIE_TUBE_CLOCK  // OK 2.0.3 2022-09-17
-//#define TEST_IMU              // OK 2.0.3 2022-09-17 for ATOM Matrix
+//#define MATRIXRAIN            // OK 2.0.3 2022-10-13
+//#define NTP_NIXIE_TUBE_CLOCK  // OK 2.0.3 2022-10-13
+#define TEST_IMU  // OK 2.0.3 2022-10-13 for M5StickCPlus
 
 #if defined(TEST_IMU)
 #include <M5Unified.h>
-
-// 使用するサンプルに応じて設定を変更してください
-// StickCPlusでは、output_powerをtrueに設定すると外部に5Vを出力します
-// ATOM Matrixではinternal_imuをtrueに設定します
+// M5StickCPlus用の設定です
+// CVBS出力はG26を使用してください
+// StickCPlusは、output_powerをtrueに設定すると外部に5Vを出力します。
+// ATOM Matrixではinternal_imuをtrueに設定します。
 void initM5Stack(void) {
   auto cfg = M5.config();
 
   // cfg.serial_baudrate                     = 115200; // default=115200. if "Serial" is not needed, set it to 0.
   // cfg.clear_display                       = true;   // default=true. clear the screen when begin.
-  // cfg.output_power                        = true;   // default=true. use external port 5V output.
+  cfg.output_power = true;  // default=true. use external port 5V output.
   cfg.internal_imu = true;  // default=true. use internal IMU.
   // cfg.internal_rtc                        = true;   // default=true. use internal RTC.
   // cfg.internal_spk                        = true;   // default=true. use internal speaker.
@@ -206,7 +206,7 @@ void setup(void) {
 }
 
 void loop(void) {
-  //display.waitForFrame();
+  // display.waitForFrame();
 }
 
 #elif defined(PARTY_PARROT)
@@ -238,7 +238,7 @@ void loop(void) {
 #elif defined(RADGIALGAUGE)
 #include "./02_Sprite/RadgialGauge/RadgialGauge.ino"
 #elif defined(METERSAMPLE)
-#include "./02_Sprite/MeterSample.ino"
+#include "./02_Sprite/MeterSample/MeterSample.ino"
 #elif defined(SPINTILE)
 #include "./03_Standard/SpinTile/SpinTile.ino"
 #elif defined(GAMEOFLIFE)

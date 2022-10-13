@@ -26,8 +26,8 @@ original source
 
 */
 
-#define WIFI_SSID "俺のiPhone"
-#define WIFI_PASS "room03601"
+#define WIFI_SSID ""
+#define WIFI_PASS ""
 
 #include <Arduino.h>
 #include <SPI.h>
@@ -44,8 +44,12 @@ original source
 #include <AudioOutputI2S.h>
 
 #include <M5Unified.h>
-#include <ESP32_8BIT_CVBS.h>
-static ESP32_8BIT_CVBS display;
+
+#define LGFX_USE_V1
+#include <LovyanGFX.h>
+#include <LGFX_8BIT_CVBS.h>
+static LGFX_8BIT_CVBS display;
+#define M5Canvas LGFX_Sprite
 
 /// set M5Speaker virtual channel (0-7)
 static constexpr uint8_t m5spk_virtual_channel = 0;

@@ -4,20 +4,11 @@
 
 #include <Arduino.h>
 
-#include <M5GFX.h>
-#include <ESP32_8BIT_CVBS.h>
-ESP32_8BIT_CVBS display;
-
-//#include <M5UnitOLED.h>
-// M5UnitOLED display; // default setting
-// M5UnitOLED display ( 21, 22, 400000 ); // SDA, SCL, FREQ
-
-//#include <M5UnitLCD.h>
-// M5UnitLCD display;  // default setting
-// M5UnitLCD display  ( 21, 22, 400000 ); // SDA, SCL, FREQ
-
-//#include <M5AtomDisplay.h>
-// M5AtomDisplay display;
+#define LGFX_USE_V1
+#include <LovyanGFX.h>
+#include <LGFX_8BIT_CVBS.h>
+static LGFX_8BIT_CVBS display;
+#define M5Canvas LGFX_Sprite
 
 M5Canvas canvas[2];
 

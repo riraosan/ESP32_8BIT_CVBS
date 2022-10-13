@@ -1,8 +1,9 @@
 
-#include <M5GFX.h>
-#include <ESP32_8BIT_CVBS.h>
-
-static ESP32_8BIT_CVBS lcd;
+#define LGFX_USE_V1
+#include <LovyanGFX.h>
+#include <LGFX_8BIT_CVBS.h>
+static LGFX_8BIT_CVBS display;
+#define M5Canvas LGFX_Sprite
 
 static std::uint32_t sec, psec;
 static std::uint32_t fps = 0, frame_count = 0;
@@ -44,13 +45,13 @@ static LGFX_Sprite  sprites[2];
 static int_fast16_t sprite_height;
 
 void setup(void) {
-  lcd.begin();
+  display.begin();
 
-  if (lcd.width() < lcd.height()) {
-    lcd.setRotation(lcd.getRotation() ^ 1);
+  if (display.width() < display.height()) {
+    display.setRotation(display.getRotation() ^ 1);
   }
-  lcd_width  = lcd.width();
-  lcd_height = lcd.height();
+  lcd_width  = display.width();
+  lcd_height = display.height();
   obj_info_t *a;
   for (std::uint32_t i = 0; i < obj_count; ++i) {
     a        = &objects[i];
@@ -67,7 +68,7 @@ void setup(void) {
     sprite_height = (lcd_height + div - 1) / div;
     bool fail     = false;
     for (std::uint32_t i = 0; !fail && i < 2; ++i) {
-      sprites[i].setColorDepth(lcd.getColorDepth());
+      sprites[i].setColorDepth(display.getColorDepth());
       sprites[i].setFont(&fonts::Font2);
       fail = !sprites[i].createSprite(lcd_width, sprite_height);
     }
@@ -77,7 +78,7 @@ void setup(void) {
     }
     ++div;
   }
-  lcd.startWrite();
+  display.startWrite();
 }
 
 void loop(void) {
@@ -104,10 +105,10 @@ void loop(void) {
       sprites[flip].setTextColor(TFT_WHITE);
       sprites[flip].printf("obj:%d fps:%d", obj_count, fps);
     }
-    sprites[flip].pushSprite(&lcd, 0, y);
+    sprites[flip].pushSprite(&display, 0, y);
   }
 
-  lcd.display();
+  display.display();
 
   ++frame_count;
   sec = lgfx::millis() / 1000;

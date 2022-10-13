@@ -1,9 +1,11 @@
 
-#include <M5GFX.h>
-#include <ESP32_8BIT_CVBS.h>
+#define LGFX_USE_V1
+#include <LovyanGFX.h>
+#include <LGFX_8BIT_CVBS.h>
+static LGFX_8BIT_CVBS display;
+#define M5Canvas LGFX_Sprite
 
-static ESP32_8BIT_CVBS lcd;
-static LGFX_Sprite     canvas(&lcd);     // オフスクリーン描画用バッファ
+static LGFX_Sprite     canvas(&display);     // オフスクリーン描画用バッファ
 static LGFX_Sprite     base(&canvas);    // 文字盤パーツ
 static LGFX_Sprite     needle(&canvas);  // 針パーツ
 
@@ -17,29 +19,29 @@ static float   zoom;                       // 表示倍率
 #endif
 
 void setup(void) {
-  lcd.init();
-  lcd.startWrite();
+  display.init();
+  display.startWrite();
 
-  int lw = std::min(lcd.width(), lcd.height());
+  int lw = std::min(display.width(), display.height());
 
   zoom = (float)lw / width;  // 表示が画面にフィットするよう倍率を調整
 
-  int px = (lcd.width() >> 1) - 6;
-  int py = lcd.height() >> 1;
-  lcd.setPivot(px, py);  // 描画時の中心を画面中心に合わせる
+  int px = (display.width() >> 1) - 6;
+  int py = display.height() >> 1;
+  display.setPivot(px, py);  // 描画時の中心を画面中心に合わせる
 
-  lcd.setColorDepth(24);
+  display.setColorDepth(24);
   for (int i = 0; i < 180; i += 2) {  // 外周を描画する
-    lcd.setColor(lcd.color888(i * 1.4, i * 1.4 + 2, i * 1.4 + 4));
-    lcd.fillArc(px, py, (lw >> 1), (lw >> 1) - zoom * 3, 90 + i, 92 + i);
-    lcd.fillArc(px, py, (lw >> 1), (lw >> 1) - zoom * 3, 88 - i, 90 - i);
+    display.setColor(display.color888(i * 1.4, i * 1.4 + 2, i * 1.4 + 4));
+    display.fillArc(px, py, (lw >> 1), (lw >> 1) - zoom * 3, 90 + i, 92 + i);
+    display.fillArc(px, py, (lw >> 1), (lw >> 1) - zoom * 3, 88 - i, 90 - i);
   }
   for (int i = 0; i < 180; i += 2) {  // 外周を描画する
-    lcd.setColor(lcd.color888(i * 1.4, i * 1.4 + 2, i * 1.4 + 4));
-    lcd.fillArc(px, py, (lw >> 1) - zoom * 4, (lw >> 1) - zoom * 7, 270 + i, 272 + i);
-    lcd.fillArc(px, py, (lw >> 1) - zoom * 4, (lw >> 1) - zoom * 7, 268 - i, 270 - i);
+    display.setColor(display.color888(i * 1.4, i * 1.4 + 2, i * 1.4 + 4));
+    display.fillArc(px, py, (lw >> 1) - zoom * 4, (lw >> 1) - zoom * 7, 270 + i, 272 + i);
+    display.fillArc(px, py, (lw >> 1) - zoom * 4, (lw >> 1) - zoom * 7, 268 - i, 270 - i);
   }
-  lcd.setColorDepth(8);
+  display.setColorDepth(8);
 
   canvas.setColorDepth(lgfx::palette_2bit);  // 各部品を２ビットパレットモードで準備する
   base.setColorDepth(lgfx::palette_2bit);
@@ -96,10 +98,10 @@ void draw(float value) {
   canvas.pushRotateZoom(0, zoom, zoom);  // 完了した盤をLCDに描画する
 
   if (value >= 1.5) {
-    lcd.fillCircle(lcd.width() >> 1, (lcd.height() >> 1) + width * 4 / 10, 5, 0x007FFFU);
+    display.fillCircle(display.width() >> 1, (display.height() >> 1) + width * 4 / 10, 5, 0x007FFFU);
   }
 
-  lcd.display();
+  display.display();
 }
 
 void loop(void) {
