@@ -16,12 +16,11 @@ Modified by @riraosan.github.io for ATOM Lite.
 
 #define NOT_USEATOM
 
-#define LGFX_USE_V1
-#include <LovyanGFX.h>
-#include <ESP32_8BIT_CVBS.h>
-static ESP32_8BIT_CVBS display;
+#include <M5GFX.h>
+#include <LGFX_8BIT_CVBS.h>
+static LGFX_8BIT_CVBS display;
 
-#define M5Canvas LGFX_Sprite
+//#define M5Canvas LGFX_Sprite
 
 static M5Canvas     sprites[2];
 static int_fast16_t sprite_height;
