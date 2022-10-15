@@ -44,9 +44,7 @@ original source
 #include <AudioOutputI2S.h>
 
 #include <M5Unified.h>
-
-#define LGFX_USE_V1
-#include <LovyanGFX.h>
+#include <M5GFX.h>
 #include <LGFX_8BIT_CVBS.h>
 static LGFX_8BIT_CVBS display;
 #define M5Canvas LGFX_Sprite
@@ -64,8 +62,7 @@ static constexpr const char* station_list[][2] =
         {"J-Rock Powerplay", "http://kathy.torontocast.com:3340/stream"},
         {"J-Club Hip Hop", "http://kathy.torontocast.com:3350/stream"},
         {"Jazz Sakura", "http://kathy.torontocast.com:3330/stream"},
-        {"Lite Favorites", "http://naxos.cdnstream.com:80/1255_128"},
-};
+        {"Lite Favorites", "http://naxos.cdnstream.com:80/1255_128"}};
 
 static constexpr const size_t stations = sizeof(station_list) / sizeof(station_list[0]);
 
@@ -219,12 +216,12 @@ static int16_t                   wave_y[WAVE_SIZE];
 static int16_t                   wave_h[WAVE_SIZE];
 static int16_t                   raw_data[WAVE_SIZE * 2];
 static int                       header_height     = 0;
-static size_t                    station_index     = 0;
+static int8_t                    station_index     = 0;
 static char                      stream_title[128] = {0};
 static const char*               meta_text[2]      = {nullptr, stream_title};
 static const size_t              meta_text_num     = sizeof(meta_text) / sizeof(meta_text[0]);
 static uint8_t                   meta_mod_bits     = 0;
-static volatile size_t           playindex         = ~2u;
+static volatile int8_t           playindex         = ~2u;
 
 static void MDCallback(void* cbData, const char* type, bool isUnicode, const char* string) {
   (void)cbData;
@@ -254,7 +251,7 @@ static void stop(void) {
   out.stop();
 }
 
-static void play(size_t index) {
+static void play(int8_t index) {
   playindex = index;
 }
 
@@ -565,7 +562,7 @@ void setup() {
   auto cfg = M5.config();
 
   cfg.external_spk = true;  /// use external speaker (SPK HAT / ATOMIC SPK)
-  // cfg.external_spk_detail.omit_atomic_spk = true;  // exclude ATOMIC SPK
+  //  cfg.external_spk_detail.omit_atomic_spk = true;  // exclude ATOMIC SPK
   //  cfg.external_spk_detail.omit_spk_hat    = true; // exclude SPK HAT
 
   M5.begin(cfg);
@@ -576,6 +573,16 @@ void setup() {
     spk_cfg.sample_rate      = 128000;  // default:64000 (64kHz)  e.g. 48000 , 50000 , 80000 , 96000 , 100000 , 128000 , 144000 , 192000 , 200000
     spk_cfg.task_pinned_core = APP_CPU_NUM;
     spk_cfg.i2s_port         = i2s_port_t::I2S_NUM_1;  // IS2_NUM_0はCVBSが使用する。AudioはI2S_NUM_1を使用する。
+    spk_cfg.pin_bck          = 33;
+    spk_cfg.pin_ws           = 22;
+    spk_cfg.pin_data_out     = 19;
+    spk_cfg.stereo           = true;
+    spk_cfg.use_dac          = false;  // about internal DAC
+
+    // for ES9038Q2M VR1.07 DAC Board
+    spk_cfg.dma_buf_count = 64;
+    spk_cfg.dma_buf_len   = 64;
+
     M5.Speaker.config(spk_cfg);
   }
 
@@ -630,20 +637,26 @@ void loop() {
       case 1:
         M5.Speaker.tone(1000, 100, m5spk_virtual_channel);
         delay(100);
+        ++station_index;
 
-        if (++station_index >= stations) {
+        log_d("%d", station_index);
+        if (station_index > stations - 1) {
           station_index = 0;
         }
+        log_d("%d", station_index);
         play(station_index);
         break;
 
       case 2:
         M5.Speaker.tone(800, 100, m5spk_virtual_channel);
         delay(100);
+        --station_index;
 
-        if (--station_index == 0) {
-          station_index = stations;
+        log_d("%d", station_index);
+        if (station_index < 0) {
+          station_index = stations - 1;
         }
+        log_d("%d", station_index);
         play(station_index);
         break;
     }
