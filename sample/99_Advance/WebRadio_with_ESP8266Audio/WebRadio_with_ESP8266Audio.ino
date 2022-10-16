@@ -44,10 +44,18 @@ original source
 #include <AudioOutputI2S.h>
 
 #include <M5Unified.h>
-#include <M5GFX.h>
+#include <m5GFX.h>
 #include <LGFX_8BIT_CVBS.h>
 static LGFX_8BIT_CVBS display;
 #define M5Canvas LGFX_Sprite
+
+#include <Button2.h>
+#define BUTTON_PIN26 26  // Button Unit RED
+#define BUTTON_PIN32 32  // Button Unit BLUE
+#define BUTTON_PIN39 39  // ATOM Lite Body Push Button
+static Button2 bRed;
+static Button2 bBlue;
+static Button2 Btn;
 
 /// set M5Speaker virtual channel (0-7)
 static constexpr uint8_t m5spk_virtual_channel = 0;
@@ -198,7 +206,7 @@ public:
   }
 };
 
-static constexpr const int       preallocateBufferSize = 32 * 1024;  // 5 * 1024 ボツ音周期的発生。ボツ音間の周期が長くなるように修正。
+static constexpr const int       preallocateBufferSize = 48 * 1024;  // 5 * 1024 ボツ音周期的発生。ボツ音間の周期が長くなるように修正。
 static constexpr const int       preallocateCodecSize  = 29192;      // MP3 codec max mem needed
 static void*                     preallocateBuffer     = nullptr;
 static void*                     preallocateCodec      = nullptr;
@@ -349,7 +357,7 @@ void gfxLoop(LGFX_Device* gfx) {
         gfx->print(meta_text[id]);
         gfx->print(" ");  // Garbage data removal when UTF8 characters are broken in the middle.
       }
-      // gfx->display();
+      gfx->display();
       // gfx->endWrite();
     }
   } else {
@@ -548,6 +556,71 @@ void gfxLoop(LGFX_Device* gfx) {
   }
 }
 
+void pressed(Button2& btn) {
+  M5.Speaker.tone(440, 100);
+}
+
+void longClickExternalButton(Button2& btn) {
+  if (btn == bRed) {
+    M5.Speaker.tone(1000, 100);
+    if (++station_index >= stations) {
+      station_index = 0;
+    }
+    play(station_index);
+
+  } else if (btn == bBlue) {
+    M5.Speaker.tone(800, 100);
+    if (station_index == 0) {
+      station_index = stations;
+    }
+    play(--station_index);
+  }
+}
+
+void longClick(Button2& btn) {
+  display.fillScreen(TFT_BLACK);
+  ESP.restart();
+}
+
+void click(Button2& btn) {
+  size_t v   = M5.Speaker.getChannelVolume(m5spk_virtual_channel);
+  int    add = (btn == bRed) ? 5 : -5;
+  v += add;
+
+  if (v <= 255) {
+    M5.Speaker.setChannelVolume(m5spk_virtual_channel, v);
+  }
+  if (add > 0) {
+    M5.Speaker.tone(1000, 100);
+  } else {
+    M5.Speaker.tone(800, 100);
+  }
+}
+
+void tripleClick(Button2& btn) {
+  //?
+}
+
+void setupButton(void) {
+  bRed.setDoubleClickTime(300);
+  bRed.setLongClickTime(1000);
+  bRed.setPressedHandler(pressed);
+  bRed.setClickHandler(click);
+  bRed.setLongClickDetectedHandler(longClickExternalButton);
+  bRed.begin(BUTTON_PIN26);
+
+  bBlue.setDoubleClickTime(300);
+  bBlue.setLongClickTime(1000);
+  bBlue.setPressedHandler(pressed);
+  bBlue.setClickHandler(click);
+  bBlue.setLongClickDetectedHandler(longClickExternalButton);
+  bBlue.begin(BUTTON_PIN32);
+
+  Btn.setPressedHandler(pressed);
+  Btn.setLongClickHandler(longClick);
+  Btn.begin(BUTTON_PIN39);
+}
+
 void setup() {
   log_d("Free Heap : %d", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
 
@@ -555,7 +628,10 @@ void setup() {
   pinMode(0, OUTPUT);
   digitalWrite(0, LOW);
 
+  setupButton();
+
   display.begin();
+  display.setFont(&fonts::lgfxJapanGothic_16);
   display.startWrite();
   gfxSetup(&display);
 
@@ -580,7 +656,7 @@ void setup() {
     spk_cfg.use_dac          = false;  // about internal DAC
 
     // for ES9038Q2M VR1.07 DAC Board
-    spk_cfg.dma_buf_count = 64;
+    spk_cfg.dma_buf_count = 96;
     spk_cfg.dma_buf_len   = 64;
 
     M5.Speaker.config(spk_cfg);
@@ -628,37 +704,7 @@ void loop() {
 
   // for ATOM Lite G39
   M5.update();
-  if (M5.BtnA.wasPressed()) {
-    M5.Speaker.tone(440, 50, m5spk_virtual_channel);
-  }
-
-  if (M5.BtnA.wasDeciedClickCount()) {
-    switch (M5.BtnA.getClickCount()) {
-      case 1:
-        M5.Speaker.tone(1000, 100, m5spk_virtual_channel);
-        delay(100);
-        ++station_index;
-
-        log_d("%d", station_index);
-        if (station_index > stations - 1) {
-          station_index = 0;
-        }
-        log_d("%d", station_index);
-        play(station_index);
-        break;
-
-      case 2:
-        M5.Speaker.tone(800, 100, m5spk_virtual_channel);
-        delay(100);
-        --station_index;
-
-        log_d("%d", station_index);
-        if (station_index < 0) {
-          station_index = stations - 1;
-        }
-        log_d("%d", station_index);
-        play(station_index);
-        break;
-    }
-  }
+  bRed.loop();
+  bBlue.loop();
+  Btn.loop();
 }
