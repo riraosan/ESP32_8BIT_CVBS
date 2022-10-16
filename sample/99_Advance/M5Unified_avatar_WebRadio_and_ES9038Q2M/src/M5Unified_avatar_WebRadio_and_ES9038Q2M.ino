@@ -3,8 +3,8 @@
 
 #define AVATAR
 
-#define WIFI_SSID "Buffalo-C130"
-#define WIFI_PASS "nnkxnpshmhai6"
+#define WIFI_SSID ""
+#define WIFI_PASS ""
 
 #include <HTTPClient.h>
 #include <math.h>
@@ -28,12 +28,11 @@ static Button2 bRed;
 static Button2 bBlue;
 static Button2 Btn;
 
-#include <M5UnitLCD.h>
-#include <M5UnitOLED.h>
 #include <M5Unified.h>
-#include <ESP32_8BIT_CVBS.h>
-static ESP32_8BIT_CVBS display;
-static M5Canvas        canvas;
+#include <M5GFX.h>
+#include <LGFX_8BIT_CVBS.h>
+static LGFX_8BIT_CVBS display;
+static M5Canvas       canvas;
 
 #define W_SCALE 1.00
 #define H_SCALE 1.00
@@ -574,7 +573,7 @@ void setupAvatar(void) {
   avatar = new Avatar(&sp_avatar);
 
   avatar->setScale(0.65);
-  avatar->setOffset(-30, 40);
+  avatar->setOffset(-30, 35);
 
   ColorPalette cp;
   cp.set(COLOR_PRIMARY, TFT_WHITE);
@@ -646,7 +645,7 @@ void setupAudio(void) {
   {  // custom setting
     auto spk_cfg = M5.Speaker.config();
     //  sample_rateを上げると、CPU負荷が上がる代わりに音質が向上します。
-    spk_cfg.sample_rate      = 144000 * 2;  // default:64000 (64kH z)  e.g. 48000 , 50000 , 80000 , 96000 , 100000 , 128000 , 144000 , 192000 , 200000
+    spk_cfg.sample_rate      = 128000;  // default:64000 (64kH z)  e.g. 48000 , 50000 , 80000 , 96000 , 100000 , 128000 , 144000 , 192000 , 200000
     spk_cfg.task_pinned_core = APP_CPU_NUM;
     spk_cfg.i2s_port         = i2s_port_t::I2S_NUM_1;  // CVBS use IS2_NUM_0. Audio use I2S_NUM_1.
     spk_cfg.pin_bck          = 33;
@@ -758,7 +757,7 @@ void setup(void) {
   setupDisplay();
   setupAudio();
   setupLevelMeter();
-  // setupAvatar();
+  setupAvatar();
   setupWiFi();
 
   play(station_index);
