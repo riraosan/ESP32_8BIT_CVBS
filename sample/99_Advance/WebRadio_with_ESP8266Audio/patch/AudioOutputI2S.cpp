@@ -65,18 +65,7 @@ AudioOutputI2S::AudioOutputI2S(long sampleRate, pin_size_t sck, pin_size_t data)
 #endif
 
 AudioOutputI2S::~AudioOutputI2S() {
-#ifdef ESP32
-  if (i2sOn) {
-    audioLogger->printf("UNINSTALL I2S\n");
-    i2s_driver_uninstall((i2s_port_t)portNo);  // stop & destroy i2s driver
-  }
-#elif defined(ESP8266)
-  if (i2sOn)
-    i2s_end();
-#elif defined(ARDUINO_ARCH_RP2040)
   stop();
-#endif
-  i2sOn = false;
 }
 
 bool AudioOutputI2S::SetPinout() {
@@ -85,11 +74,14 @@ bool AudioOutputI2S::SetPinout() {
     return false;  // Not allowed
 
   i2s_pin_config_t pins = {
-      .mck_io_num   = 0,  // Unused
-      .bck_io_num   = bclkPin,
-      .ws_io_num    = wclkPin,
-      .data_out_num = doutPin,
-      .data_in_num  = I2S_PIN_NO_CHANGE};
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(4, 4, 0)
+    .mck_io_num = 0,  // Unused
+#endif
+    .bck_io_num   = bclkPin,
+    .ws_io_num    = wclkPin,
+    .data_out_num = doutPin,
+    .data_in_num  = I2S_PIN_NO_CHANGE
+  };
   i2s_set_pin((i2s_port_t)portNo, &pins);
   return true;
 #else
@@ -195,21 +187,60 @@ bool AudioOutputI2S::begin(bool txDAC) {
 #endif
     }
 
+//       i2s_config_t i2s_config_dac = {
+//           .mode = mode,
+//           .sample_rate = 44100,
+//           .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
+//           .channel_format = I2S_CHANNEL_FMT_RIGHT_LEFT,
+//           .communication_format = comm_fmt,
+//           .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1, // lowest interrupt priority
+//           .dma_buf_count = dma_buf_count,
+//           .dma_buf_len = 128,
+//           .use_apll = use_apll, // Use audio PLL
+//           .tx_desc_auto_clear = true, // Silence on underflow
+//           .fixed_mclk = 0, // Unused
+// #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(4, 4, 0)
+//           .mclk_multiple = I2S_MCLK_MULTIPLE_DEFAULT, // Unused
+//           .bits_per_chan = I2S_BITS_PER_CHAN_DEFAULT // Use bits per sample
+// #endif
+//       };
+#if defined(BITS_PER_SAMPLE_32BIT_DAC)
     i2s_config_t i2s_config_dac = {
-        .mode                 = mode,
-        .sample_rate          = 44100,
-        .bits_per_sample      = I2S_BITS_PER_SAMPLE_16BIT,
-        .channel_format       = I2S_CHANNEL_FMT_RIGHT_LEFT,
-        .communication_format = comm_fmt,
-        .intr_alloc_flags     = ESP_INTR_FLAG_LEVEL1,  // lowest interrupt priority
-        .dma_buf_count        = dma_buf_count,
-        .dma_buf_len          = 128,
-        .use_apll             = use_apll,                   // Use audio PLL
-        .tx_desc_auto_clear   = true,                       // Silence on underflow
-        .fixed_mclk           = 0,                          // Unused
-        .mclk_multiple        = I2S_MCLK_MULTIPLE_DEFAULT,  // Unused
-        .bits_per_chan        = I2S_BITS_PER_CHAN_DEFAULT   // Use bits per sample
+      .mode                 = mode,
+      .sample_rate          = 44100,
+      .bits_per_sample      = I2S_BITS_PER_SAMPLE_32BIT,
+      .channel_format       = I2S_CHANNEL_FMT_RIGHT_LEFT,
+      .communication_format = comm_fmt,              // I2S communication format I2S
+      .intr_alloc_flags     = ESP_INTR_FLAG_LEVEL1,  // default interrupt priority
+      .dma_buf_count        = dma_buf_count,
+      .dma_buf_len          = 128,
+      .use_apll             = use_apll,  // I2S using APLL as main I2S clock, enable it to get accurate clock
+      .tx_desc_auto_clear   = true,      // I2S auto clear tx descriptor if there is underflow condition
+      .fixed_mclk           = 0,         // Unused
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(4, 4, 0)
+      .mclk_multiple = I2S_MCLK_MULTIPLE_DEFAULT,  // Unused
+      .bits_per_chan = I2S_BITS_PER_CHAN_DEFAULT   // Use bits per sample
+#endif
     };
+#else
+    i2s_config_t i2s_config_dac = {
+      .mode = mode,
+      .sample_rate = 44100,
+      .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
+      .channel_format = I2S_CHANNEL_FMT_RIGHT_LEFT,
+      .communication_format = comm_fmt,          // I2S communication format I2S
+      .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,  // default interrupt priority
+      .dma_buf_count = dma_buf_count,
+      .dma_buf_len = 128,
+      .use_apll = use_apll,                        // I2S using APLL as main I2S clock, enable it to get accurate clock
+      .tx_desc_auto_clear = true,                  // I2S auto clear tx descriptor if there is underflow condition
+      .fixed_mclk = 0,                             // Unused
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(4, 4, 0)
+      .mclk_multiple = I2S_MCLK_MULTIPLE_DEFAULT,  // Unused
+      .bits_per_chan = I2S_BITS_PER_CHAN_DEFAULT   // Use bits per sample
+#endif
+    };
+#endif
     audioLogger->printf("+%d %p\n", portNo, &i2s_config_dac);
     if (i2s_driver_install((i2s_port_t)portNo, &i2s_config_dac, 0, NULL) != ESP_OK) {
       audioLogger->println("ERROR: Unable to install I2S drives\n");
@@ -286,8 +317,21 @@ bool AudioOutputI2S::ConsumeSample(int16_t sample[2]) {
   //"i2s_write_bytes" has been removed in the ESP32 Arduino 2.0.0,  use "i2s_write" instead.
   //    return i2s_write_bytes((i2s_port_t)portNo, (const char *)&s32, sizeof(uint32_t), 0);
 
+  // size_t i2s_bytes_written;
+  // i2s_write((i2s_port_t)portNo, (const char*)&s32, sizeof(uint32_t), &i2s_bytes_written, 0);
+#if defined(BITS_PER_SAMPLE_32BIT_DAC)
+  size_t i2s_bytes_written;
+  // expand e.g to 32 bit for DACs which do not support 16 bits
+  if (i2s_write_expand((i2s_port_t)portNo, (const char *)&s32, sizeof(uint32_t), I2S_BITS_PER_SAMPLE_16BIT, I2S_BITS_PER_SAMPLE_32BIT, &i2s_bytes_written, portMAX_DELAY) != ESP_OK) {
+    log_e("i2s_write_expand has failed");
+  }
+#else
+  //"i2s_write_bytes" has been removed in the ESP32 Arduino 2.0.0,  use "i2s_write" instead.
+  //    return i2s_write_bytes((i2s_port_t)portNo, (const char *)&s32, sizeof(uint32_t), 0);
+
   size_t i2s_bytes_written;
   i2s_write((i2s_port_t)portNo, (const char*)&s32, sizeof(uint32_t), &i2s_bytes_written, 0);
+#endif
   return i2s_bytes_written;
 #elif defined(ESP8266)
   uint32_t s32 = ((Amplify(ms[RIGHTCHANNEL])) << 16) | (Amplify(ms[LEFTCHANNEL]) & 0xffff);
@@ -319,6 +363,12 @@ bool AudioOutputI2S::stop() {
 
 #ifdef ESP32
   i2s_zero_dma_buffer((i2s_port_t)portNo);
+
+  // TODO modified @riraosan Why did you add below codes?
+  // audioLogger->printf("UNINSTALL I2S\n");
+  // i2s_driver_uninstall((i2s_port_t)portNo);  // stop & destroy i2s driver
+#elif defined(ESP8266)
+  i2s_end();
 #elif defined(ARDUINO_ARCH_RP2040)
   i2s.end();
 #endif
