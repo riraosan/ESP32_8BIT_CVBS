@@ -49,7 +49,7 @@ SOFTWARE.
 //#define WEBRADIO              // OK 2.0.3 2022-09-17 CVBSはI2S0を使用。AudioはI2S1を使用
 //#define MATRIXRAIN            // OK 2.0.3 2022-10-13
 //#define NTP_NIXIE_TUBE_CLOCK  // OK 2.0.3 2022-10-13
-#define TEST_IMU  // OK 2.0.3 2022-10-13 for M5StickCPlus
+//#define TEST_IMU              // OK 2.0.3 2022-10-13 for M5StickCPlus
 
 #if defined(TEST_IMU)
 #include <M5Unified.h>

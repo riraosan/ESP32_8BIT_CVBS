@@ -645,7 +645,7 @@ void setupAudio(void) {
   {  // custom setting
     auto spk_cfg = M5.Speaker.config();
     //  sample_rateを上げると、CPU負荷が上がる代わりに音質が向上します。
-    spk_cfg.sample_rate      = 128000;  // default:64000 (64kH z)  e.g. 48000 , 50000 , 80000 , 96000 , 100000 , 128000 , 144000 , 192000 , 200000
+    spk_cfg.sample_rate      = 96000;  // default:64000 (64kH z)  e.g. 48000 , 50000 , 80000 , 96000 , 100000 , 128000 , 144000 , 192000 , 200000
     spk_cfg.task_pinned_core = APP_CPU_NUM;
     spk_cfg.i2s_port         = i2s_port_t::I2S_NUM_1;  // CVBS use IS2_NUM_0. Audio use I2S_NUM_1.
     spk_cfg.pin_bck          = 33;
@@ -655,7 +655,7 @@ void setupAudio(void) {
     spk_cfg.use_dac          = false;  // about internal DAC
 
     // for ES9038Q2M VR1.07 DAC Board
-    spk_cfg.dma_buf_count = 64;
+    spk_cfg.dma_buf_count = 80;
     spk_cfg.dma_buf_len   = 64;
 
     M5.Speaker.config(spk_cfg);
