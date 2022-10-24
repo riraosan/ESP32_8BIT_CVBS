@@ -28,9 +28,7 @@ static std::int32_t display_width;
 static std::int32_t display_height;
 
 // Wifi 関連定義
-Connect _wifi;
-// const char* ssid               = "your_ssid";     // WiFi APのSSID
-// const char* password           = "your_passord";  // WiFi APのPassword
+Connect     _wifi;
 const char* ntpServer          = "ntp.nict.jp";
 const long  gmtOffset_sec      = 9 * 3600;
 const int   daylightOffset_sec = 0;
@@ -45,7 +43,7 @@ bool autoNtp(void) {
   display.setCursor(5, 10);
   display.println("Connecting...");
 
-  _wifi.begin();
+  _wifi.begin("", "");  // TODO ssid, password...
 
   display.println("");
   display.print(" ");

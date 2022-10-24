@@ -6,6 +6,7 @@
 #include <WiFi.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
+#include <Preferences.h>
 #include <AutoConnect.h>
 using WiFiWebServer = WebServer;
 #else
@@ -45,8 +46,12 @@ public:
     _config.autoReconnect     = true;
     _config.reconnectInterval = 1;
 
-    _config.ota  = AC_OTA_BUILTIN;
-    _config.apid = _apName;
+    _config.ota     = AC_OTA_BUILTIN;
+    _config.apid    = _apName;
+    _config.psk     = "0123456789";
+    _config.channel = 3;
+    _config.minRSSI = -100;
+
     _portal.config(_config);
 
     bool result = false;
