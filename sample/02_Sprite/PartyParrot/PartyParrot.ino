@@ -1,7 +1,4 @@
 
-
-#define LGFX_USE_V1
-#include <LovyanGFX.h>
 #include <LGFX_8BIT_CVBS.h>
 static LGFX_8BIT_CVBS display;
 #define M5Canvas LGFX_Sprite

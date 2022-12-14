@@ -30,8 +30,7 @@
 
 // LovyanGFXより先に efontのincludeが必要です。
 // need to include efont before LovyanGFX.
-#define LGFX_USE_V1
-#include <LovyanGFX.h>
+
 #include <LGFX_8BIT_CVBS.h>
 static LGFX_8BIT_CVBS display;
 #define M5Canvas LGFX_Sprite

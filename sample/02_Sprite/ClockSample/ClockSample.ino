@@ -1,6 +1,4 @@
 
-#define LGFX_USE_V1
-#include <LovyanGFX.h>
 #include <LGFX_8BIT_CVBS.h>
 static LGFX_8BIT_CVBS display;
 
@@ -161,10 +159,8 @@ void drawClock(uint64_t time) {  // 時計の描画
   needle1.pushRotateZoom(fmin, 1.0 * ZOOM, 1.0 * ZOOM, transpalette);
   needle2.pushRotateZoom(fsec, 1.0 * ZOOM, 1.0 * ZOOM, transpalette);
 
-  // OK
-  canvas.pushRotateZoom(0, zoom * 0.8, zoom);
-  // NG
-  // canvas.pushRotateZoom(0, zoom, zoom, transpalette);
+  canvas.pushRotateZoom(0, zoom, zoom, transpalette);
+
   display.display();
 }
 

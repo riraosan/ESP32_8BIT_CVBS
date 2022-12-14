@@ -1,8 +1,7 @@
-#define LGFX_USE_V1
-#include <LovyanGFX.hpp>
+#include <LGFX_8BIT_CVBS.h>
 
-static LGFX        lcd;
-static LGFX_Sprite _sprites[2];
+static LGFX_8BIT_CVBS lcd;
+static M5Canvas       _sprites[2];
 
 struct ball_info_t {
   int32_t  x;
@@ -262,7 +261,7 @@ void setup(void) {
 
     if (fail) {
       fail = false;
-      if (lcd_width > 320) lcd_width = 320;
+      if (lcd_width > 360) lcd_width = 360;
       if (lcd_height > 240) lcd_height = 240;
 
       for (std::uint32_t i = 0; !fail && i < 2; ++i) {

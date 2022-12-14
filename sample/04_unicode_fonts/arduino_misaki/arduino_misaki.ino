@@ -9,8 +9,6 @@
 // Include the font data of Arduino-misakiUTF16.
 #include "misakiUTF16FontData.h"
 
-#define LGFX_USE_V1
-#include <LovyanGFX.h>
 #include <LGFX_8BIT_CVBS.h>
 static LGFX_8BIT_CVBS display;
 #define M5Canvas LGFX_Sprite

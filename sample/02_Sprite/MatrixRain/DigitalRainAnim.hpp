@@ -3,17 +3,16 @@
   Created by Eric Nam, November 08, 2021.
   Released into the public domain.
 
-  modified for ESP32_8BIT_CVBS Library by @riraosan, 2022-04-28
+  modified for LGFX_8BIT_CVBS Library by @riraosan, 2022-04-28
 */
 
 #ifndef DigitalRainAnim_h
 #define DigitalRainAnim_h
 
-#include <LovyanGFX.h>
-#include <ESP32_8BIT_CVBS.h>
+#include <LGFX_8BIT_CVBS.h>
 #include <vector>
 #include <string>
-#define M5Canvas LGFX_Sprite
+#define M5Canvas       LGFX_Sprite
 
 #define FONT_SIZE      1          // set font size 1
 #define LINE_WIDTH     8          // width for font size 1
@@ -22,8 +21,8 @@
 
 class DigitalRainAnim {
 public:
-  DigitalRainAnim(ESP32_8BIT_CVBS* cvbs) : _cvbs(cvbs),
-                                           _canvas(cvbs) {
+  DigitalRainAnim(LGFX_8BIT_CVBS* cvbs) : _cvbs(cvbs),
+                                          _canvas(cvbs) {
   }
 
   // initialze
@@ -228,8 +227,8 @@ private:
     return (r << 8) | (g << 3) | (b >> 3);
   }
 
-  ESP32_8BIT_CVBS* _cvbs;
-  M5Canvas         _canvas;
+  LGFX_8BIT_CVBS* _cvbs;
+  M5Canvas        _canvas;
 
   int              line_len_min;        // minimum length of characters
   int              line_len_max;        // maximum length of characters
