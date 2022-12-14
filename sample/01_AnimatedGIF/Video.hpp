@@ -5,12 +5,11 @@
 #include <FS.h>
 #include <SD.h>
 #include <SPI.h>
-#include <M5GFX.h>
-#include <ESP32_8BIT_CVBS.h>
+#include <LGFX_8BIT_CVBS.h>
 #include <AnimatedGIF.h>
 
-static ESP32_8BIT_CVBS _display;
-static M5Canvas        _sprite(&_display);
+static LGFX_8BIT_CVBS _display;
+static M5Canvas       _sprite(&_display);
 
 class Video {
 public:
